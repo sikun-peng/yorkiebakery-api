@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, File, UploadFile, 
 from sqlmodel import Session, select
 from typing import List, Optional
 from uuid import UUID
-
+from sqlalchemy import any_
 from app.models.postgres.menu import MenuItem
 from app.core.db import get_session
 from app.core.security import require_admin
@@ -62,6 +62,45 @@ def list_menu_items(
         query = query.where(MenuItem.tags.contains([tag]))
     items = session.exec(query.offset(skip).limit(limit)).all()
     return items
+
+@router.get("/search", response_model=list[MenuItem])
+def search_menu_items(
+    session: Session = Depends(get_session),
+    q: str | None = Query(None, description="Search text in title/description"),
+    cuisine: str | None = Query(None),
+    dish_type: str | None = Query(None),
+    dietary: str | None = Query(None, description="e.g. vegetarian, gluten_free"),
+    flavor: str | None = Query(None, description="e.g. sweet, nutty, savory"),
+    min_price: float | None = Query(None),
+    max_price: float | None = Query(None),
+):
+    query = select(MenuItem).where(MenuItem.is_available == True)
+
+    if q:
+        query = query.where(
+            MenuItem.title.ilike(f"%{q}%") | MenuItem.description.ilike(f"%{q}%")
+        )
+
+    if cuisine:
+        query = query.where(MenuItem.cuisine == cuisine)
+
+    if dish_type:
+        query = query.where(MenuItem.dish_type == dish_type)
+
+    if dietary:
+        query = query.where(dietary == any_(MenuItem.dietary_restrictions))
+
+    if flavor:
+        query = query.where(flavor == any_(MenuItem.flavor_profile))
+
+    if min_price is not None:
+        query = query.where(MenuItem.price >= min_price)
+
+    if max_price is not None:
+        query = query.where(MenuItem.price <= max_price)
+
+    return session.exec(query).all()
+
 
 # -------------------------------
 # Get item by ID

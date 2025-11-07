@@ -1,71 +1,143 @@
-AI-Enhanced Bakery Web App Project
+# 🐶 Yorkie Bakery — AI-Enhanced Web App
 
-⸻
+Yorkie Bakery is a full-stack web application for bakery menu browsing, ordering, event campaigns, and an AI-powered chat assistant that helps users discover what to order. The system supports two roles: **Admin (Oscar)** and **Regular Users**, and includes a recommendation & RAG-based chat experience.
 
-Functional Requirements
+---
 
-1. Admin (Oscar)
-	•	Can access all user profiles
-	•	Can add/update/delete menu items (each with images)
-	•	Can delete reviews/comments
-	•	Receives alerts for new comments or orders
-	•	Can create and manage campaigns for events/parties
-	•	Can upload music and update titles
-	•	Has full-featured admin UI
+## ✨ Features
 
-2. Regular Users
-	•	Can create an account and log in
-	•	Can set and update food preferences
-	•	Can browse menu and music with pagination (20 or 100 per page)
-	•	Can place orders and make reservations
-	•	Can leave reviews on dishes
-	•	Can subscribe to offers/events/campaigns
-	•	Can search menu and music
-	•	Can receive personalized food recommendations
-	•	Can interact with chatbox assistant for tasks (e.g., check order status)
+### Admin (Oscar)
+- Full admin dashboard
+- Add / update / delete menu items (with images)
+- Manage events + seasonal campaigns
+- Moderate reviews and comments
+- Upload music tracks for bakery ambiance
+- Receive notifications for new orders
 
-⸻
+### Regular Users
+- Create an account & login
+- Browse menu with pagination (20–100 items)
+- Place orders & reservations
+- Leave reviews & set taste preferences
+- Subscribe to offers / events
+- Semantic search across menu & music
+- **Chat with Yorkie** for recommendations & help
 
-Non-Functional Requirements
-	•	Responsive UI (mobile/tablet/desktop)
-	•	Secure authentication (JWT-based)
-	•	Role-based access control (admin vs user)
-	•	Scalable backend using FastAPI + PostgreSQL
-	•	Image/music upload with media serving (S3 or local storage)
-	•	AI-based recommendations (OpenAI)
-	•	RAG-based search assistant (OpenAI + ChromaDB/FAISS)
-	•	Dockerized deployment
-	•	Cloud hosting (EC2 or GCP)
-	•	Monitoring/logging (optional: Prometheus, Grafana, Loki)
-	•	Optional CI/CD using GitHub Actions
+---
 
-⸻
+## 🧱 Tech Stack
 
-Project Milestone Plan
+| Layer | Technology |
+|------|------------|
+| Frontend | React (User UI), HTMX/Jinja2 (Admin Dashboard) |
+| Backend | **FastAPI** (Python) |
+| Database | **PostgreSQL** |
+| Storage | AWS S3 (images + music) |
+| AI | OpenAI GPT + **LangChain RAG** |
+| Vector Search | **FAISS** |
+| Auth | JWT + Role-based Access Control |
+| Deployment | Docker → EC2 / ECS / GCP / Fly.io |
 
-Milestone	Title	Description	Est. Time
-M0	Scaffold Project	Initialize GitHub repo, Dockerize FastAPI, base folder structure	0.5 day
-M1	Core API & Auth	User signup/login with JWT, admin roles	1 day
-M2	Menu + Pagination	CRUD for menu items with image upload + paginated API	1–1.5 days
-M3	Orders + Reservations	User order flow, reservation API, admin alert	1 day
-M4	Reviews + Preferences	Review system, user preferences, moderation	1 day
-M5	Search & Subscribe	Menu/music search, subscribe to campaigns	1 day
-M6	AI: Recommender + RAG Chat	Personalized recommendation + OpenAI-powered chat	2 days
-M7	Media Uploads	Admin upload music/images, serve via endpoint	0.5–1 day
-M8	Admin Dashboard	Jinja2 or HTMX web UI for admin	1.5–2 days
-M9	Cloud Deployment	EC2/GCP deploy, domain, HTTPS, optional CI/CD	1–2 days
-M10	Monitoring + Polish	Add logging, error handling, testing, final polish	1 day
+---
 
+## 🧠 AI Architecture (RAG)
 
-⸻
+Yorkie uses **Retrieval-Augmented Generation** to give grounded, accurate, friendly answers.
 
-Timeline (Suggestion)
+User → Chat UI → /chat API → Embedding → Vector Search (FAISS)
+↓
+Retrieve Top Matching Menu Items
+↓
+Construct Yorkie Personality Prompt → GPT Response
+↓
+UI displays reply
 
-Week	Focus
-Week 1	M0–M3: Core backend (auth, menu, orders)
-Week 2	M4–M6: Reviews, preferences, AI features
-Week 3	M7–M9: Uploads, admin UI, cloud deployment
-Week 4	M10: Polish, write documentation, record demo
+- Prevents hallucination
+- Makes Yorkie *actually know the menu*
+- Allows natural questions like:
+  > *“I want something fluffy and sweet.”*
+
+---
+
+## 🗄️ System Architecture
+
+┌────────────────────── UI ──────────────────────┐
+| React User App        | Admin Dashboard (HTMX) |
+└─────────────┬─────────┴───────────┬────────────┘
+│                     │
+▼                     ▼
+┌──────────────────────────────────┐
+│           FastAPI API            │
+│ (Auth, Menu, Orders, Chat, etc.) │
+└─────────────────┬────────────────┘
+│
+┌─────────────────────────────┐
+│     Core Infrastructure     │
+│   PostgreSQL (main data)    │
+│   S3 (images/music)         │
+│   FAISS (vector index)      │
+│   OpenAI (LLM + embeddings) │
+└─────────────────────────────┘
+
+---
+
+## 🗃️ Data Model (Simplified)
+
+User(id, email, password_hash, role, preferences)
+MenuItem(id, title, description, tags[], image_url, is_available)
+Order(id, user_id, items[], total_price, status)
+Review(id, user_id, menu_item_id, rating, text)
+Campaign(id, name, description, image, start_date, end_date)
+Music(id, title, audio_url)
+
+---
+
+## 🚀 Milestone Plan
+
+| # | Milestone | Outcome |
+|---|---|---|
+| M1 | Auth & Roles | Users + Admin login |
+| M2 | Menu CRUD + Images | Admin menu mgmt + pagination |
+| M3 | Orders & Alerts | Order workflow + notifications |
+| M4 | Reviews + Preferences | Flavor profile + social reviews |
+| M5 | Search & Campaigns | Keyword + tag + semantic search |
+| **M6** | **AI Recommender + RAG Chat** | FAISS vector search + GPT chat |
+| M7 | Music Uploads | Admin ambient music |
+| M8 | Admin Dashboard | Full bakery operations UI |
+| M9 | Deployment | Cloud hosting + HTTPS |
+| M10 | Polish | Logging, UX, QA |
+
+---
+
+## 🧭 Roadmap / Future Extensions
+- Yorkie ordering assistant ("Place this order for me")
+- Seasonal recommendation tuning
+- Voice chat (WebRTC + Whisper)
+- Loyalty rewards & referral perks
+
+---
+
+## 🐾 Personality Prompt (Yorkie Mode)
+
+Yorkie speaks in:
+- Warm, cute bakery tone
+- Encouraging language
+- Never robotic
+
+Example:
+> “WOOF! 🐾 I sniffed out the perfect bun for you.  
+> It’s fluffy, sweet, and full of love! 🍞💗 Want me to fetch it for your cart?”
+
+---
+
+## ❤️ About This Project
+This project is being built to learn:
+- Real-world backend engineering patterns
+- AI + RAG integration
+- Scalable product system design
+- UI/UX for consumer-facing web apps
+
+Where Bakery Meets Intelligence ✨🐶🥐
 
 APIs
 http://localhost:8000/auth/login/google

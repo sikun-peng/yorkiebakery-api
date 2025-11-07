@@ -1,0 +1,165 @@
+<!-- static/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Yorkie Bakery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif; margin: 0; padding: 0; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #eee; }
+    .container { padding: 16px; max-width: 900px; margin: 0 auto; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+    .card { border: 1px solid #eee; border-radius: 8px; padding: 12px; }
+    .row { display: flex; gap: 8px; align-items: center; }
+    .btn { padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; cursor: pointer; background: #fff; }
+    .btn:hover { background: #f5f5f5; }
+    .pill { background: #f0f0f0; padding: 2px 8px; border-radius: 999px; font-size: 12px; }
+    #cart-drawer { position: fixed; right: 0; top: 0; bottom: 0; width: 360px; background: #fff; border-left: 1px solid #eee; box-shadow: -6px 0 16px rgba(0,0,0,0.06); transform: translateX(100%); transition: transform 0.2s ease; padding: 16px; display: flex; flex-direction: column; }
+    #cart-drawer.open { transform: translateX(0); }
+    #cart-items { flex: 1; overflow: auto; }
+    #response { white-space: pre-wrap; border: 1px dashed #ddd; padding: 8px; min-height: 80px; }
+    .price { margin-left: auto; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="row">
+      <strong>Yorkie Bakery</strong>
+    </div>
+    <div class="row">
+      <input id="chat-input" placeholder="try 'thai'" />
+      <button class="btn" onclick="sendMessage()">Ask AI</button>
+      <button class="btn" onclick="toggleCart()">🛒 Cart <span id="cart-count" class="pill">0</span></button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="response">Ask the AI for suggestions, then add items to your cart.</div>
+    <div style="height: 12px"></div>
+    <div id="suggestions" class="grid"></div>
+  </div>
+
+  <aside id="cart-drawer">
+    <h3>Your Cart</h3>
+    <div id="cart-items"></div>
+    <div class="row" style="border-top: 1px solid #eee; padding-top: 8px; margin-top: 8px;">
+      <div>Total:</div>
+      <div id="cart-total" class="price">$0.00</div>
+    </div>
+    <div class="row" style="margin-top: 8px;">
+      <button class="btn" onclick="checkout()">Checkout</button>
+      <button class="btn" onclick="clearCart()">Clear</button>
+    </div>
+  </aside>
+
+  <script src="/static/chat_client.js"></script>
+  <script>
+    async function renderSuggestions(items) {
+      const grid = document.getElementById('suggestions');
+      grid.innerHTML = '';
+      for (const it of items) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="row">
+            <div><strong>${it.title}</strong></div>
+            <div class="price">$${Number(it.price || 0).toFixed(2)}</div>
+          </div>
+          <div style="margin-top:4px; font-size: 12px; color:#555;">${it.cuisine || ''} ${it.dish_type ? '• ' + it.dish_type : ''}</div>
+          <div style="margin-top:6px;">
+            <button class="btn" data-id="${it.menu_item_id || it.id}">Add to cart</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      }
+      grid.querySelectorAll('button[data-id]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.currentTarget.getAttribute('data-id');
+          await addToCart(id);
+          await refreshCart();
+          toggleCart(true);
+        });
+      });
+    }
+
+    function toggleCart(forceOpen) {
+      const el = document.getElementById('cart-drawer');
+      if (forceOpen === true) el.classList.add('open');
+      else if (forceOpen === false) el.classList.remove('open');
+      else el.classList.toggle('open');
+    }
+
+    async function refreshCart() {
+      const res = await fetch('/cart');
+      if (!res.ok) return;
+      const data = await res.json();
+      const list = document.getElementById('cart-items');
+      const totalEl = document.getElementById('cart-total');
+      const countEl = document.getElementById('cart-count');
+
+      list.innerHTML = '';
+      let count = 0;
+      for (const it of (data.items || [])) {
+        count += Number(it.quantity || 0);
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.style.marginBottom = '8px';
+        row.innerHTML = `
+          <div style="flex:1;">
+            <div><strong>${it.title}</strong></div>
+            <div style="font-size:12px;color:#666;">$${Number(it.price).toFixed(2)} x ${it.quantity}</div>
+          </div>
+          <div class="row">
+            <button class="btn" data-dec="${it.menu_item_id}">-</button>
+            <button class="btn" data-inc="${it.menu_item_id}">+</button>
+          </div>
+        `;
+        list.appendChild(row);
+      }
+      list.querySelectorAll('button[data-inc]').forEach(b => {
+        b.addEventListener('click', async (e) => {
+          const id = e.currentTarget.getAttribute('data-inc');
+          await addToCart(id);
+          await refreshCart();
+        });
+      });
+      list.querySelectorAll('button[data-dec]').forEach(b => {
+        b.addEventListener('click', async (e) => {
+          const id = e.currentTarget.getAttribute('data-dec');
+          await decFromCart(id);
+          await refreshCart();
+        });
+      });
+
+      totalEl.textContent = `$${Number(data.total || 0).toFixed(2)}`;
+      countEl.textContent = String(count);
+    }
+
+    async function addToCart(menu_item_id) {
+      await fetch('/cart/add', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ menu_item_id }) });
+    }
+    async function decFromCart(menu_item_id) {
+      await fetch('/cart/remove', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ menu_item_id }) });
+    }
+    async function clearCart() {
+      await fetch('/cart/clear', { method: 'POST' });
+      await refreshCart();
+    }
+    async function checkout() {
+      const res = await fetch('/order/checkout', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({}) });
+      if (res.ok) {
+        const data = await res.json();
+        alert(`Order placed!\nID: ${data.order_id}\nTotal: $${data.total.toFixed(2)}`);
+        await refreshCart();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert('Checkout failed: ' + (err.detail || res.status));
+      }
+    }
+
+    // Initial cart refresh on load
+    refreshCart();
+  </script>
+</body>
+</html>
