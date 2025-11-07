@@ -1,25 +1,34 @@
-from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from sqlmodel import SQLModel
-from app.core.db import engine
-from app.routes import auth, menu, order, ai
 from starlette.middleware.sessions import SessionMiddleware
+from fastapi.templating import Jinja2Templates
+from app.core.db import engine
+from app.routes import auth, menu, order, ai, cart
+from fastapi import Request, Depends
+from sqlmodel import Session
+from app.core.db import get_session
+from app.core.cart_utils import get_cart_count
 
 app = FastAPI()
 
-# Serve static JS/CSS
-app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="app/templates")
 
-# Include routes
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
 app.include_router(auth.router)
 app.include_router(menu.router)
 app.include_router(order.router)
 app.include_router(ai.router)
+app.include_router(cart.router)
 
-# Session middleware
-app.add_middleware(SessionMiddleware, secret_key="YOUR_SECRET_KEY")
+app.add_middleware(SessionMiddleware, secret_key="SUPER_SECRET_DO_NOT_HARD_CODE")
 
-# Create tables on startup
 @app.on_event("startup")
 def on_startup():
     SQLModel.metadata.create_all(engine)
+
+@app.get("/")
+def home(request: Request):
+    cart_count = get_cart_count(request)
+    return templates.TemplateResponse("home.html", {"request": request, "cart_count": cart_count})

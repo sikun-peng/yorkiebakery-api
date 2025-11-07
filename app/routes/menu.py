@@ -1,101 +1,118 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, File, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException, Query, File, UploadFile, Form, Request
+from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 from typing import List, Optional
 from uuid import UUID
 from sqlalchemy import any_
+
 from app.models.postgres.menu import MenuItem
-from app.core.db import get_session
+from app.core.db import get_session, engine
 from app.core.security import require_admin
 from app.utils.s3_util import upload_file_to_s3
+
+templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter(prefix="/menu", tags=["Menu"])
 
 S3_BUCKET_IMAGE = "yorkiebakery-image"
 
 # -------------------------------
+# Public menu view (HTML Page)
+# -------------------------------
+@router.get("/view")
+def view_menu_page(request: Request, session: Session = Depends(get_session)):
+    items = session.exec(select(MenuItem).where(MenuItem.is_available == True)).all()
+
+    cart = request.session.get("cart", {})
+    cart_count = sum(cart.values())
+
+    return templates.TemplateResponse(
+        "menu.html",
+        {
+            "request": request,
+            "items": items,
+            "cart": cart,
+            "cart_count": cart_count,
+        }
+    )
+
+
+# -------------------------------
 # Create menu item (with image)
 # -------------------------------
 @router.post("/", response_model=MenuItem)
 def create_menu_item(
-    title: str = Form(...),
-    description: Optional[str] = Form(None),
-    tags: Optional[str] = Form(None),  # Comma-separated tags
-    is_available: bool = Form(True),
-    image: UploadFile = File(...),
-    session: Session = Depends(get_session),
-    user=Depends(require_admin)
+        title: str = Form(...),
+        description: Optional[str] = Form(None),
+        tags: Optional[str] = Form(None),
+        is_available: bool = Form(True),
+        image: UploadFile = File(...),
+        session: Session = Depends(get_session),
+        user=Depends(require_admin)
 ):
     if not image.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Only image files are allowed")
 
-    try:
-        image_url = upload_file_to_s3(image, folder="menu", bucket=S3_BUCKET_IMAGE)
-    except RuntimeError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-    tag_list = [tag.strip() for tag in tags.split(",")] if tags else []
+    image_url = upload_file_to_s3(image, folder="menu", bucket=S3_BUCKET_IMAGE)
 
     item = MenuItem(
         title=title,
         description=description,
-        tags=tag_list,
+        tags=[t.strip() for t in tags.split(",")] if tags else [],
         image_url=image_url,
         is_available=is_available
     )
+
     session.add(item)
     session.commit()
     session.refresh(item)
     return item
 
+
 # -------------------------------
-# List menu items (with filter)
+# List menu items (API JSON)
 # -------------------------------
 @router.get("/", response_model=List[MenuItem])
 def list_menu_items(
-    skip: int = 0,
-    limit: int = 20,
-    tag: Optional[str] = Query(None),
-    session: Session = Depends(get_session)
+        skip: int = 0,
+        limit: int = 20,
+        tag: Optional[str] = Query(None),
+        session: Session = Depends(get_session)
 ):
     query = select(MenuItem).where(MenuItem.is_available == True)
     if tag:
         query = query.where(MenuItem.tags.contains([tag]))
-    items = session.exec(query.offset(skip).limit(limit)).all()
-    return items
+    return session.exec(query.offset(skip).limit(limit)).all()
 
-@router.get("/search", response_model=list[MenuItem])
+
+# -------------------------------
+# Search menu items (API JSON)
+# -------------------------------
+@router.get("/search", response_model=List[MenuItem])
 def search_menu_items(
-    session: Session = Depends(get_session),
-    q: str | None = Query(None, description="Search text in title/description"),
-    cuisine: str | None = Query(None),
-    dish_type: str | None = Query(None),
-    dietary: str | None = Query(None, description="e.g. vegetarian, gluten_free"),
-    flavor: str | None = Query(None, description="e.g. sweet, nutty, savory"),
-    min_price: float | None = Query(None),
-    max_price: float | None = Query(None),
+        session: Session = Depends(get_session),
+        q: Optional[str] = Query(None),
+        cuisine: Optional[str] = Query(None),
+        dish_type: Optional[str] = Query(None),
+        dietary: Optional[str] = Query(None),
+        flavor: Optional[str] = Query(None),
+        min_price: Optional[float] = Query(None),
+        max_price: Optional[float] = Query(None),
 ):
     query = select(MenuItem).where(MenuItem.is_available == True)
 
     if q:
-        query = query.where(
-            MenuItem.title.ilike(f"%{q}%") | MenuItem.description.ilike(f"%{q}%")
-        )
-
+        query = query.where(MenuItem.title.ilike(f"%{q}%") | MenuItem.description.ilike(f"%{q}%"))
     if cuisine:
         query = query.where(MenuItem.cuisine == cuisine)
-
     if dish_type:
         query = query.where(MenuItem.dish_type == dish_type)
-
     if dietary:
         query = query.where(dietary == any_(MenuItem.dietary_restrictions))
-
     if flavor:
         query = query.where(flavor == any_(MenuItem.flavor_profile))
-
     if min_price is not None:
         query = query.where(MenuItem.price >= min_price)
-
     if max_price is not None:
         query = query.where(MenuItem.price <= max_price)
 
@@ -112,19 +129,20 @@ def get_menu_item(item_id: UUID, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Item not found")
     return item
 
+
 # -------------------------------
-# Update menu item (optional image upload)
+# Update menu item
 # -------------------------------
 @router.put("/{item_id}", response_model=MenuItem)
 def update_menu_item(
-    item_id: UUID,
-    title: Optional[str] = Form(None),
-    description: Optional[str] = Form(None),
-    tags: Optional[str] = Form(None),  # Comma-separated
-    is_available: Optional[bool] = Form(None),
-    image: Optional[UploadFile] = File(None),
-    session: Session = Depends(get_session),
-    user=Depends(require_admin)
+        item_id: UUID,
+        title: Optional[str] = Form(None),
+        description: Optional[str] = Form(None),
+        tags: Optional[str] = Form(None),
+        is_available: Optional[bool] = Form(None),
+        image: Optional[UploadFile] = File(None),
+        session: Session = Depends(get_session),
+        user=Depends(require_admin)
 ):
     item = session.get(MenuItem, item_id)
     if not item:
@@ -132,42 +150,39 @@ def update_menu_item(
 
     if title is not None:
         item.title = title
-
     if description is not None:
         item.description = description
-
     if tags is not None:
         item.tags = [t.strip() for t in tags.split(",") if t.strip()]
-
     if is_available is not None:
         item.is_available = is_available
 
     if image:
         if not image.content_type.startswith("image/"):
             raise HTTPException(status_code=400, detail="Only image files are allowed")
-        try:
-            image_url = upload_file_to_s3(image, folder="menu")
-            item.image_url = image_url
-        except RuntimeError as e:
-            raise HTTPException(status_code=500, detail=str(e))
+        item.image_url = upload_file_to_s3(image, folder="menu", bucket=S3_BUCKET_IMAGE)
 
-    session.add(item)
     session.commit()
     session.refresh(item)
     return item
+
 
 # -------------------------------
 # Delete menu item
 # -------------------------------
 @router.delete("/{item_id}")
-def delete_menu_item(
-    item_id: UUID,
-    session: Session = Depends(get_session),
-    user=Depends(require_admin)
-):
+def delete_menu_item(item_id: UUID, session: Session = Depends(get_session), user=Depends(require_admin)):
     item = session.get(MenuItem, item_id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
     session.delete(item)
     session.commit()
     return {"detail": "Item deleted"}
+
+
+# -------------------------------
+# Admin UI Page
+# -------------------------------
+@router.get("/admin/new")
+def admin_new_menu_page(request: Request, user=Depends(require_admin)):
+    return templates.TemplateResponse("menu_admin_new.html", {"request": request})

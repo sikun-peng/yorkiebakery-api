@@ -9,7 +9,6 @@ httpx
 psycopg2-binary
 sqlmodel
 python-dotenv
-passlib[bcrypt]
 python-jose[cryptography]
 boto3
 python-multipart
@@ -18,3 +17,6 @@ itsdangerous
 openai
 chromadb
 tiktoken
+jinja2
+bcrypt==4.0.1
+passlib[bcrypt]==1.7.4

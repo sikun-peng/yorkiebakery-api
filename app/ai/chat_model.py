@@ -1,5 +1,4 @@
 # app/ai/chat_model.py
-
 from openai import OpenAI
 
 # Uses your OPENAI_API_KEY automatically

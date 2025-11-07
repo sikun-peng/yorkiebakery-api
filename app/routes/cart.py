@@ -1,98 +1,99 @@
 # app/routes/cart.py
-from __future__ import annotations
-
-from typing import List, Dict, Any
-from uuid import UUID
-
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request
+from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
-
 from app.core.db import engine
-from app.core.ddb import add_item, remove_item, get_cart, clear_cart, ensure_table
 from app.models.postgres.menu import MenuItem
 
-router = APIRouter(prefix="/cart", tags=["cart"])
-
-CART_COOKIE = "yorkie_cart_id"
-
-
-def _ensure_cart_id(request: Request) -> str:
-    # session middleware is already mounted in the app
-    cart_id = request.session.get(CART_COOKIE)
-    if not cart_id:
-        # use the client host + a random suffix; but simplest is Starlette session ID itself
-        import uuid
-        cart_id = str(uuid.uuid4())
-        request.session[CART_COOKIE] = cart_id
-    return cart_id
+router = APIRouter(prefix="/cart", tags=["Cart"])
+templates = Jinja2Templates(directory="app/templates")
 
 
-@router.on_event("startup")
-def _startup():
-    ensure_table()
+def _get_cart(request: Request):
+    """
+    Ensure cart exists in session and return it.
+    Structure: {"menu_item_id": quantity}
+    """
+    return request.session.setdefault("cart", {})
 
 
-@router.get("")
-def get_current_cart(request: Request) -> Dict[str, Any]:
-    cart_id = _ensure_cart_id(request)
-    raw = get_cart(cart_id)
+# -------------------
+# CART PAGE (HTML)
+# -------------------
+@router.get("/view")
+def view_cart_page(request: Request):
+    cart = _get_cart(request)
+    item_ids = list(cart.keys())
+    items = []
 
-    # hydrate from Postgres for client convenience
-    items = raw.get("items", [])
-    menu_ids: List[UUID] = [UUID(i["menu_item_id"]) for i in items]
+    if item_ids:
+        with Session(engine) as session:
+            results = session.exec(
+                select(MenuItem).where(MenuItem.id.in_(item_ids))
+            ).all()
 
-    detailed: List[Dict[str, Any]] = []
-    if menu_ids:
-        with Session(engine) as s:
-            db_items: List[MenuItem] = list(s.exec(select(MenuItem).where(MenuItem.id.in_(menu_ids))))
-        lookup = {str(mi.id): mi for mi in db_items}
-        for it in items:
-            mi = lookup.get(it["menu_item_id"])
-            if not mi:
-                # skip stale IDs
-                continue
-            detailed.append({
-                "menu_item_id": str(mi.id),
-                "title": mi.title,
-                "price": float(mi.price or 0.0),
-                "quantity": int(it.get("quantity", 0)),
-                "image_url": mi.image_url,
-            })
+            for item in results:
+                qty = cart.get(str(item.id), 0)
+                items.append({
+                    "id": item.id,
+                    "title": item.title,
+                    "price": item.price,
+                    "quantity": qty,
+                    "subtotal": item.price * qty,
+                })
 
-    total = sum(x["price"] * x["quantity"] for x in detailed)
-    return {"cart_id": raw["cart_id"], "items": detailed, "total": round(total, 2)}
+    total = sum(i["subtotal"] for i in items)
+    cart_count = sum(cart.values())
+
+    return templates.TemplateResponse("cart.html", {
+        "request": request,
+        "items": items,
+        "total": total,
+        "cart": cart,          # ✅ For badge matching in menu.html
+        "cart_count": cart_count,
+    })
 
 
+# -------------------
+# ADD ITEM (AJAX)
+# -------------------
 @router.post("/add")
-async def add_to_cart(request: Request, payload: Dict[str, str]) -> Dict[str, Any]:
-    cart_id = _ensure_cart_id(request)
-    menu_item_id = payload.get("menu_item_id")
-    if not menu_item_id:
-        raise HTTPException(status_code=400, detail="menu_item_id is required")
+async def add_item_json(request: Request):
+    data = await request.json()
+    menu_item_id = str(data["menu_item_id"])
 
-    # validate item exists and is available
-    with Session(engine) as s:
-        mi = s.exec(select(MenuItem).where(MenuItem.id == UUID(menu_item_id), MenuItem.is_available == True)).first()
-    if not mi:
-        raise HTTPException(status_code=404, detail="Menu item not found or unavailable")
+    cart = _get_cart(request)
+    cart[menu_item_id] = cart.get(menu_item_id, 0) + 1
+    request.session["cart"] = cart  # ✅ Save update
 
-    add_item(cart_id, menu_item_id, inc=1)
-    return get_current_cart(request)
-
-
-@router.post("/remove")
-async def remove_from_cart(request: Request, payload: Dict[str, str]) -> Dict[str, Any]:
-    cart_id = _ensure_cart_id(request)
-    menu_item_id = payload.get("menu_item_id")
-    if not menu_item_id:
-        raise HTTPException(status_code=400, detail="menu_item_id is required")
-
-    remove_item(cart_id, menu_item_id, dec=1)
-    return get_current_cart(request)
+    return {
+        "ok": True,
+        "cart_count": sum(cart.values()),
+        "item_count": cart[menu_item_id]
+    }
 
 
-@router.post("/clear")
-async def clear_current_cart(request: Request) -> Dict[str, Any]:
-    cart_id = _ensure_cart_id(request)
-    clear_cart(cart_id)
-    return {"ok": True}
+# -------------------
+# PLUS BUTTON (+) — FORM POST
+# -------------------
+@router.post("/add/{menu_item_id}")
+def add_item_button(menu_item_id: str, request: Request):
+    cart = _get_cart(request)
+    cart[menu_item_id] = cart.get(menu_item_id, 0) + 1
+    request.session["cart"] = cart
+    return RedirectResponse(url="/menu/view", status_code=303)
+
+
+# -------------------
+# MINUS BUTTON (−) — FORM POST
+# -------------------
+@router.post("/remove/{menu_item_id}")
+def remove_item_button(menu_item_id: str, request: Request):
+    cart = _get_cart(request)
+    if menu_item_id in cart:
+        cart[menu_item_id] -= 1
+        if cart[menu_item_id] <= 0:
+            del cart[menu_item_id]
+    request.session["cart"] = cart
+    return RedirectResponse(url="/menu/view", status_code=303)

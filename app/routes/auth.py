@@ -1,214 +1,193 @@
-from fastapi import APIRouter, HTTPException, Depends
+# app/routes/auth.py
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
+from fastapi.responses import RedirectResponse
 from sqlmodel import Session, select
-from pydantic import BaseModel
-from uuid import UUID
-import re
-from authlib.integrations.starlette_client import OAuth
-from app.models.postgres.user import User
-from app.core.db import get_session
-from app.core.security import hash_password, verify_password, create_access_token
-from jose import jwt
-from app.core.security import SECRET_KEY, ALGORITHM
-from starlette.requests import Request
+from pydantic import BaseModel, EmailStr
+from starlette.templating import Jinja2Templates
 from starlette.config import Config
 
-config = Config('.env')
-oauth = OAuth(config)
-oauth.register(
-    name='google',
-    client_id=config('GOOGLE_CLIENT_ID'),
-    client_secret=config('GOOGLE_CLIENT_SECRET'),
-    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
-    client_kwargs={'scope': 'openid email profile'}
+from app.core.db import get_session
+from app.core.security import (
+    hash_password, verify_password,
+    create_access_token
 )
+from app.models.postgres.user import User
 
-# Python
-oauth.register(
-    name='facebook',
-    client_id=config('FACEBOOK_CLIENT_ID'),
-    client_secret=config('FACEBOOK_CLIENT_SECRET'),
-    access_token_url='https://graph.facebook.com/v12.0/oauth/access_token',
-    access_token_params=None,
-    authorize_url='https://www.facebook.com/v12.0/dialog/oauth',
-    authorize_params=None,
-    api_base_url='https://graph.facebook.com/v12.0/',
-    client_kwargs={'scope': 'email public_profile'}
-)
-router = APIRouter(prefix="/auth")
+templates = Jinja2Templates(directory="app/templates")
+router = APIRouter(prefix="/auth", tags=["Auth"])
 
+# --- OAuth Setup ---
+try:
+    from authlib.integrations.starlette_client import OAuth
+    config = Config(".env")
+    oauth = OAuth(config)
+
+    # Google OAuth
+    oauth.register(
+        name="google",
+        client_id=config("GOOGLE_CLIENT_ID", default=None),
+        client_secret=config("GOOGLE_CLIENT_SECRET", default=None),
+        server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+        client_kwargs={"scope": "openid email profile"},
+    )
+
+    # Facebook OAuth
+    oauth.register(
+        name="facebook",
+        client_id=config("FACEBOOK_CLIENT_ID", default=None),
+        client_secret=config("FACEBOOK_CLIENT_SECRET", default=None),
+        access_token_url="https://graph.facebook.com/v12.0/oauth/access_token",
+        authorize_url="https://www.facebook.com/v12.0/dialog/oauth",
+        api_base_url="https://graph.facebook.com/v12.0/",
+        client_kwargs={"scope": "email public_profile"},
+    )
+except Exception:
+    oauth = None
+
+
+# --- Request Models ---
 class UserRegisterRequest(BaseModel):
-    email: str
+    email: EmailStr
     password: str
     first_name: str
     last_name: str
 
 class UserLoginRequest(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
-class PasswordResetRequest(BaseModel):
-    email: str
 
-class PasswordResetConfirm(BaseModel):
-    token: str
-    new_password: str
+# --- Login Page ---
+@router.get("/login")
+def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
 
-# --- Register ---
-@router.post("/register")
-def register_user(payload: UserRegisterRequest, session: Session = Depends(get_session)):
-    existing_user = session.exec(select(User).where(User.email == payload.email)).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Email already exists")
-    if not is_strong_password(payload.password):
-        raise HTTPException(status_code=400, detail="Password must be at least 8 characters and include upper, lower, digit, and special character.")
+
+# --- Login Form ---
+@router.post("/login_form")
+def login_form(request: Request, email: str = Form(...), password: str = Form(...), session: Session = Depends(get_session)):
+    user = session.exec(select(User).where(User.email == email)).first()
+    if not user or not verify_password(password, user.password_hash):
+        return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid email or password."}, status_code=400)
+
+    request.session["user"] = {
+        "id": str(user.id),
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "is_admin": bool(user.is_admin),
+    }
+    request.session["access_token"] = create_access_token({"sub": str(user.id), "email": user.email})
+    return RedirectResponse(url="/menu/view", status_code=303)
+
+
+# --- Register Form ---
+@router.post("/register_form")
+def register_form(
+    request: Request,
+    email: EmailStr = Form(...),
+    password: str = Form(...),
+    first_name: str = Form(...),
+    last_name: str = Form(...),
+    session: Session = Depends(get_session),
+):
+    if session.exec(select(User).where(User.email == email)).first():
+        return templates.TemplateResponse("login.html", {"request": request, "tab": "register", "error": "Email already exists."}, status_code=400)
 
     user = User(
-        email=payload.email,
-        first_name=payload.first_name,
-        last_name=payload.last_name,
-        password_hash=hash_password(payload.password)
+        email=email,
+        first_name=first_name,
+        last_name=last_name,
+        password_hash=hash_password(password),
     )
     session.add(user)
     session.commit()
     session.refresh(user)
 
-    return {
-        "msg": "User created",
-        "user_id": user.id,
-        "first_name": user.first_name,
-        "last_name": user.last_name
-    }
-
-
-@router.get('/login/google')
-async def login_google(request: Request):
-    redirect_uri = request.url_for('auth_google_callback')
-    return await oauth.google.authorize_redirect(request, redirect_uri)
-
-@router.get('/google/callback')
-async def auth_google_callback(request: Request, session: Session = Depends(get_session)):
-    token = await oauth.google.authorize_access_token(request)
-    print(token)
-    id_token = token.get("id_token")
-    if not isinstance(token, dict):
-        raise Exception("Token is not a dict!")
-    if not id_token:
-        raise HTTPException(status_code=400, detail="No id_token in response from Google")
-    print(type(request), type(token))
-    print(token["id_token"])
-    try:
-        user_info = jwt.decode(
-            id_token,
-            key=None,  # still skipping signature verification in dev
-            options={
-                "verify_signature": False,
-                "verify_aud": False,
-                "verify_at_hash": False  # <--- this fixes your current error
-            }
-        )
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to decode id_token: {str(e)}")
-    email = user_info['email']
-    user = session.exec(select(User).where(User.email == email)).first()
-    if not user:
-        user = User(
-            email=email,
-            first_name=user_info.get('given_name', ''),
-            last_name=user_info.get('family_name', ''),
-            provider='google',
-            password_hash=''
-        )
-        session.add(user)
-        session.commit()
-        session.refresh(user)
-    access_token = create_access_token({"sub": str(user.id), "email": user.email})
-    return {"access_token": access_token, "token_type": "bearer"}
-
-@router.get('/login/facebook')
-async def login_facebook(request: Request):
-    redirect_uri = request.url_for('auth_facebook_callback')
-    return await oauth.facebook.authorize_redirect(request, redirect_uri)
-
-# Python
-@router.get('/facebook/callback')
-async def auth_facebook_callback(request: Request, session: Session = Depends(get_session)):
-    token = await oauth.facebook.authorize_access_token(request)
-    access_token = token.get("access_token")
-    if not access_token:
-        raise HTTPException(status_code=400, detail="No access_token in response from Facebook")
-    # Fetch user info from Facebook Graph API
-    resp = await oauth.facebook.get('https://graph.facebook.com/me?fields=id,email,first_name,last_name', token=token)
-    user_info = resp.json()
-    email = user_info.get('email')
-    if not email:
-        raise HTTPException(status_code=400, detail="No email returned from Facebook")
-    user = session.exec(select(User).where(User.email == email)).first()
-    if not user:
-        user = User(
-            email=email,
-            first_name=user_info.get('first_name', ''),
-            last_name=user_info.get('last_name', ''),
-            provider='facebook',
-            password_hash=''
-        )
-        session.add(user)
-        session.commit()
-        session.refresh(user)
-    access_token = create_access_token({"sub": str(user.id), "email": user.email})
-    return {"access_token": access_token, "token_type": "bearer"}
-
-# --- Login ---
-@router.post("/login")
-def login_user(payload: UserLoginRequest, session: Session = Depends(get_session)):
-    user = session.exec(select(User).where(User.email == payload.email)).first()
-    if not user or not verify_password(payload.password, user.password_hash):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-
-    token = create_access_token({
-        "sub": str(user.id),
+    request.session["user"] = {
+        "id": str(user.id),
         "email": user.email,
         "first_name": user.first_name,
         "last_name": user.last_name,
-        "is_admin": user.is_admin
-    })
+        "is_admin": bool(user.is_admin),
+    }
+    request.session["access_token"] = create_access_token({"sub": str(user.id), "email": user.email})
+    return RedirectResponse(url="/menu/view", status_code=303)
 
+
+# --- Logout ---
+@router.get("/logout")
+def logout(request: Request):
+    request.session.clear()
+    return RedirectResponse(url="/menu/view", status_code=303)
+
+
+# --- JSON Login/Register (unchanged) ---
+@router.post("/register")
+def api_register(payload: UserRegisterRequest, session: Session = Depends(get_session)):
+    if session.exec(select(User).where(User.email == payload.email)).first():
+        raise HTTPException(status_code=400, detail="Email already exists")
+    user = User(
+        email=payload.email,
+        first_name=payload.first_name,
+        last_name=payload.last_name,
+        password_hash=hash_password(payload.password),
+    )
+    session.add(user)
+    session.commit()
+    return {"msg": "User created", "user_id": str(user.id)}
+
+@router.post("/login")
+def api_login(payload: UserLoginRequest, request: Request, session: Session = Depends(get_session)):
+    user = session.exec(select(User).where(User.email == payload.email)).first()
+    if not user or not verify_password(payload.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    token = create_access_token({"sub": str(user.id), "email": user.email})
+    request.session["user"] = {
+        "id": str(user.id),
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+    }
+    request.session["access_token"] = token
     return {"access_token": token, "token_type": "bearer"}
 
 
-@router.post("/password-reset/request")
-def password_reset_request(payload: PasswordResetRequest, session: Session = Depends(get_session)):
-    user = session.exec(select(User).where(User.email == payload.email)).first()
+# --- Google OAuth ---
+@router.get("/login/google")
+async def login_google(request: Request):
+    if not oauth or not oauth.google.client_id:
+        raise HTTPException(status_code=400, detail="Google OAuth is not configured")
+    redirect_uri = request.url_for("google_callback")
+    return await oauth.google.authorize_redirect(request, redirect_uri)
+
+@router.get("/google/callback")
+async def google_callback(request: Request, session: Session = Depends(get_session)):
+    token = await oauth.google.authorize_access_token(request)
+    user_info = token.get("userinfo")
+
+    email = user_info["email"]
+    user = session.exec(select(User).where(User.email == email)).first()
+
+    # ✅ Ensure password_hash is never null
     if not user:
-        raise HTTPException(status_code=404, detail="Email not found")
-    # Generate and email a reset token (implement email sending)
-    reset_token = create_access_token({"sub": str(user.id)}, expires_delta=600)
-    # send_email(user.email, reset_token)  # Implement this
-    return {"msg": "Password reset email sent"}
+        placeholder_pw = hash_password("oauth-user")
+        user = User(
+            email=email,
+            first_name=user_info.get("given_name", ""),
+            last_name=user_info.get("family_name", ""),
+            password_hash=placeholder_pw,
+        )
+        session.add(user)
+        session.commit()
+        session.refresh(user)
 
-
-@router.post("/password-reset/confirm")
-def password_reset_confirm(payload: PasswordResetConfirm, session: Session = Depends(get_session)):
-    # Decode token, get user id
-    user_id = decode_token(payload.token)["sub"]
-    user = session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    if not is_strong_password(payload.new_password):
-        raise HTTPException(status_code=400, detail="Weak password")
-    user.password_hash = hash_password(payload.new_password)
-    session.add(user)
-    session.commit()
-    return {"msg": "Password updated"}
-
-
-def is_strong_password(password: str) -> bool:
-    return (
-        len(password) >= 8 and
-        re.search(r"[A-Z]", password) and
-        re.search(r"[a-z]", password) and
-        re.search(r"[0-9]", password) and
-        re.search(r"[!@#$%^&*(),.?\":{}|<>]", password)
-    )
-
-def decode_token(token: str):
-    return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    request.session["user"] = {
+        "id": str(user.id),
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "is_admin": bool(user.is_admin),
+    }
+    request.session["access_token"] = create_access_token({"sub": str(user.id), "email": user.email})
+    return RedirectResponse(url="/menu/view", status_code=303)

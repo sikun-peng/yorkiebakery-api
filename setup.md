@@ -9,7 +9,6 @@ docker rm $(docker ps -a -q)
 docker-compose down && docker-compose build && docker-compose up -d
 
 
-
 # Run migrations
 docker exec -it yorkiebakery-api-db-1 psql -U postgres -d yorkiebakery -f /migrations/001_create_tables.sql
 docker exec -it yorkiebakery-api-db-1 psql -U postgres -d yorkiebakery -f /migrations/002_seed_menu.sql
@@ -25,3 +24,6 @@ curl -X POST http://localhost:8000/ai/chat \
   -d '{"message": "thai", "top_k": 5, "filters": {"cuisine": "thai"}}'
 
 UPDATE "user" SET is_admin = true WHERE email = 'admin@yorkie.com';
+
+
+docker exec -it yorkiebakery-api-web-1 /bin/bash

@@ -39,6 +39,8 @@ services:
       DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/yorkiebakery
     env_file:
       - .env
+    volumes:
+      - .:/app
 
 volumes:
   postgres_data:

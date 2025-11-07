@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}Yorkie Bakery{% endblock %}</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+
+<header>
+  <nav class="nav-bar">
+    <div class="nav-left">
+      <a href="/" class="logo">Yorkie Bakery 🐶🥐</a>
+      <a href="/menu/view" class="nav-link">Menu</a>
+
+      <a href="/cart/view" class="nav-link cart-link">
+        Cart 🛒
+        <span id="global-cart-count"
+          class="cart-badge"
+          style="{% if not cart_count %}display:none;{% endif %}">
+          {{ cart_count or 0 }}
+        </span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      {% if request.session.get("user") %}
+        <span class="nav-user">👋 {{ request.session.user.first_name }}</span>
+        <a href="/auth/logout" class="btn-small">Logout</a>
+      {% else %}
+        <button id="open-login" class="btn-small">Login</button>
+        <button id="open-register" class="btn-small">Register</button>
+      {% endif %}
+    </div>
+  </nav>
+</header>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+
+<!-- ✅ LOGIN / REGISTER MODAL -->
+<div class="modal" id="auth-modal">
+  <div class="modal-content">
+    <h2 id="modal-title">Login</h2>
+
+    <form id="auth-form" method="POST">
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Password" required>
+
+      <input type="text" name="first_name" id="first-name-field" placeholder="First Name" style="display:none;">
+      <input type="text" name="last_name" id="last-name-field" placeholder="Last Name" style="display:none;">
+
+      <button type="submit" class="btn" id="auth-submit-btn">Login</button>
+    </form>
+
+    <hr>
+
+    <!-- Social Login -->
+    <button onclick="location.href='/auth/login/google'" class="social-btn google-btn">
+      Continue with Google
+    </button>
+
+    <button onclick="location.href='/auth/login/facebook'" class="social-btn facebook-btn">
+      Continue with Facebook
+    </button>
+
+    <p class="auth-toggle-text">
+      <span id="toggle-text">Don't have an account?</span>
+      <a id="toggle-auth-mode" class="toggle-link">Register</a>
+    </p>
+
+    <button class="close-btn" id="close-auth">✕ Close</button>
+  </div>
+</div>
+
+
+<!-- ✅ FLOATING CHAT -->
+<button class="chat-toggle" id="chat-toggle">💬</button>
+
+<div class="chat-box" id="chat-box">
+  <div class="chat-header">
+    Chat with Yorkie 🐶
+    <button class="close-chat" id="close-chat">✕</button>
+  </div>
+  <div class="chat-messages" id="chat-messages"></div>
+  <div class="chat-input">
+    <input id="chat-input-text" placeholder="Say something..." />
+    <button id="chat-send">Send</button>
+  </div>
+</div>
+
+
+<!-- ✅ Scripts now load AFTER DOM is ready -->
+<script src="/static/main.js" defer></script>
+<script src="/static/chat.js" defer></script>
+
+</body>
+</html>

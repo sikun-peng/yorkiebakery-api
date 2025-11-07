@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Add Menu Item (Admin){% endblock %}
+
+{% block content %}
+
+<header>
+  <nav style="margin-bottom: 20px;">
+    <a href="/menu/view">← Back to Menu</a>
+  </nav>
+</header>
+
+<h1>Add New Menu Item 🥐</h1>
+
+<div class="admin-form-container">
+  <form action="/menu/" method="post" enctype="multipart/form-data">
+
+    <label>Title *</label>
+    <input type="text" name="title" required>
+
+    <label>Description</label>
+    <textarea name="description"></textarea>
+
+    <label>Tags (comma-separated)</label>
+    <input type="text" name="tags" placeholder="classic, sweet">
+
+    <label>Available</label>
+    <select name="is_available">
+      <option value="true">Yes</option>
+      <option value="false">No</option>
+    </select>
+
+    <label>Image *</label>
+    <input type="file" name="image" accept="image/*" required>
+
+    <button type="submit" class="btn">Create Item ✅</button>
+
+  </form>
+</div>
+
+{% endblock %}
