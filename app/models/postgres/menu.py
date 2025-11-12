@@ -6,7 +6,6 @@ from sqlalchemy.dialects.postgresql import ARRAY
 
 class MenuItem(SQLModel, table=True):
     __tablename__ = "menu_item"
-    
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     title: str
     description: str

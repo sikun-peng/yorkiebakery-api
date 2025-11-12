@@ -108,7 +108,7 @@ h1, h2, h3 {
   margin-top: 6px;
 }
 
-/* Per-item quantity badge */
+/* Quantity badge */
 .item-qty-badge {
   position: absolute;
   top: 8px;
@@ -198,31 +198,8 @@ button:hover, .btn:hover {
   border-radius: 6px;
 }
 
-/* Social login */
-.social-btn {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  margin-top: 8px;
-}
-.google-btn { background:#4285F4; color:white; }
-.facebook-btn { background:#1877F2; color:white; }
-
-.close-btn {
-  margin-top: 14px;
-  background: #eee;
-  padding: 6px 12px;
-  border-radius: 6px;
-}
-
-.auth-toggle-text { margin-top: 12px; color:#555; }
-.toggle-link { cursor:pointer; font-weight:600; }
-
 /* ===========================
-   CHAT WIDGET
+   CHAT WIDGET (Yorkie Style 🐶)
    =========================== */
 .chat-toggle {
   position: fixed;
@@ -230,76 +207,94 @@ button:hover, .btn:hover {
   right: 24px;
   background: #ffb36b;
   border-radius: 50%;
-  width: 54px;
-  height: 54px;
+  width: 56px;
+  height: 56px;
   border: none;
-  font-size: 24px;
+  font-size: 22px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
   z-index: 10000;
+  transition: all 0.25s ease;
+}
+.chat-toggle:hover {
+  background: #ff9d41;
+  transform: scale(1.05);
 }
 
+/* Chat popup box */
 .chat-box {
   position: fixed;
   bottom: 90px;
   right: 24px;
-  width: 300px;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+  width: 340px;
+  height: 460px;
+  background: #fffdf9;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25);
   display: none;
   flex-direction: column;
   overflow: hidden;
   z-index: 10000;
+  border: 1px solid #f3e8dd;
 }
 
+/* Header */
 .chat-header {
   background: #ffb36b;
-  padding: 10px;
+  padding: 12px 16px;
   font-weight: 700;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: #3b2d1f;
+  font-size: 15px;
 }
-
 .close-chat {
   background: transparent;
   border: none;
   font-size: 18px;
   cursor: pointer;
+  border-radius: 6px;
+  padding: 2px 6px;
+  transition: background 0.2s;
+}
+.close-chat:hover {
+  background: rgba(0,0,0,0.08);
 }
 
+/* Scrollable messages */
 .chat-messages {
-  padding: 12px;
-  height: 200px;
+  flex: 1;
+  padding: 14px;
   overflow-y: auto;
   font-size: 14px;
   line-height: 1.4;
+  background: #fffaf4;
+  scrollbar-width: thin;
+  scrollbar-color: #ffb36b #fffaf4;
+}
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #ffb36b;
+  border-radius: 6px;
 }
 
-.chat-input {
-  display: flex;
-  border-top: 1px solid #ddd;
-}
-.chat-input input {
-  flex: 1;
-  padding: 8px;
-  border: none;
-}
-.chat-input button {
-  padding: 8px 12px;
-  border-left: 1px solid #ddd;
-}
-
+/* Message bubbles */
 .msg-user {
   text-align: right;
   margin: 6px 0;
 }
 .msg-user span {
   background: #ffe2b5;
-  padding: 6px 10px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 14px 14px 0 14px;
   display: inline-block;
+  max-width: 80%;
 }
 
 .msg-bot {
@@ -308,7 +303,125 @@ button:hover, .btn:hover {
 }
 .msg-bot span {
   background: #eee;
-  padding: 6px 10px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 14px 14px 14px 0;
   display: inline-block;
+  max-width: 80%;
+}
+
+/* Input bar */
+.chat-input {
+  display: flex;
+  border-top: 1px solid #f3e8dd;
+  background: #fff9f3;
+  padding: 8px;
+  gap: 8px;
+}
+.chat-input input {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 14px;
+  outline: none;
+}
+.chat-input input:focus {
+  border-color: #ffb36b;
+}
+.chat-input button {
+  background: #ffb36b;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.chat-input button:hover {
+  background: #ff9d41;
+}
+
+/* ===========================
+   🎵 MUSIC GRID FIX
+   =========================== */
+.music-section {
+  margin-bottom: 48px;
+}
+.music-section h2 {
+  color: #333;
+  border-bottom: 2px solid #ffb36b;
+  display: inline-block;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
+}
+
+/* Grid container */
+.track-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Track card */
+.music-track-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.music-track-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* Cover image */
+.music-cover-img {
+  width: 120px !important;
+  height: 120px !important;
+  object-fit: cover !important;
+  border-radius: 10px;
+  background: #f7f4ef;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+  display: block;
+  transition: transform 0.2s ease;
+}
+.music-cover-img:hover {
+  transform: scale(1.05);
+}
+
+/* Info text */
+.music-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 4px;
+}
+.music-info p {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
+  margin: 2px 0;
+}
+.music-info audio {
+  width: 100%;
+  margin-top: 6px;
+  border-radius: 8px;
+}
+
+/* Responsive grid */
+@media (min-width: 768px) {
+  .track-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .music-cover-img {
+    width: 130px !important;
+    height: 130px !important;
+  }
 }

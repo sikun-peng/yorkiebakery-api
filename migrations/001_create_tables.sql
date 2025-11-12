@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS user_account (
 );
 
 -- ============ MENU ITEMS ============
--- Expanded schema for AI filtering and recommendations
 DROP TABLE IF EXISTS menu_item CASCADE;
 CREATE TABLE menu_item (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -24,7 +23,6 @@ CREATE TABLE menu_item (
     tags TEXT[] DEFAULT ARRAY[]::TEXT[],
     flavor_profile TEXT[] DEFAULT ARRAY[]::TEXT[],
     dietary_restrictions TEXT[] DEFAULT ARRAY[]::TEXT[],
-
     price NUMERIC(10,2),
     is_available BOOLEAN DEFAULT TRUE
 );
@@ -59,8 +57,15 @@ CREATE TABLE IF NOT EXISTS campaign (
 );
 
 -- ============ MUSIC ============
-CREATE TABLE IF NOT EXISTS music_track (
+DROP TABLE IF EXISTS music_track CASCADE;
+CREATE TABLE music_track (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
-    file_url TEXT NOT NULL
+    composer TEXT,
+    performer TEXT,
+    category TEXT,
+    description TEXT,
+    file_url TEXT NOT NULL,
+    cover_url TEXT,
+    uploaded_at TIMESTAMP DEFAULT NOW()
 );

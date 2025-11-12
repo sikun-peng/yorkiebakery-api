@@ -22,23 +22,21 @@
     <!-- Title + Desc -->
     <h2>{{ item.title }}</h2>
     <p>{{ item.description }}</p>
+
+    <!-- Price -->
     <p class="price">${{ "%.2f"|format(item.price) }}</p>
 
     <!-- Quantity in session -->
     {% set qty = cart.get(item.id|string, 0) %}
 
-    <!-- ✅ Badge on card -->
     {% if qty > 0 %}
       <span class="item-qty-badge">{{ qty }}</span>
     {% endif %}
 
-    <!-- ✅ If qty = 0 → show Add button -->
     {% if qty == 0 %}
       <form action="/cart/add/{{ item.id }}" method="post">
         <button type="submit" class="btn">Add to Cart 🛍️</button>
       </form>
-
-    <!-- ✅ If qty > 0 → show inline qty controls -->
     {% else %}
       <div class="qty-controls">
 
@@ -47,7 +45,6 @@
           <button type="submit" class="qty-btn">−</button>
         </form>
 
-        <!-- Qty Display -->
         <span class="qty-display">{{ qty }}</span>
 
         <!-- Plus -->

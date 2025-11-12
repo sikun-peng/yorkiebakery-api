@@ -36,6 +36,7 @@ toggleAuthMode?.addEventListener("click", () => {
 function setLoginMode() {
   modalTitle.innerText = "Login";
   submitBtn.innerText = "Login";
+  form.dataset.mode = "login";
   form.action = "/auth/login_form";
   firstNameField.style.display = "none";
   lastNameField.style.display = "none";
@@ -46,9 +47,37 @@ function setLoginMode() {
 function setRegisterMode() {
   modalTitle.innerText = "Register";
   submitBtn.innerText = "Register";
+  form.dataset.mode = "register";
   form.action = "/auth/register_form";
   firstNameField.style.display = "block";
   lastNameField.style.display = "block";
   toggleText.innerText = "Already have an account?";
   toggleAuthMode.innerText = "Login";
 }
+
+/* ===========================
+   AJAX FORM SUBMIT (Login / Register)
+   =========================== */
+form?.addEventListener("submit", async (e) => {
+  e.preventDefault(); // prevent full page POST refresh
+
+  const formData = new FormData(form);
+  const mode = form.dataset.mode; // "login" or "register"
+  const url = mode === "login" ? "/auth/login_form" : "/auth/register_form";
+
+  const res = await fetch(url, {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  if (!data.success) {
+    alert(data.error || "Something went wrong");
+    return;
+  }
+
+  // ✅ Close modal and refresh UI
+  modal.style.display = "none";
+  location.reload();
+});

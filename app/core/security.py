@@ -1,7 +1,7 @@
 # app/core/security.py
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
-
+from itsdangerous import URLSafeTimedSerializer
 from fastapi import HTTPException, Request, status
 from jose import jwt
 from passlib.context import CryptContext
@@ -18,6 +18,7 @@ def verify_password(plain: str, hashed: str) -> bool:
 SECRET_KEY = os.getenv("SECRET_KEY", "super-secret")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
+SERIALIZER = URLSafeTimedSerializer(SECRET_KEY)
 
 def create_access_token(data: dict, expires_delta: Optional[int] = None) -> str:
     expire = datetime.utcnow() + timedelta(
@@ -49,3 +50,14 @@ def require_admin(request: Request) -> dict:
     if not user.get("is_admin"):
         raise HTTPException(status_code=403, detail="Admin access required")
     return user
+
+def create_verification_token(email: str):
+    return SERIALIZER.dumps(email, salt="email-verify")
+
+def verify_email_token(token: str, max_age=3600):
+    from itsdangerous import SignatureExpired, BadSignature
+    try:
+        email = SERIALIZER.loads(token, salt="email-verify", max_age=max_age)
+        return email
+    except (SignatureExpired, BadSignature):
+        return None

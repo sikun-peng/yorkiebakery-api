@@ -50,7 +50,7 @@ def view_cart_page(request: Request):
         "request": request,
         "items": items,
         "total": total,
-        "cart": cart,          # ✅ For badge matching in menu.html
+        "cart": cart,
         "cart_count": cart_count,
     })
 
@@ -65,7 +65,7 @@ async def add_item_json(request: Request):
 
     cart = _get_cart(request)
     cart[menu_item_id] = cart.get(menu_item_id, 0) + 1
-    request.session["cart"] = cart  # ✅ Save update
+    request.session["cart"] = cart
 
     return {
         "ok": True,

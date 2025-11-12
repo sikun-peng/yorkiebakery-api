@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Upload Music{% endblock %}
+
+{% block content %}
+<h2 style="text-align:center; margin-bottom:30px;">Upload New Track 🎼</h2>
+
+<form action="/music/new" method="post" enctype="multipart/form-data" style="max-width:600px; margin:auto; display:flex; flex-direction:column; gap:15px;">
+
+  <label>🎵 Title *</label>
+  <input type="text" name="title" placeholder="e.g. Morning Café Vibes" required>
+
+  <label>🎼 Composer *</label>
+  <input type="text" name="composer" placeholder="e.g. Frédéric Chopin" required>
+
+  <label>🎹 Performer *</label>
+  <input type="text" name="performer" placeholder="e.g. Baby Oscar" required>
+
+  <label>🎧 Category *</label>
+  <select name="category" required>
+    <option value="">Select category...</option>
+    <option value="Piano Solo">Piano Solo</option>
+    <option value="Accompaniment">Accompaniment</option>
+    <option value="To-Do List">To-Do List</option>
+    <option value="Wishlist">Wishlist</option>
+  </select>
+
+  <label>📝 Description *</label>
+  <textarea name="description" rows="3" placeholder="Short description of this piece..." required></textarea>
+
+  <label>🎵 Audio File *</label>
+  <input type="file" name="file" accept="audio/*" required>
+
+  <label>🖼️ Cover Image (optional)</label>
+  <input type="file" name="cover" accept="image/*">
+
+  <button type="submit" class="btn" style="margin-top:20px;">Upload ✅</button>
+</form>
+{% endblock %}

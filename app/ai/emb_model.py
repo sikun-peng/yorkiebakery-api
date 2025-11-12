@@ -1,5 +1,4 @@
 # app/ai/emb_model.py
-
 import os
 from openai import OpenAI
 

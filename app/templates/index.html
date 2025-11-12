@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1 style="text-align:center; margin-top:40px;">
+  Welcome to Yorkie Bakery 🐶🥐
+</h1>
+
+<p style="text-align:center; margin-bottom:32px;">
+  Fresh baked pastries & snacks daily — ask AI for personalized menu recommendations!
+</p>
+
+<div style="text-align:center; margin-bottom:40px;">
+  <a href="/menu/view" class="btn">Browse Menu</a>
+  <a href="/music/listen" class="btn">🎵 Listen Music</a>
+</div>
+
+<!-- 🍰 Featured Menu Section -->
+<h2 style="text-align:center;">🍰 Featured Menu</h2>
+<div class="menu-grid" style="margin-bottom:50px;">
+  {% for item in menu_items %}
+  <div class="menu-card">
+    <img src="{{ item.image_url or '/static/default_menu_image.jpg' }}" alt="{{ item.title }}">
+    <h3>{{ item.title }}</h3>
+    <p>{{ item.description or '' }}</p>
+    {% if item.price is not none %}
+      <p class="price">${{ "%.2f"|format(item.price) }}</p>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<!-- 🎵 Music Section -->
+<h2 style="text-align:center;">🎵 Café Music</h2>
+<div class="music-grid">
+  {% for track in tracks %}
+  <div class="music-card">
+    <h3>{{ track.title }}</h3>
+    {% if track.s3_url %}
+      <audio controls>
+        <source src="{{ track.s3_url }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    {% else %}
+      <p class="text-gray-500 italic">Track unavailable</p>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<!-- 👑 Admin Upload Section -->
+{% if request.session.get("user") and request.session.get("user").get("is_admin") %}
+  <hr style="margin: 40px auto; width: 60%;">
+  <div style="text-align:center;">
+    <h3>🛠️ Admin Shortcuts</h3>
+    <a href="/menu/new" class="btn btn-admin">➕ Add Menu Item</a>
+    <a href="/music/new" class="btn btn-admin">🎵 Upload Music</a>
+  </div>
+{% endif %}
+
+{% endblock %}

@@ -22,10 +22,9 @@
         </span>
       </a>
     </div>
-
     <div class="nav-right">
       {% if request.session.get("user") %}
-        <span class="nav-user">👋 {{ request.session.user.first_name }}</span>
+        <span class="nav-user">👋 {{ request.session['user']['first_name'] }}</span>
         <a href="/auth/logout" class="btn-small">Logout</a>
       {% else %}
         <button id="open-login" class="btn-small">Login</button>

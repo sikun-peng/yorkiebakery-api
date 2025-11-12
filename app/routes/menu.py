@@ -1,12 +1,22 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, File, UploadFile, Form, Request
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Query,
+    File,
+    UploadFile,
+    Form,
+    Request,
+)
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 from sqlmodel import Session, select
 from typing import List, Optional
 from uuid import UUID
 from sqlalchemy import any_
 
 from app.models.postgres.menu import MenuItem
-from app.core.db import get_session, engine
+from app.core.db import get_session
 from app.core.security import require_admin
 from app.utils.s3_util import upload_file_to_s3
 
@@ -33,39 +43,53 @@ def view_menu_page(request: Request, session: Session = Depends(get_session)):
             "items": items,
             "cart": cart,
             "cart_count": cart_count,
-        }
+        },
     )
 
 
 # -------------------------------
 # Create menu item (with image)
 # -------------------------------
-@router.post("/", response_model=MenuItem)
+@router.post("/", response_model=Optional[MenuItem])
 def create_menu_item(
-        title: str = Form(...),
-        description: Optional[str] = Form(None),
-        tags: Optional[str] = Form(None),
-        is_available: bool = Form(True),
-        image: UploadFile = File(...),
-        session: Session = Depends(get_session),
-        user=Depends(require_admin)
+    request: Request,
+    title: str = Form(...),
+    description: Optional[str] = Form(None),
+    price: float = Form(...),
+    tags: Optional[str] = Form(None),
+    is_available: bool = Form(True),
+    image: UploadFile = File(...),
+    session: Session = Depends(get_session),
+    user=Depends(require_admin),
 ):
+    # Validate image type
     if not image.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Only image files are allowed")
 
+    # Upload to S3
     image_url = upload_file_to_s3(image, folder="menu", bucket=S3_BUCKET_IMAGE)
 
+    # Create DB record
     item = MenuItem(
         title=title,
         description=description,
+        price=float(price),
         tags=[t.strip() for t in tags.split(",")] if tags else [],
         image_url=image_url,
-        is_available=is_available
+        is_available=is_available,
     )
 
     session.add(item)
     session.commit()
     session.refresh(item)
+
+    # ✅ Detect if the request came from a browser form
+    content_type = request.headers.get("content-type", "")
+    if "multipart/form-data" in content_type:
+        # Redirect back to the menu page
+        return RedirectResponse(url="/menu/view", status_code=303)
+
+    # Otherwise return JSON (API clients)
     return item
 
 
@@ -74,10 +98,10 @@ def create_menu_item(
 # -------------------------------
 @router.get("/", response_model=List[MenuItem])
 def list_menu_items(
-        skip: int = 0,
-        limit: int = 20,
-        tag: Optional[str] = Query(None),
-        session: Session = Depends(get_session)
+    skip: int = 0,
+    limit: int = 20,
+    tag: Optional[str] = Query(None),
+    session: Session = Depends(get_session),
 ):
     query = select(MenuItem).where(MenuItem.is_available == True)
     if tag:
@@ -90,14 +114,14 @@ def list_menu_items(
 # -------------------------------
 @router.get("/search", response_model=List[MenuItem])
 def search_menu_items(
-        session: Session = Depends(get_session),
-        q: Optional[str] = Query(None),
-        cuisine: Optional[str] = Query(None),
-        dish_type: Optional[str] = Query(None),
-        dietary: Optional[str] = Query(None),
-        flavor: Optional[str] = Query(None),
-        min_price: Optional[float] = Query(None),
-        max_price: Optional[float] = Query(None),
+    session: Session = Depends(get_session),
+    q: Optional[str] = Query(None),
+    cuisine: Optional[str] = Query(None),
+    dish_type: Optional[str] = Query(None),
+    dietary: Optional[str] = Query(None),
+    flavor: Optional[str] = Query(None),
+    min_price: Optional[float] = Query(None),
+    max_price: Optional[float] = Query(None),
 ):
     query = select(MenuItem).where(MenuItem.is_available == True)
 
@@ -120,6 +144,14 @@ def search_menu_items(
 
 
 # -------------------------------
+# Admin UI Page
+# -------------------------------
+@router.get("/new")
+def admin_new_menu_page(request: Request, user=Depends(require_admin)):
+    return templates.TemplateResponse("menu_new.html", {"request": request})
+
+
+# -------------------------------
 # Get item by ID
 # -------------------------------
 @router.get("/{item_id}", response_model=MenuItem)
@@ -135,14 +167,14 @@ def get_menu_item(item_id: UUID, session: Session = Depends(get_session)):
 # -------------------------------
 @router.put("/{item_id}", response_model=MenuItem)
 def update_menu_item(
-        item_id: UUID,
-        title: Optional[str] = Form(None),
-        description: Optional[str] = Form(None),
-        tags: Optional[str] = Form(None),
-        is_available: Optional[bool] = Form(None),
-        image: Optional[UploadFile] = File(None),
-        session: Session = Depends(get_session),
-        user=Depends(require_admin)
+    item_id: UUID,
+    title: Optional[str] = Form(None),
+    description: Optional[str] = Form(None),
+    tags: Optional[str] = Form(None),
+    is_available: Optional[bool] = Form(None),
+    image: Optional[UploadFile] = File(None),
+    session: Session = Depends(get_session),
+    user=Depends(require_admin),
 ):
     item = session.get(MenuItem, item_id)
     if not item:
@@ -178,11 +210,3 @@ def delete_menu_item(item_id: UUID, session: Session = Depends(get_session), use
     session.delete(item)
     session.commit()
     return {"detail": "Item deleted"}
-
-
-# -------------------------------
-# Admin UI Page
-# -------------------------------
-@router.get("/admin/new")
-def admin_new_menu_page(request: Request, user=Depends(require_admin)):
-    return templates.TemplateResponse("menu_admin_new.html", {"request": request})
