@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmed · Yorkie Bakery{% endblock %}
+
+{% block content %}
+<div style="text-align:center; margin-top:60px;">
+  <h1>🎉 Order Confirmed!</h1>
+  <p>Thank you, {{ name }}!</p>
+  <p>Your Yorkie Bakery order has been received.</p>
+  <p>We’ve sent a confirmation email (mock) to <strong>{{ email }}</strong>.</p>
+
+  <h3 style="margin-top:24px;">Order Summary</h3>
+  <ul style="list-style:none; padding:0;">
+    {% for item in cart %}
+      <li>{{ item.qty }} × {{ item.title }} — ${{ "%.2f"|format(item.price * item.qty) }}</li>
+    {% endfor %}
+  </ul>
+
+  <h3>Total: ${{ "%.2f"|format(total) }}</h3>
+
+  <a href="/menu/view" class="btn" style="margin-top:24px;">🍰 Back to Menu</a>
+</div>
+{% endblock %}

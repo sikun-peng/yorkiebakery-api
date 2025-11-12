@@ -462,3 +462,77 @@ button:hover,
     height: 160px;
   }
 }
+
+/* ===========================
+   🧾 CHECKOUT PAGE STYLES
+   =========================== */
+.checkout-form {
+  max-width: 500px;
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.checkout-form h3 {
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.checkout-form input,
+.checkout-form textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.checkout-form input:focus,
+.checkout-form textarea:focus {
+  border-color: #ffb36b;
+  outline: none;
+}
+
+.checkout-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.checkout-table th,
+.checkout-table td {
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  padding: 8px;
+}
+
+.checkout-table th {
+  background-color: #fff4e1;
+  color: #333;
+  font-weight: 600;
+}
+
+.checkout-table .total-row td {
+  border-top: 2px solid #ffb36b;
+  font-weight: 700;
+}
+
+.confirm-btn {
+  margin-top: 20px;
+  width: 100%;
+  font-size: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #ffb36b;
+  color: #222;
+  font-weight: 600;
+  transition: background 0.25s ease;
+}
+
+.confirm-btn:hover {
+  background-color: #ff9d41;
+}

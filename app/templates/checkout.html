@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout · Yorkie Bakery{% endblock %}
+
+{% block content %}
+<h1 class="text-center">🧾 Checkout</h1>
+
+{% if cart %}
+  <form action="/cart/checkout" method="post" class="checkout-form">
+    <h3>Contact Information</h3>
+
+    <label for="name">Your Name *</label>
+    <input type="text" name="name" id="name" required>
+
+    <label for="email">Email *</label>
+    <input type="email" name="email" id="email" required>
+
+    <label for="address">Delivery Address *</label>
+    <textarea name="address" id="address" rows="3" required></textarea>
+
+    <h3 class="order-summary-title">Order Summary</h3>
+
+    <table class="checkout-table">
+      <thead>
+        <tr>
+          <th>Item</th><th>Qty</th><th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in cart %}
+        <tr>
+          <td>{{ item.title }}</td>
+          <td>{{ item.qty }}</td>
+          <td>${{ "%.2f"|format(item.price * item.qty) }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="total-row">
+          <td colspan="2"><strong>Total</strong></td>
+          <td><strong>${{ "%.2f"|format(total) }}</strong></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button type="submit" class="btn confirm-btn">✅ Confirm Order</button>
+  </form>
+
+{% else %}
+  <p class="text-center">Your cart is empty. <a href="/menu/view">Go back to menu</a>.</p>
+{% endif %}
+{% endblock %}
