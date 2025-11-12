@@ -21,7 +21,7 @@ Yorkie Bakery is a full-stack web application for bakery menu browsing, ordering
 - Leave reviews & set taste preferences
 - Subscribe to offers / events
 - Semantic search across menu & music
-- **Chat with Yorkie** for recommendations & help
+- **Chat with Oscar** for recommendations & help
 
 ---
 

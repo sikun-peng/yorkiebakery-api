@@ -48,6 +48,47 @@
   {% endfor %}
 </div>
 
+<!-- 📱 Mobile App Section -->
+<section style="background:#fff9f3; padding:60px 0; text-align:center;">
+  <h2 class="cursive-font">📱 Yorkie Bakery App</h2>
+  <p style="font-size:18px;">Our mobile app is now unavailable!</p>
+  <img src="/static/images/iphone.png" alt="Yorkie App" style="width:200px; margin:20px auto;">
+  <div style="margin-top:20px;">
+    <a href="#"><img src="/static/images/google.png" alt="Google Play" style="height:50px; margin-right:10px;"></a>
+    <a href="#"><img src="/static/images/apps.png" alt="App Store" style="height:50px;"></a>
+  </div>
+</section>
+
+<!-- 🌟 Our Services -->
+<section style="background:#fff; padding:50px 0; text-align:center;">
+  <h2 class="cursive-font">🌟 Our Services</h2>
+  <p>We offer joyful experiences for every guest!</p>
+  <ul style="list-style:none; padding:0;">
+    <li>👶 Kid-Friendly: nanny and piano tutoring service</li>
+    <li>🍰 Creative Culinary: customized desserts & cakes</li>
+    <li>🚚 Free Delivery for your events</li>
+  </ul>
+</section>
+
+<!-- 🐶 About Me -->
+<section style="background:#fffaf4; padding:60px 0; text-align:center;">
+  <h2 class="cursive-font">🐶 About Me</h2>
+  <img src="/static/images/img_oscar.jpg" alt="Chef Oscar" style="width:150px; border-radius:50%; margin-bottom:10px;">
+  <p>
+    Hello! I’m Oscar — a cheerful 5-year-old Yorkie from California.
+    I love baking cakes and playing Chopin’s piano pieces.
+    Yorkie Bakery is my cozy space for sharing sweet creations and good vibes. 🎹
+  </p>
+  <img src="/static/images/store.jpeg" alt="Bakery Store" style="width:250px; border-radius:10px; margin-top:20px;">
+</section>
+
+<!-- 🕒 Store Hours -->
+<section style="background:#fff; padding:40px 0; text-align:center;">
+  <h2 class="cursive-font">🕒 Store Hours</h2>
+  <p>Mon – Sun: CLOSED (Appointments Only)</p>
+  <p>Contact us to book private tastings or baking classes!</p>
+</section>
+
 <!-- 👑 Admin Upload Section -->
 {% if request.session.get("user") and request.session.get("user").get("is_admin") %}
   <hr style="margin: 40px auto; width: 60%;">
