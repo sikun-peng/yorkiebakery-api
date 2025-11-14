@@ -1,5 +1,3 @@
-# app/routes/auth.py
-
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse, JSONResponse
 from sqlmodel import Session, select
@@ -18,15 +16,23 @@ from app.models.postgres.user import User
 templates = Jinja2Templates(directory="app/templates")
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
-# -----------------------------
-# OAuth (optional; only if set)
-# -----------------------------
+
+# --------------------------------------
+# Helper for correct absolute URLs (EC2 safe)
+# --------------------------------------
+def absolute_url(request: Request, path: str) -> str:
+    base = str(request.base_url).rstrip("/")
+    return f"{base}{path}"
+
+
+# --------------------------------------
+# OAuth (optional)
+# --------------------------------------
 try:
     from authlib.integrations.starlette_client import OAuth
     config = Config(".env")
     oauth = OAuth(config)
 
-    # Google OAuth
     oauth.register(
         name="google",
         client_id=config("GOOGLE_CLIENT_ID", default=None),
@@ -35,7 +41,6 @@ try:
         client_kwargs={"scope": "openid email profile"},
     )
 
-    # Facebook OAuth (kept for parity; unused unless keys set)
     oauth.register(
         name="facebook",
         client_id=config("FACEBOOK_CLIENT_ID", default=None),
@@ -49,9 +54,9 @@ except Exception:
     oauth = None
 
 
-# -----------------------------
-# Request models (API JSON)
-# -----------------------------
+# --------------------------------------
+# Request Models
+# --------------------------------------
 class UserRegisterRequest(BaseModel):
     email: EmailStr
     password: str
@@ -63,17 +68,16 @@ class UserLoginRequest(BaseModel):
     password: str
 
 
-# ------------------------------------------------
-# Optional: legacy login page (your UI uses modal)
-# ------------------------------------------------
+# --------------------------------------
+# Legacy login endpoint
+# --------------------------------------
 @router.get("/login")
 def login_page(_: Request):
-    # We don't render login.html anymore—modal handles UI.
     return JSONResponse({"detail": "Use the in-page login modal."})
 
 
 # --------------------------------------
-# Login (modal POST -> returns JSON)
+# Login (modal -> JSON)
 # --------------------------------------
 @router.post("/login_form")
 def login_form(
@@ -86,10 +90,7 @@ def login_form(
     if not user or not verify_password(password, user.password_hash):
         return JSONResponse({"success": False, "error": "Invalid email or password."}, status_code=400)
 
-    # if not user.is_verified:
-        # return JSONResponse({"success": False, "error": "Please verify your email first."}, status_code=403)
-
-    # Session + JWT
+    # Set session
     request.session["user"] = {
         "id": str(user.id),
         "email": user.email,
@@ -97,6 +98,7 @@ def login_form(
         "last_name": user.last_name,
         "is_admin": bool(user.is_admin),
     }
+
     token = create_access_token({"sub": str(user.id), "email": user.email})
     request.session["access_token"] = token
 
@@ -104,7 +106,7 @@ def login_form(
 
 
 # --------------------------------------
-# Register (modal POST -> returns JSON)
+# Register (modal)
 # --------------------------------------
 @router.post("/register_form")
 def register_form(
@@ -129,17 +131,17 @@ def register_form(
     session.commit()
     session.refresh(user)
 
-    # Send verification email
+    # Send verification link (fixed)
     token = create_verification_token(user.email)
-    verify_link = f"{request.url_for('verify_email')}?token={token}"
-    #TODO:  send_verification_email(user.email, verify_link)
+    verify_path = request.url_for("verify_email")
+    verify_link = absolute_url(request, verify_path) + f"?token={token}"
+    send_verification_email(user.email, verify_link)
 
-    # Do NOT log them in yet; require verification first
     return JSONResponse({"success": True, "message": "Check your email to verify your account."})
 
 
 # --------------------------------------
-# Resend verification (optional helper)
+# Resend verification (modal)
 # --------------------------------------
 @router.post("/resend_verification")
 def resend_verification(
@@ -148,33 +150,35 @@ def resend_verification(
     session: Session = Depends(get_session),
 ):
     user = session.exec(select(User).where(User.email == email)).first()
-    # Always respond success to avoid user enumeration
+
     if user and not user.is_verified:
         token = create_verification_token(user.email)
-        verify_link = f"{request.url_for('verify_email')}?token={token}"
-        #TODO: send_verification_email(user.email, verify_link)
-    return JSONResponse({"success": True, "message": "If this email exists and is unverified, a new link was sent."})
+        verify_path = request.url_for("verify_email")
+        verify_link = absolute_url(request, verify_path) + f"?token={token}"
+        send_verification_email(user.email, verify_link)
+
+    return JSONResponse({"success": True})
 
 
 # --------------------------------------
-# Verify email link
+# Email verification handler
 # --------------------------------------
 @router.get("/verify", name="verify_email")
 def verify_email(request: Request, token: str, session: Session = Depends(get_session)):
     email = verify_email_token(token)
     if not email:
-        return JSONResponse({"success": False, "error": "Verification link expired or invalid."}, status_code=400)
+        return JSONResponse({"success": False, "error": "Verification link invalid or expired."}, status_code=400)
 
     user = session.exec(select(User).where(User.email == email)).first()
     if not user:
-        return JSONResponse({"success": False, "error": "User not found."}, status_code=404)
+        return JSONResponse({"success": False, "error": "User not found"}, status_code=404)
 
     if not user.is_verified:
         user.is_verified = True
         session.add(user)
         session.commit()
 
-    # Auto-login after verification
+    # Auto-login
     request.session["user"] = {
         "id": str(user.id),
         "email": user.email,
@@ -182,6 +186,7 @@ def verify_email(request: Request, token: str, session: Session = Depends(get_se
         "last_name": user.last_name,
         "is_admin": bool(user.is_admin),
     }
+
     token_jwt = create_access_token({"sub": str(user.id), "email": user.email})
     request.session["access_token"] = token_jwt
 
@@ -194,11 +199,11 @@ def verify_email(request: Request, token: str, session: Session = Depends(get_se
 @router.get("/logout")
 def logout(request: Request):
     request.session.clear()
-    return RedirectResponse(url="/menu/view", status_code=303)
+    return RedirectResponse("/menu/view", status_code=303)
 
 
 # --------------------------------------
-# JSON API: register (programmatic)
+# JSON Register
 # --------------------------------------
 @router.post("/register")
 def api_register(payload: UserRegisterRequest, session: Session = Depends(get_session), request: Request = None):
@@ -216,17 +221,17 @@ def api_register(payload: UserRegisterRequest, session: Session = Depends(get_se
     session.commit()
     session.refresh(user)
 
-    # send verification email
-    if request is not None:
+    if request:
         token = create_verification_token(user.email)
-        verify_link = f"{request.url_for('verify_email')}?token={token}"
-        #TODO: send_verification_email(user.email, verify_link)
+        verify_path = request.url_for("verify_email")
+        verify_link = absolute_url(request, verify_path) + f"?token={token}"
+        send_verification_email(user.email, verify_link)
 
-    return {"msg": "User created. Please verify your email.", "user_id": str(user.id)}
+    return {"msg": "User created. Please verify email.", "user_id": str(user.id)}
 
 
 # --------------------------------------
-# JSON API: login (programmatic)
+# JSON Login
 # --------------------------------------
 @router.post("/login")
 def api_login(payload: UserLoginRequest, request: Request, session: Session = Depends(get_session)):
@@ -239,7 +244,6 @@ def api_login(payload: UserLoginRequest, request: Request, session: Session = De
 
     token = create_access_token({"sub": str(user.id), "email": user.email})
 
-    # Fill session too (useful for hybrid API/browser)
     request.session["user"] = {
         "id": str(user.id),
         "email": user.email,
@@ -253,14 +257,16 @@ def api_login(payload: UserLoginRequest, request: Request, session: Session = De
 
 
 # --------------------------------------
-# Google OAuth (marks users verified)
+# Google OAuth
 # --------------------------------------
 @router.get("/login/google")
 async def login_google(request: Request):
     if not oauth or not getattr(oauth, "google", None) or not oauth.google.client_id:
-        raise HTTPException(status_code=400, detail="Google OAuth is not configured")
+        raise HTTPException(status_code=400, detail="Google OAuth not configured")
+
     redirect_uri = request.url_for("google_callback")
     return await oauth.google.authorize_redirect(request, redirect_uri)
+
 
 @router.get("/google/callback")
 async def google_callback(request: Request, session: Session = Depends(get_session)):
@@ -269,12 +275,11 @@ async def google_callback(request: Request, session: Session = Depends(get_sessi
 
     email = user_info.get("email")
     if not email:
-        raise HTTPException(status_code=400, detail="Google did not return an email")
+        raise HTTPException(status_code=400, detail="Google did not return email")
 
     user = session.exec(select(User).where(User.email == email)).first()
 
     if not user:
-        # Create verified user from provider identity
         placeholder_pw = hash_password("oauth-user")
         user = User(
             email=email,
@@ -287,13 +292,11 @@ async def google_callback(request: Request, session: Session = Depends(get_sessi
         session.commit()
         session.refresh(user)
     else:
-        # If existing local account wasn't verified yet, trust Google to verify email ownership
         if not user.is_verified:
             user.is_verified = True
             session.add(user)
             session.commit()
 
-    # Start session
     request.session["user"] = {
         "id": str(user.id),
         "email": user.email,
@@ -302,4 +305,5 @@ async def google_callback(request: Request, session: Session = Depends(get_sessi
         "is_admin": bool(user.is_admin),
     }
     request.session["access_token"] = create_access_token({"sub": str(user.id), "email": user.email})
-    return RedirectResponse(url="/menu/view", status_code=303)
+
+    return RedirectResponse("/menu/view", status_code=303)

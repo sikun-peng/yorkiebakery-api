@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Your Orders · Yorkie Bakery{% endblock %}
+
+{% block content %}
+<h1 class="cursive-font text-center mb-6">🧾 Your Orders</h1>
+
+{% if orders and orders|length > 0 %}
+  <div class="orders-list">
+
+    {% for order in orders %}
+      <div class="order-card">
+        <h2>Order #{{ order.id }}</h2>
+        <p><strong>Status:</strong> {{ order.status }}</p>
+        <p><strong>Placed:</strong> {{ order.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
+        <p><strong>Total:</strong> ${{ "%.2f"|format(order.total) }}</p>
+
+        <h3>Items:</h3>
+        <ul>
+          {% for item in order.items %}
+            <li>{{ item.quantity }} × {{ item.title }} — ${{ "%.2f"|format(item.unit_price * item.quantity) }}</li>
+          {% endfor %}
+        </ul>
+
+      </div>
+    {% endfor %}
+
+  </div>
+
+{% else %}
+  <p class="text-center text-gray-600 mt-8 italic">You have no orders yet.</p>
+{% endif %}
+
+<a href="/menu/view" class="btn" style="margin-top:24px;">🍰 Back to Menu</a>
+
+<style>
+.order-card {
+    border: 1px solid #ddd;
+    padding: 16px;
+    margin: 20px auto;
+    width: 80%;
+    border-radius: 12px;
+    background: #fafafa;
+}
+.order-card h2 {
+    margin-bottom: 8px;
+}
+.order-card ul {
+    list-style: none;
+    padding-left: 0;
+}
+</style>
+
+{% endblock %}
