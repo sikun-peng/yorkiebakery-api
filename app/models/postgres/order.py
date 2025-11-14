@@ -7,7 +7,6 @@ from sqlmodel import SQLModel, Field
 
 class Order(SQLModel, table=True):
     __tablename__ = "order"
-
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     user_id: Optional[UUID] = Field(default=None, foreign_key="user_account.id", index=True)
     status: str = Field(default="pending", index=True)

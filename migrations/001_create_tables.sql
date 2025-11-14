@@ -1,14 +1,17 @@
--- Enable UUIDs
+-- Enable UUID
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- ============ USERS ============
-CREATE TABLE IF NOT EXISTS user_account (
+DROP TABLE IF EXISTS user_account CASCADE;
+CREATE TABLE user_account (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    display_name TEXT,
+    first_name TEXT,
+    last_name TEXT,
     is_admin BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT NOW()
+    is_verified BOOLEAN DEFAULT FALSE,
+    verification_token TEXT
 );
 
 -- ============ MENU ITEMS ============
@@ -18,8 +21,8 @@ CREATE TABLE menu_item (
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     image_url TEXT,
-    cuisine TEXT,
-    dish_type TEXT,
+    origin TEXT,
+    category TEXT,
     tags TEXT[] DEFAULT ARRAY[]::TEXT[],
     flavor_profile TEXT[] DEFAULT ARRAY[]::TEXT[],
     dietary_restrictions TEXT[] DEFAULT ARRAY[]::TEXT[],
@@ -27,33 +30,39 @@ CREATE TABLE menu_item (
     is_available BOOLEAN DEFAULT TRUE
 );
 
--- ============ REVIEWS ============
-CREATE TABLE IF NOT EXISTS review (
+-- ============ CART ============
+DROP TABLE IF EXISTS cart CASCADE;
+CREATE TABLE cart (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES user_account(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES user_account(id) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS cart_item CASCADE;
+CREATE TABLE cart_item (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    cart_id UUID NOT NULL REFERENCES cart(id) ON DELETE CASCADE,
     menu_item_id UUID NOT NULL REFERENCES menu_item(id) ON DELETE CASCADE,
-    rating INT CHECK(rating BETWEEN 1 AND 5),
-    comment TEXT,
-    created_at TIMESTAMP DEFAULT NOW()
+    quantity INT DEFAULT 1
 );
 
 -- ============ ORDERS ============
-CREATE TABLE IF NOT EXISTS order_record (
+DROP TABLE IF EXISTS "order" CASCADE;
+CREATE TABLE "order" (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID NOT NULL REFERENCES user_account(id) ON DELETE CASCADE,
-    order_details JSONB NOT NULL,
-    total_price NUMERIC(10,2) NOT NULL,
+    user_id UUID REFERENCES user_account(id) ON DELETE SET NULL,
     status TEXT DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    total NUMERIC(10,2) DEFAULT 0
 );
 
--- ============ CAMPAIGNS ============
-CREATE TABLE IF NOT EXISTS campaign (
+DROP TABLE IF EXISTS order_item CASCADE;
+CREATE TABLE order_item (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id UUID NOT NULL REFERENCES "order"(id) ON DELETE CASCADE,
+    menu_item_id UUID NOT NULL REFERENCES menu_item(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
-    description TEXT,
-    start_date DATE,
-    end_date DATE
+    unit_price NUMERIC(10,2) NOT NULL,
+    quantity INT NOT NULL
 );
 
 -- ============ MUSIC ============

@@ -536,3 +536,78 @@ button:hover,
 .confirm-btn:hover {
   background-color: #ff9d41;
 }
+
+/* Clean Admin Form */
+.admin-form-simple {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.05);
+}
+
+.admin-form-simple label {
+  margin-top: 18px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  display: block;
+  color: #444;
+}
+
+.admin-form-simple input,
+.admin-form-simple textarea,
+.admin-form-simple select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #fffdf8;
+  transition: 0.2s ease;
+}
+
+.admin-form-simple input:focus,
+.admin-form-simple textarea:focus,
+.admin-form-simple select:focus {
+  border-color: #ffb36b;
+  box-shadow: 0 0 0 3px rgba(255,179,107,0.3);
+  outline: none;
+}
+
+.section-title {
+  margin-top: 30px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
+  border-left: 5px solid #ffb36b;
+  padding-left: 12px;
+}
+
+.multi-select {
+  height: 120px;
+  padding: 10px;
+}
+
+.help {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+.btn-submit {
+  margin-top: 30px;
+  width: 100%;
+  padding: 14px;
+  background: #ffb36b;
+  font-weight: 700;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-submit:hover {
+  background: #ff9d41;
+}

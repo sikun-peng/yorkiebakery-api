@@ -3,8 +3,7 @@ from uuid import UUID, uuid4
 from sqlmodel import SQLModel, Field
 
 class OrderItem(SQLModel, table=True):
-    __tablename__ = "orderitem"
-
+    __tablename__ = "order_item"
     id: UUID = Field(default_factory=uuid4, primary_key=True)
     order_id: UUID = Field(foreign_key="order.id", index=True)
     menu_item_id: UUID = Field(foreign_key="menu_item.id", index=True)

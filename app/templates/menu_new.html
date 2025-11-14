@@ -1,44 +1,89 @@
 {% extends "base.html" %}
 
-{% block title %}Add Menu Item (Admin){% endblock %}
+{% block title %}Add Menu Item{% endblock %}
 
 {% block content %}
 
-<header>
-  <nav style="margin-bottom: 20px;">
-    <a href="/menu/view">← Back to Menu</a>
-  </nav>
-</header>
-
+<a href="/menu/view" class="admin-back-link">← Back to Menu</a>
 <h1>Add New Menu Item 🥐</h1>
 
-<div class="admin-form-container">
-  <form action="/menu/" method="post" enctype="multipart/form-data">
+<form action="/menu/" method="post" enctype="multipart/form-data" class="admin-form-simple">
 
-    <label>Title *</label>
-    <input type="text" name="title" required>
+  <!-- BASIC INFO -->
+  <h2 class="section-title">Basic Information</h2>
 
-    <label>Description</label>
-    <textarea name="description"></textarea>
+  <label>Title *</label>
+  <input type="text" name="title" required>
 
-    <label>Price *</label>
-    <input type="number" name="price" step="0.01" min="0" required>
+  <label>Description</label>
+  <textarea name="description"></textarea>
 
-    <label>Tags (comma-separated)</label>
-    <input type="text" name="tags" placeholder="classic, sweet">
+  <label>Price *</label>
+  <input type="number" name="price" step="0.01" required>
 
-    <label>Available</label>
-    <select name="is_available">
-      <option value="true" selected>Yes</option>
-      <option value="false">No</option>
-    </select>
 
-    <label>Image *</label>
-    <input type="file" name="image" accept="image/*" required>
+  <!-- CLASSIFICATION -->
+  <h2 class="section-title">Classification</h2>
 
-    <button type="submit" class="btn">Create Item ✅</button>
+  <label>origin *</label>
+  <select name="origin" required>
+    <option value="">Choose origin</option>
+    <option value="french">French</option>
+    <option value="japanese">Japanese</option>
+    <option value="chinese">Chinese</option>
+    <option value="thai">Thai</option>
+    <option value="korean">Korean</option>
+    <option value="american">American</option>
+    <option value="fusion">Fusion</option>
+  </select>
 
-  </form>
-</div>
+  <label>Category *</label>
+  <select name="category" required>
+    <option value="">Select category</option>
+    <option value="pastry">Pastry</option>
+    <option value="dessert">Dessert</option>
+    <option value="drink">Drink</option>
+    <option value="entree">Entrée</option>
+    <option value="appetizer">Appetizer</option>
+    <option value="side">Side</option>
+    <option value="bread">Bread</option>
+  </select>
+
+  <label>Tags (comma-separated)</label>
+  <input type="text" name="tags">
+
+
+  <!-- FLAVOR & DIETARY -->
+  <h2 class="section-title">Flavor & Dietary</h2>
+
+  <label>Flavor Profile (comma-separated)</label>
+  <input type="text" name="flavor_profile">
+
+  <label>Dietary Restrictions (multi-select)</label>
+  <select name="dietary_restrictions" multiple class="multi-select">
+    <option value="vegetarian">Vegetarian</option>
+    <option value="vegan">Vegan</option>
+    <option value="contains_nuts">Contains Nuts</option>
+    <option value="gluten_free">Gluten-Free</option>
+    <option value="dairy_free">Dairy-Free</option>
+  </select>
+  <p class="help">Hold ⌘ (Mac) or CTRL (Win) to select multiple</p>
+
+
+  <!-- SETTINGS -->
+  <h2 class="section-title">Availability & Image</h2>
+
+  <label>Available?</label>
+  <select name="is_available">
+    <option value="true">Yes</option>
+    <option value="false">No</option>
+  </select>
+
+  <label>Image *</label>
+  <input type="file" name="image" accept="image/*" required>
+
+
+  <button type="submit" class="btn-submit">Create Item ✅</button>
+</form>
 
 {% endblock %}

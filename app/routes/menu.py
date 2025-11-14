@@ -26,6 +26,7 @@ router = APIRouter(prefix="/menu", tags=["Menu"])
 
 S3_BUCKET_IMAGE = "yorkiebakery-image"
 
+
 # -------------------------------
 # Public menu view (HTML Page)
 # -------------------------------
@@ -56,7 +57,11 @@ def create_menu_item(
     title: str = Form(...),
     description: Optional[str] = Form(None),
     price: float = Form(...),
+    category: Optional[str] = Form(None),
+    origin: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),
+    flavor_profile: Optional[str] = Form(None),
+    dietary_restrictions: Optional[str] = Form(None),
     is_available: bool = Form(True),
     image: UploadFile = File(...),
     session: Session = Depends(get_session),
@@ -66,15 +71,24 @@ def create_menu_item(
     if not image.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Only image files are allowed")
 
-    # Upload to S3
+    # Upload image to S3
     image_url = upload_file_to_s3(image, folder="menu", bucket=S3_BUCKET_IMAGE)
 
-    # Create DB record
+    # Convert CSV → list[]
+    def parse_list(value: Optional[str]):
+        if not value:
+            return []
+        return [v.strip() for v in value.split(",") if v.strip()]
+
     item = MenuItem(
         title=title,
         description=description,
         price=float(price),
-        tags=[t.strip() for t in tags.split(",")] if tags else [],
+        category=category,
+        origin=origin,
+        tags=parse_list(tags),
+        flavor_profile=parse_list(flavor_profile),
+        dietary_restrictions=parse_list(dietary_restrictions),
         image_url=image_url,
         is_available=is_available,
     )
@@ -83,13 +97,10 @@ def create_menu_item(
     session.commit()
     session.refresh(item)
 
-    # ✅ Detect if the request came from a browser form
-    content_type = request.headers.get("content-type", "")
-    if "multipart/form-data" in content_type:
-        # Redirect back to the menu page
+    # Browser redirect
+    if "multipart/form-data" in request.headers.get("content-type", ""):
         return RedirectResponse(url="/menu/view", status_code=303)
 
-    # Otherwise return JSON (API clients)
     return item
 
 
@@ -110,14 +121,14 @@ def list_menu_items(
 
 
 # -------------------------------
-# Search menu items (API JSON)
+# Search menu items
 # -------------------------------
 @router.get("/search", response_model=List[MenuItem])
 def search_menu_items(
     session: Session = Depends(get_session),
     q: Optional[str] = Query(None),
-    cuisine: Optional[str] = Query(None),
-    dish_type: Optional[str] = Query(None),
+    origin: Optional[str] = Query(None),
+    category: Optional[str] = Query(None),
     dietary: Optional[str] = Query(None),
     flavor: Optional[str] = Query(None),
     min_price: Optional[float] = Query(None),
@@ -126,11 +137,14 @@ def search_menu_items(
     query = select(MenuItem).where(MenuItem.is_available == True)
 
     if q:
-        query = query.where(MenuItem.title.ilike(f"%{q}%") | MenuItem.description.ilike(f"%{q}%"))
-    if cuisine:
-        query = query.where(MenuItem.cuisine == cuisine)
-    if dish_type:
-        query = query.where(MenuItem.dish_type == dish_type)
+        query = query.where(
+            MenuItem.title.ilike(f"%{q}%") |
+            MenuItem.description.ilike(f"%{q}%")
+        )
+    if origin:
+        query = query.where(MenuItem.origin == origin)
+    if category:
+        query = query.where(MenuItem.category == category)
     if dietary:
         query = query.where(dietary == any_(MenuItem.dietary_restrictions))
     if flavor:
@@ -144,7 +158,7 @@ def search_menu_items(
 
 
 # -------------------------------
-# Admin UI Page
+# Admin UI page
 # -------------------------------
 @router.get("/new")
 def admin_new_menu_page(request: Request, user=Depends(require_admin)):
@@ -170,7 +184,12 @@ def update_menu_item(
     item_id: UUID,
     title: Optional[str] = Form(None),
     description: Optional[str] = Form(None),
+    price: Optional[float] = Form(None),
+    category: Optional[str] = Form(None),
+    origin: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),
+    flavor_profile: Optional[str] = Form(None),
+    dietary_restrictions: Optional[str] = Form(None),
     is_available: Optional[bool] = Form(None),
     image: Optional[UploadFile] = File(None),
     session: Session = Depends(get_session),
@@ -180,15 +199,36 @@ def update_menu_item(
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")
 
+    # String updates
     if title is not None:
         item.title = title
     if description is not None:
         item.description = description
+    if price is not None:
+        item.price = price
+    if category is not None:
+        item.category = category
+    if origin is not None:
+        item.origin = origin
+
+    # List fields (CSV → list)
+    def parse_list(value):
+        if value is None:
+            return None
+        return [v.strip() for v in value.split(",") if v.strip()]
+
     if tags is not None:
-        item.tags = [t.strip() for t in tags.split(",") if t.strip()]
+        item.tags = parse_list(tags)
+    if flavor_profile is not None:
+        item.flavor_profile = parse_list(flavor_profile)
+    if dietary_restrictions is not None:
+        item.dietary_restrictions = parse_list(dietary_restrictions)
+
+    # Availability
     if is_available is not None:
         item.is_available = is_available
 
+    # Image upload
     if image:
         if not image.content_type.startswith("image/"):
             raise HTTPException(status_code=400, detail="Only image files are allowed")
@@ -203,7 +243,11 @@ def update_menu_item(
 # Delete menu item
 # -------------------------------
 @router.delete("/{item_id}")
-def delete_menu_item(item_id: UUID, session: Session = Depends(get_session), user=Depends(require_admin)):
+def delete_menu_item(
+    item_id: UUID,
+    session: Session = Depends(get_session),
+    user=Depends(require_admin),
+):
     item = session.get(MenuItem, item_id)
     if not item:
         raise HTTPException(status_code=404, detail="Item not found")

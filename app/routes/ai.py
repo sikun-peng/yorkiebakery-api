@@ -33,7 +33,7 @@ def normalize(value):
     return []
 
 
-def cuisine_emoji(cuisine: str):
+def origin_emoji(origin: str):
     emojis = {
         "thai": "🇹🇭🍜",
         "chinese": "🇨🇳🥡",
@@ -44,7 +44,7 @@ def cuisine_emoji(cuisine: str):
         "italian": "🇮🇹🍝",
         "bakery": "🧁",
     }
-    return emojis.get((cuisine or "").lower(), "🍽️")
+    return emojis.get((origin or "").lower(), "🍽️")
 
 
 def format_cute_results(results):
@@ -56,8 +56,8 @@ def format_cute_results(results):
     for item in results:
         title = item.get("title", "Unknown Item")
         price = float(item.get("price", 0.0))
-        cuisine = item.get("cuisine", "")
-        emoji = cuisine_emoji(cuisine)
+        origin = item.get("origin", "")
+        emoji = origin_emoji(origin)
 
         tags = normalize(item.get("tags"))
         flavors = normalize(item.get("flavor_profile"))

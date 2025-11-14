@@ -47,8 +47,8 @@ def build_embeddings():
 
         metadatas.append({
             "title": item.title,
-            "cuisine": item.cuisine or "",
-            "dish_type": item.dish_type or "",
+            "origin": item.origin or "",
+            "category": item.category or "",
             "price": float(item.price) if item.price else None,
             "tags": ",".join(item.tags or []),
             "flavor_profile": ",".join(item.flavor_profile or []),

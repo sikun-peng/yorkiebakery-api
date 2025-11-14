@@ -5,58 +5,88 @@
 {% block content %}
 <h1>🍽️ Our Menu</h1>
 
-<div class="menu-grid">
+{% set cart = request.session.get("cart", {}) %}
 
-  {% set cart = request.session.get("cart", {}) %}
+{# Group items by category #}
+{% set categories = items | map(attribute='category') | unique | list %}
 
-  {% for item in items %}
-  <div class="menu-card">
+{% for cat in categories %}
+  <h2 class="category-header">{{ cat }}</h2>
 
-    <!-- Image -->
-    {% if item.image_url %}
-      <img src="{{ item.image_url }}" alt="{{ item.title }}">
-    {% else %}
-      <img src="/static/images/default_menu_image.jpg" alt="No Image Available">
-    {% endif %}
+  <div class="menu-grid">
+    {% for item in items if item.category == cat %}
+    <div class="menu-card">
 
-    <!-- Title + Desc -->
-    <h2>{{ item.title }}</h2>
-    <p>{{ item.description }}</p>
+      <!-- Image -->
+      {% if item.image_url %}
+        <img src="{{ item.image_url }}" alt="{{ item.title }}">
+      {% else %}
+        <img src="/static/images/default_menu_image.jpg" alt="No Image Available">
+      {% endif %}
 
-    <!-- Price -->
-    <p class="price">${{ "%.2f"|format(item.price) }}</p>
+      <!-- Title + Desc -->
+      <h2>{{ item.title }}</h2>
+      <p>{{ item.description }}</p>
 
-    <!-- Quantity in session -->
-    {% set qty = cart.get(item.id|string, 0) %}
+      <!-- Metadata row -->
+      <div class="menu-meta">
 
-    {% if qty > 0 %}
-      <span class="item-qty-badge">{{ qty }}</span>
-    {% endif %}
+        {% if item.origin %}
+        <p><strong>Origin:</strong> {{ item.origin }}</p>
+        {% endif %}
 
-    {% if qty == 0 %}
-      <form action="/cart/add/{{ item.id }}" method="post">
-        <button type="submit" class="btn">Add to Cart 🛍️</button>
-      </form>
-    {% else %}
-      <div class="qty-controls">
+        {% if item.tags %}
+        <p><strong>Tags:</strong> {{ item.tags | join(", ") }}</p>
+        {% endif %}
 
-        <!-- Minus -->
-        <form action="/cart/remove/{{ item.id }}" method="post" style="display:inline;">
-          <button type="submit" class="qty-btn">−</button>
-        </form>
+        {% if item.flavor_profile %}
+        <p><strong>Flavor:</strong> {{ item.flavor_profile | join(", ") }}</p>
+        {% endif %}
 
-        <span class="qty-display">{{ qty }}</span>
-
-        <!-- Plus -->
-        <form action="/cart/add/{{ item.id }}" method="post" style="display:inline;">
-          <button type="submit" class="qty-btn">+</button>
-        </form>
+        {% if item.dietary_restrictions %}
+        <p><strong>Dietary:</strong> {{ item.dietary_restrictions | join(", ") }}</p>
+        {% endif %}
 
       </div>
-    {% endif %}
 
+      <!-- Price -->
+      {% if item.price is not none %}
+        <p class="price">${{ "%.2f"|format(item.price) }}</p>
+      {% else %}
+        <p class="price text-gray-400 italic">Price not set</p>
+      {% endif %}
+
+      <!-- Quantity in session -->
+      {% set qty = cart.get(item.id|string, 0) %}
+
+      {% if qty > 0 %}
+        <span class="item-qty-badge">{{ qty }}</span>
+      {% endif %}
+
+      {% if qty == 0 %}
+        <form action="/cart/add/{{ item.id }}" method="post">
+          <button type="submit" class="btn">Add to Cart 🛍️</button>
+        </form>
+      {% else %}
+        <div class="qty-controls">
+
+          <form action="/cart/remove/{{ item.id }}" method="post" style="display:inline;">
+            <button type="submit" class="qty-btn">−</button>
+          </form>
+
+          <span class="qty-display">{{ qty }}</span>
+
+          <form action="/cart/add/{{ item.id }}" method="post" style="display:inline;">
+            <button type="submit" class="qty-btn">+</button>
+          </form>
+
+        </div>
+      {% endif %}
+
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
 
-</div>
+{% endfor %}
+
 {% endblock %}

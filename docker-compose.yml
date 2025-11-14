@@ -1,13 +1,14 @@
 version: '3.9'
 services:
   db:
-    image: postgres:16
+    image: postgres:16.10
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: yorkiebakery
       PYTHONPATH: /app
+      POSTGRES_INITDB_ARGS: "--locale=C --lc-ctype=C --lc-collate=C"
     ports:
       - "5432:5432"
     volumes:
@@ -19,13 +20,6 @@ services:
       timeout: 5s
       retries: 5
 
-  dynamodb:
-    image: amazon/dynamodb-local
-    container_name: dynamodb-local
-    ports:
-      - "8001:8000"
-    command: "-jar DynamoDBLocal.jar -inMemory -sharedDb"
-
   web:
     build:
       context: .
@@ -34,7 +28,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8000:8000"
+      - "80:8000"
     environment:
       DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/yorkiebakery
     env_file:

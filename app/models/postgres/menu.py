@@ -10,8 +10,8 @@ class MenuItem(SQLModel, table=True):
     title: str
     description: str
     image_url: Optional[str] = None
-    cuisine: Optional[str] = None
-    dish_type: Optional[str] = None
+    origin: Optional[str] = None
+    category: Optional[str] = None
     tags: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
     flavor_profile: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
     dietary_restrictions: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
