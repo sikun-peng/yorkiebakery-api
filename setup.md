@@ -12,7 +12,7 @@ docker exec -it yorkiebakery-api-db-1 psql -U postgres -d yorkiebakery -f /migra
 docker exec -it yorkiebakery-api-db-1 psql -U postgres -d yorkiebakery -f /migrations/002_seed_menu.sql
 docker exec -it yorkiebakery-api-db-1 psql -U postgres -d yorkiebakery -f /migrations/003_seed_music.sql
 
-# docker exec -it yorkiebakery-api_db_1 psql
+# docker exec -it yorkiebakery-api_db_1 psql -U postgres
 docker exec -it yorkiebakery-api-db-1 psql -U postgres -d yorkiebakery
 
 SELECT pg_terminate_backend(pid)

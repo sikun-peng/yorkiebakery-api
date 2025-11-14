@@ -59,7 +59,7 @@ INSERT INTO music_track (id, title, composer, performer, category, description, 
 VALUES
 (uuid_generate_v4(), 'Violin Sonata no.3 in E-flat, Op.12, No.3', 'Beethoven, Ludwig van', 'Weronika Dziadek', 'accompaniment', '', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_maría_dueñas.jpg', NOW()),
 (uuid_generate_v4(), 'Violin Sonata No.5 in F major, Op.24', 'Beethoven, Ludwig van', 'Weronika Dziadek', 'accompaniment', '春天奏鸣曲', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music/Beethoven_violin_sonata_no_5.mp3', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_maría_dueñas.jpg', NOW()),
-(uuid_generate_v4(), 'Brahms - Contemplation, Op. 105, No. 1 for Violin and Piano', 'Brahms, Johannes', '荒井里桜', 'accompaniment', '', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_荒井里桜.jpg', NOW()),
+(uuid_generate_v4(), 'Contemplation, Op. 105, No. 1 for Violin and Piano', 'Brahms, Johannes', '荒井里桜', 'accompaniment', '', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_荒井里桜.jpg', NOW()),
 (uuid_generate_v4(), 'Salut d''Amour', 'Elgar, Edward', '島谷美賀子', 'accompaniment', 'Love''s Greeting / 爱的礼赞', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music/Elgar_love_s_greeting_violin.mp3', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_髙木凜々子_3.jpg', NOW()),
 (uuid_generate_v4(), 'Liebesleid', 'Kreisler, Fritz', 'Joshua Bell', 'accompaniment', '爱的悲伤', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_joshua_bell.jpg', NOW()),
 (uuid_generate_v4(), 'Song Without Words, Op.62', 'Mendelssohn, Felix', 'Tiffany', 'accompaniment', 'Spring Song', '', NULL, NOW()),
@@ -86,7 +86,7 @@ INSERT INTO music_track (id, title, composer, performer, category, description, 
 VALUES
 (uuid_generate_v4(), 'Piano Concerto No.2 in C minor, Op.18', 'Rachmaninoff, Sergei', 'Oscar Peng', 'wishlist', '拉二', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_rachmaninoff.jpg', NOW()),
 (uuid_generate_v4(), 'Polonaise in F-sharp minor, Op.44', 'Chopin, Frédéric', 'Oscar Peng', 'wishlist', 'F小调波兰舞曲', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_chopin_2.jpg', NOW()),
-(uuid_generate_v4(), 'Impromptu in E-flat major, Op.90 No.2', 'Schubert, Franz', 'Oscar Peng', 'wishlist', '降E大调即兴曲', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_chopin_2.jpg', NOW()),
+(uuid_generate_v4(), 'Impromptu in E-flat major, Op.90 No.2', 'Schubert, Franz', 'Oscar Peng', 'wishlist', '降E大调即兴曲', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_schubert.jpg', NOW()),
 (uuid_generate_v4(), 'La Campanella', 'Liszt, Franz', 'Oscar Peng', 'wishlist', '钟', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_liszt.jpg', NOW()),
 (uuid_generate_v4(), 'Hungarian Rhapsody No.2', 'Liszt, Franz', 'Oscar Peng', 'wishlist', '匈牙利狂想曲第二号', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_liszt.jpg', NOW()),
 (uuid_generate_v4(), 'Mephisto Waltz No.1', 'Liszt, Franz', 'Oscar Peng', 'wishlist', '梅菲斯特圆舞曲', '', 'https://yorkiebakery-music.s3.us-west-2.amazonaws.com/music-covers/cover_liszt.jpg', NOW());

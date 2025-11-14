@@ -9,6 +9,8 @@ from app.core.db import get_session
 from app.models.postgres.order import Order
 from app.models.postgres.order_item import OrderItem
 from app.models.postgres.menu import MenuItem
+from app.models.postgres.user import User
+from app.core.send_email import send_order_confirmation_email, send_owner_new_order_email
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -23,9 +25,15 @@ def create_order(
     if not items:
         raise HTTPException(status_code=400, detail="No items in order.")
 
+    # Validate user
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Create order
     order = Order(user_id=user_id, total=0.0, status="pending")
     session.add(order)
-    session.flush()  # gives order.id
+    session.flush()  # to get order.id
 
     total_cost = 0.0
     order_items = []
@@ -55,6 +63,30 @@ def create_order(
     session.add(order)
     session.commit()
     session.refresh(order)
+
+    # ---------------------------------------------------
+    # ✔️ Send confirmation email (non-blocking / safe)
+    # ---------------------------------------------------
+    try:
+        send_order_confirmation_email(
+            email=user.email,
+            order_items=[
+                {"title": i.title, "qty": i.quantity, "price": i.unit_price}
+                for i in order_items
+            ],
+            total=total_cost
+        )
+        send_owner_new_order_email(
+            order_items=[
+                {"title": i.title, "qty": i.quantity, "price": i.unit_price}
+                for i in order_items
+            ],
+            total=total_cost,
+            customer_email=user.email
+        )
+    except Exception as e:
+        print("⚠️ Warning: failed to send email:", e)
+
     return order
 
 

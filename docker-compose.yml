@@ -28,7 +28,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "80:8000"
+      - "8000:8000"
     environment:
       DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/yorkiebakery
     env_file:
