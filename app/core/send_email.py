@@ -8,8 +8,9 @@ SES_SENDER = f"Yorkie Bakery <noreply@beta.yorkiebakery.com>"
 
 ses = boto3.client("ses", region_name=AWS_REGION)
 
-def send_verification_email(email: str, token: str):
-    verify_url = f"https://beta.yorkiebakery.com/auth/verify/{token}"
+def send_verification_email(email: str, verify_url: str):  # Changed parameter name
+    print(f"DEBUG: Sending verification email to {email}")
+    print(f"DEBUG: Verification URL: {verify_url}")
 
     ses.send_email(
         Source=SES_SENDER,
@@ -19,6 +20,21 @@ def send_verification_email(email: str, token: str):
             "Body": {
                 "Text": {
                     "Data": f"Welcome! Click here to verify your account:\n{verify_url}\n\n- Yorkie Bakery"
+                },
+                "Html": {
+                    "Data": f"""
+                    <html>
+                    <body>
+                        <h2>Verify your Yorkie Bakery account 🐶🥐</h2>
+                        <p>Welcome! Click the link below to verify your account:</p>
+                        <p><a href="{verify_url}" style="background: #ffb36b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Verify Account</a></p>
+                        <p>Or copy and paste this URL in your browser:</p>
+                        <p><code>{verify_url}</code></p>
+                        <hr>
+                        <p><small>If you didn't create this account, please ignore this email.</small></p>
+                    </body>
+                    </html>
+                    """
                 }
             }
         }
@@ -33,7 +49,7 @@ def send_order_confirmation_email(email: str, order_items: list, total: float):
         f"{item_list}\n\n"
         f"Total: ${total:.2f}\n"
         "We will contact you when your order is ready.\n\n"
-        "- Yorkie Bakery 🐶🥐"
+        "- Oscar Peng 🐶🥐"
     )
 
     ses.send_email(
