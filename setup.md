@@ -2,6 +2,8 @@
 source venv/bin/activate
 pip install -r requirements.txt
 
+# docker exec -it yorkiebakery-api-web-1 /bin/bash
+
 # docker build and run
 docker stop $(docker ps -q)
 docker rm $(docker ps -a -q)
@@ -20,8 +22,8 @@ FROM pg_stat_activity
 WHERE datname = 'yorkiebakery';
 
 DROP DATABASE yorkiebakery;
+CREATE DATABASE yorkiebakery WITH ENCODING 'UTF8' TEMPLATE template0;
 
-CREATE DATABASE yorkiebakery;
 
 
 # run embedding script to populate FAISS index
@@ -31,7 +33,6 @@ curl -X POST http://localhost:8000/ai/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "thai", "top_k": 5, "filters": {"origin": "thai"}}'
 
-UPDATE "user" SET is_admin = true WHERE email = 'admin@yorkie.com';
 
+# facebook app https://developers.facebook.com/apps/1307678087403930/settings/basic/
 
-docker exec -it yorkiebakery-api-web-1 /bin/bash

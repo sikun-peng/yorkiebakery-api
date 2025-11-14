@@ -17,7 +17,6 @@
         <a href="/" class="logo">Yorkie Bakery 🐶🥐</a>
         <a href="/menu/view" class="nav-link">Menu</a>
         <a href="/music/listen" class="nav-link">🎵 Music</a>
-
         <a href="/cart/view" class="nav-link cart-link">
           Cart 🛒
           <span id="global-cart-count"
@@ -26,6 +25,9 @@
             {{ cart_count or 0 }}
           </span>
         </a>
+        {% if request.session.get("user") %}
+          <a href="/orders/view" class="nav-link">My Orders</a>
+        {% endif %}
       </div>
 
       <div class="nav-right">

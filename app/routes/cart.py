@@ -3,6 +3,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlmodel import Session, select
 from uuid import uuid4
+from datetime import datetime
 
 from app.core.db import engine
 from app.models.postgres.menu import MenuItem
@@ -32,7 +33,7 @@ def require_login(request: Request):
     user = request.session.get("user")
     if not user:
         return None
-    return user.get("id")   # user["id"] stored from /auth/login_form
+    return user.get("id")  # user["id"] stored from /auth/login_form
 
 
 # ---------------------------------------------
@@ -121,7 +122,6 @@ def remove_item_button(menu_item_id: str, request: Request):
 # ---------------------------------------------
 @router.get("/checkout")
 def checkout_page(request: Request):
-
     # Check login
     user_id = require_login(request)
     if not user_id:
@@ -151,12 +151,12 @@ def checkout_page(request: Request):
 
 
 # ---------------------------------------------
-# PROCESS CHECKOUT
+# PROCESS CHECKOUT (FIXED VERSION)
 # ---------------------------------------------
 @router.post("/checkout")
 def process_checkout(
-    request: Request,
-    address: str = Form(...)
+        request: Request,
+        address: str = Form(...)
 ):
     # Must be logged in
     user_id = require_login(request)
@@ -167,11 +167,19 @@ def process_checkout(
     if not cart:
         return RedirectResponse("/menu/view", status_code=303)
 
+    # Store user info before session closes
+    user_email = None
+    user_name = None
+
     with Session(engine) as session:
 
         user = session.get(User, user_id)
         if not user:
             return RedirectResponse("/auth/login", status_code=303)
+
+        # Store user info while session is active
+        user_email = user.email
+        user_name = f"{user.first_name or ''} {user.last_name or ''}".strip()
 
         items = session.exec(
             select(MenuItem).where(MenuItem.id.in_(cart.keys()))
@@ -196,41 +204,42 @@ def process_checkout(
         # Create order
         order = Order(
             id=uuid4(),
-            user_id=user_id,  # REAL UUID from session
+            user_id=user_id,
             total=total,
-            status="confirmed"
+            status="confirmed",
+            created_at=datetime.utcnow()
         )
 
         session.add(order)
-        session.flush()    # get order.id
+        session.commit()  # Commit to get order ID
+        session.refresh(order)
 
-        # Create order items
-        order_items_db = []
+        # Create order items individually (FIXED - no relationship assignment)
         for ci in cart_items:
-            oi = OrderItem(
+            order_item = OrderItem(
+                id=uuid4(),
                 order_id=order.id,
                 menu_item_id=ci["menu_item_id"],
                 title=ci["title"],
                 unit_price=ci["price"],
                 quantity=ci["qty"]
             )
-            order_items_db.append(oi)
+            session.add(order_item)
 
-        order.items = order_items_db
-        session.add(order)
+        # Commit all order items
         session.commit()
 
-    # Send emails
+    # Send emails (using stored user info)
     try:
         send_order_confirmation_email(
-            email=user.email,
+            email=user_email,
             order_items=cart_items,
             total=total
         )
         send_owner_new_order_email(
             order_items=cart_items,
             total=total,
-            customer_email=user.email
+            customer_email=user_email
         )
     except Exception as e:
         print("⚠️ Email send error:", e)
@@ -242,6 +251,6 @@ def process_checkout(
         "request": request,
         "cart": cart_items,
         "total": total,
-        "email": user.email,
-        "name": f"{user.first_name or ''} {user.last_name or ''}".strip()
+        "email": user_email,
+        "name": user_name
     })

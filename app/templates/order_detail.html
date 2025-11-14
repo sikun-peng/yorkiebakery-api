@@ -2,23 +2,66 @@
 {% block title %}Order Details · Yorkie Bakery{% endblock %}
 
 {% block content %}
-<h1>📦 Order Details</h1>
+<div class="container">
+    <h1>📦 Order Details</h1>
 
-<p><strong>Order ID:</strong> {{ order.id }}</p>
-<p><strong>Status:</strong> {{ order.status }}</p>
-<p><strong>Date:</strong> {{ order.created_at }}</p>
+    <div class="order-summary">
+        <div class="summary-grid">
+            <div class="summary-item">
+                <strong>Order ID:</strong>
+                <span class="order-id">{{ order['id'] }}</span>
+            </div>
+            <div class="summary-item">
+                <strong>Status:</strong>
+                <span class="status {{ order['status'] }}">{{ order['status'].title() }}</span>
+            </div>
+            <div class="summary-item">
+                <strong>Date:</strong>
+                <span class="date">
+                    {% if order['created_at'] %}
+                        {{ order['created_at'].strftime('%B %d, %Y at %I:%M %p') }}
+                    {% else %}
+                        Date not available
+                    {% endif %}
+                </span>
+            </div>
+            <div class="summary-item">
+                <strong>Total:</strong>
+                <span class="total-amount">${{ "%.2f"|format(order['total']) }}</span>
+            </div>
+        </div>
+    </div>
 
-<h2>Items</h2>
-<ul>
-  {% for item in order.items %}
-    <li>
-      {{ item.quantity }} × {{ item.title }}
-      — ${{ "%.2f"|format(item.unit_price * item.quantity) }}
-    </li>
-  {% endfor %}
-</ul>
+    <div class="order-section">
+        <h2>Items</h2>
+        <div class="order-items">
+            <div class="items-header">
+                <span class="item-col item-name-header">Item</span>
+                <span class="item-col item-quantity-header">Qty</span>
+                <span class="item-col item-price-header">Price</span>
+                <span class="item-col item-total-header">Total</span>
+            </div>
+            <ul class="items-list">
+            {% for item in items %}
+                <li class="order-item">
+                    <span class="item-col item-name">{{ item['title'] }}</span>
+                    <span class="item-col item-quantity">{{ item['quantity'] }}</span>
+                    <span class="item-col item-price">${{ "%.2f"|format(item['unit_price']) }}</span>
+                    <span class="item-col item-total">${{ "%.2f"|format(item['unit_price'] * item['quantity']) }}</span>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
 
-<h3>Total: ${{ "%.2f"|format(order.total) }}</h3>
+    <div class="order-total-section">
+        <div class="total-display">
+            <h3>Order Total: ${{ "%.2f"|format(order['total']) }}</h3>
+        </div>
+    </div>
 
-<a href="/orders/view" class="btn" style="margin-top:20px;">⬅ Back to My Orders</a>
+    <div class="order-actions">
+        <a href="/orders/view" class="btn btn-outline">⬅ Back to My Orders</a>
+    </div>
+</div>
 {% endblock %}

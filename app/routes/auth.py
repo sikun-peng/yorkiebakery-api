@@ -18,11 +18,14 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
 # --------------------------------------
-# Helper for correct absolute URLs (EC2 safe)
+# FIXED: Helper for correct absolute URLs
 # --------------------------------------
-def absolute_url(request: Request, path: str) -> str:
+def absolute_url(request: Request, path: str = "") -> str:
+    """Create absolute URL safely"""
     base = str(request.base_url).rstrip("/")
-    return f"{base}{path}"
+    if path.startswith("/"):
+        path = path[1:]
+    return f"{base}/{path}"
 
 
 # --------------------------------------
@@ -30,6 +33,7 @@ def absolute_url(request: Request, path: str) -> str:
 # --------------------------------------
 try:
     from authlib.integrations.starlette_client import OAuth
+
     config = Config(".env")
     oauth = OAuth(config)
 
@@ -48,8 +52,9 @@ try:
         access_token_url="https://graph.facebook.com/v12.0/oauth/access_token",
         authorize_url="https://www.facebook.com/v12.0/dialog/oauth",
         api_base_url="https://graph.facebook.com/v12.0/",
-        client_kwargs={"scope": "email public_profile"},
+        client_kwargs={"scope": "public_profile"},  # Only public_profile, no email
     )
+
 except Exception:
     oauth = None
 
@@ -62,6 +67,7 @@ class UserRegisterRequest(BaseModel):
     password: str
     first_name: str
     last_name: str
+
 
 class UserLoginRequest(BaseModel):
     email: EmailStr
@@ -81,10 +87,10 @@ def login_page(_: Request):
 # --------------------------------------
 @router.post("/login_form")
 def login_form(
-    request: Request,
-    email: str = Form(...),
-    password: str = Form(...),
-    session: Session = Depends(get_session),
+        request: Request,
+        email: str = Form(...),
+        password: str = Form(...),
+        session: Session = Depends(get_session),
 ):
     user = session.exec(select(User).where(User.email == email)).first()
     if not user or not verify_password(password, user.password_hash):
@@ -106,16 +112,16 @@ def login_form(
 
 
 # --------------------------------------
-# Register (modal)
+# Register (modal) - FIXED VERSION
 # --------------------------------------
 @router.post("/register_form")
 def register_form(
-    request: Request,
-    email: EmailStr = Form(...),
-    password: str = Form(...),
-    first_name: str = Form(...),
-    last_name: str = Form(...),
-    session: Session = Depends(get_session),
+        request: Request,
+        email: EmailStr = Form(...),
+        password: str = Form(...),
+        first_name: str = Form(...),
+        last_name: str = Form(...),
+        session: Session = Depends(get_session),
 ):
     if session.exec(select(User).where(User.email == email)).first():
         return JSONResponse({"success": False, "error": "Email already exists."}, status_code=400)
@@ -131,31 +137,38 @@ def register_form(
     session.commit()
     session.refresh(user)
 
-    # Send verification link (fixed)
+    # FIXED: Proper URL construction
     token = create_verification_token(user.email)
-    verify_path = request.url_for("verify_email")
-    verify_link = absolute_url(request, verify_path) + f"?token={token}"
-    send_verification_email(user.email, verify_link)
+    verify_url = absolute_url(request, f"/auth/verify?token={token}")
+
+    print(f"DEBUG: Sending verification email to {user.email}")
+    print(f"DEBUG: Verification URL: {verify_url}")
+
+    send_verification_email(user.email, verify_url)
 
     return JSONResponse({"success": True, "message": "Check your email to verify your account."})
 
 
 # --------------------------------------
-# Resend verification (modal)
+# Resend verification (modal) - FIXED VERSION
 # --------------------------------------
 @router.post("/resend_verification")
 def resend_verification(
-    request: Request,
-    email: EmailStr = Form(...),
-    session: Session = Depends(get_session),
+        request: Request,
+        email: EmailStr = Form(...),
+        session: Session = Depends(get_session),
 ):
     user = session.exec(select(User).where(User.email == email)).first()
 
     if user and not user.is_verified:
+        # FIXED: Proper URL construction
         token = create_verification_token(user.email)
-        verify_path = request.url_for("verify_email")
-        verify_link = absolute_url(request, verify_path) + f"?token={token}"
-        send_verification_email(user.email, verify_link)
+        verify_url = absolute_url(request, f"/auth/verify?token={token}")
+
+        print(f"DEBUG: Resending verification email to {user.email}")
+        print(f"DEBUG: Verification URL: {verify_url}")
+
+        send_verification_email(user.email, verify_url)
 
     return JSONResponse({"success": True})
 
@@ -203,7 +216,7 @@ def logout(request: Request):
 
 
 # --------------------------------------
-# JSON Register
+# JSON Register - FIXED VERSION
 # --------------------------------------
 @router.post("/register")
 def api_register(payload: UserRegisterRequest, session: Session = Depends(get_session), request: Request = None):
@@ -222,10 +235,10 @@ def api_register(payload: UserRegisterRequest, session: Session = Depends(get_se
     session.refresh(user)
 
     if request:
+        # FIXED: Proper URL construction
         token = create_verification_token(user.email)
-        verify_path = request.url_for("verify_email")
-        verify_link = absolute_url(request, verify_path) + f"?token={token}"
-        send_verification_email(user.email, verify_link)
+        verify_url = absolute_url(request, f"/auth/verify?token={token}")
+        send_verification_email(user.email, verify_url)
 
     return {"msg": "User created. Please verify email.", "user_id": str(user.id)}
 
@@ -307,3 +320,90 @@ async def google_callback(request: Request, session: Session = Depends(get_sessi
     request.session["access_token"] = create_access_token({"sub": str(user.id), "email": user.email})
 
     return RedirectResponse("/menu/view", status_code=303)
+
+
+# --------------------------------------
+# Facebook OAuth - ADDED MISSING ROUTES
+# --------------------------------------
+@router.get("/login/facebook")
+async def login_facebook(request: Request):
+    if not oauth or not getattr(oauth, "facebook", None) or not oauth.facebook.client_id:
+        raise HTTPException(status_code=400, detail="Facebook OAuth not configured")
+
+    redirect_uri = request.url_for("facebook_callback")
+    return await oauth.facebook.authorize_redirect(request, redirect_uri)
+
+
+@router.get("/facebook/callback")
+async def facebook_callback(request: Request, session: Session = Depends(get_session)):
+    try:
+        token = await oauth.facebook.authorize_access_token(request)
+
+        # Get user info from Facebook - only public_profile (no email without review)
+        resp = await oauth.facebook.get('https://graph.facebook.com/me?fields=id,name,first_name,last_name',
+                                        token=token)
+        user_info = resp.json()
+
+        # Create a placeholder email using Facebook ID
+        facebook_id = user_info.get('id')
+        if not facebook_id:
+            raise HTTPException(status_code=400, detail="Facebook did not return user ID")
+
+        # Generate unique email from Facebook ID
+        email = f"fb_{facebook_id}@facebook.user"
+
+        # Extract names from Facebook data
+        first_name = user_info.get('first_name') or 'Facebook'
+        last_name = user_info.get('last_name') or 'User'
+
+        # If no first/last name, try to parse from full name
+        if first_name == 'Facebook':
+            name_parts = user_info.get('name', '').split(' ', 1)
+            if name_parts:
+                first_name = name_parts[0]
+                last_name = name_parts[1] if len(name_parts) > 1 else 'User'
+
+        print(f"DEBUG: Facebook user - ID: {facebook_id}, Name: {first_name} {last_name}")
+
+        # Check if user already exists
+        user = session.exec(select(User).where(User.email == email)).first()
+
+        if not user:
+            placeholder_pw = hash_password("oauth-user")
+            user = User(
+                email=email,
+                first_name=first_name,
+                last_name=last_name,
+                password_hash=placeholder_pw,
+                is_verified=True,
+            )
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+            print(f"DEBUG: Created new Facebook user: {user.email}")
+        else:
+            if not user.is_verified:
+                user.is_verified = True
+                session.add(user)
+                session.commit()
+            print(f"DEBUG: Existing Facebook user: {user.email}")
+
+        # Set session
+        request.session["user"] = {
+            "id": str(user.id),
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "is_admin": bool(user.is_admin),
+        }
+        request.session["access_token"] = create_access_token({"sub": str(user.id), "email": user.email})
+
+        print(f"DEBUG: Facebook login successful for {user.email}")
+        return RedirectResponse("/menu/view", status_code=303)
+
+    except Exception as e:
+        print(f"Facebook OAuth error: {e}")
+        # More detailed error logging
+        import traceback
+        print(f"Full traceback: {traceback.format_exc()}")
+        raise HTTPException(status_code=400, detail="Facebook login failed")

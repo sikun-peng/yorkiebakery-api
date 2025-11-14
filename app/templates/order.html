@@ -1,53 +1,51 @@
 {% extends "base.html" %}
-{% block title %}Your Orders · Yorkie Bakery{% endblock %}
+{% block title %}My Orders · Yorkie Bakery{% endblock %}
 
 {% block content %}
-<h1 class="cursive-font text-center mb-6">🧾 Your Orders</h1>
+<div class="container">
+    <h1>📦 My Orders</h1>
 
-{% if orders and orders|length > 0 %}
-  <div class="orders-list">
+    {% if not orders_with_items %}
+        <div class="empty-state">
+            <p>You haven't placed any orders yet.</p>
+            <a href="/menu/view" class="btn">Start Shopping</a>
+        </div>
+    {% else %}
+        {% for order_data in orders_with_items %}
+        <div class="order-card">
+            <div class="order-header">
+                <h3>Order #{{ order_data['order']['id'][:8] }}...</h3>
+                <div class="order-meta">
+                    <span class="status {{ order_data['order']['status'] }}">{{ order_data['order']['status'].title() }}</span>
+                    <span class="date">
+                        {% if order_data['order']['created_at'] %}
+                            {{ order_data['order']['created_at'].strftime('%b %d, %Y at %I:%M %p') }}
+                        {% else %}
+                            Date not available
+                        {% endif %}
+                    </span>
+                    <span class="total-amount">${{ "%.2f"|format(order_data['order']['total']) }}</span>
+                </div>
+            </div>
 
-    {% for order in orders %}
-      <div class="order-card">
-        <h2>Order #{{ order.id }}</h2>
-        <p><strong>Status:</strong> {{ order.status }}</p>
-        <p><strong>Placed:</strong> {{ order.created_at.strftime("%Y-%m-%d %H:%M") }}</p>
-        <p><strong>Total:</strong> ${{ "%.2f"|format(order.total) }}</p>
+            <div class="order-items-simple">
+                <h4>Items ({{ order_data['items']|length }}):</h4>
+                <ul>
+                    {% for item in order_data['items'] %}
+                    <li class="order-item-simple">
+                        <span class="item-name-simple">{{ item['title'] }}</span>
+                        <span class="item-quantity-simple">Qty: {{ item['quantity'] }}</span>
+                        <span class="item-price-simple">${{ "%.2f"|format(item['unit_price']) }} each</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
 
-        <h3>Items:</h3>
-        <ul>
-          {% for item in order.items %}
-            <li>{{ item.quantity }} × {{ item.title }} — ${{ "%.2f"|format(item.unit_price * item.quantity) }}</li>
-          {% endfor %}
-        </ul>
-
-      </div>
-    {% endfor %}
-
-  </div>
-
-{% else %}
-  <p class="text-center text-gray-600 mt-8 italic">You have no orders yet.</p>
-{% endif %}
-
-<a href="/menu/view" class="btn" style="margin-top:24px;">🍰 Back to Menu</a>
-
-<style>
-.order-card {
-    border: 1px solid #ddd;
-    padding: 16px;
-    margin: 20px auto;
-    width: 80%;
-    border-radius: 12px;
-    background: #fafafa;
-}
-.order-card h2 {
-    margin-bottom: 8px;
-}
-.order-card ul {
-    list-style: none;
-    padding-left: 0;
-}
-</style>
-
+            <div class="order-footer">
+                <a href="/orders/{{ order_data['order']['id'] }}/detail" class="btn btn-outline">View Details</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
 {% endblock %}
