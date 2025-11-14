@@ -51,7 +51,7 @@
 
 
   <!-- ===========================
-       LOGIN / REGISTER MODAL
+       LOGIN / REGISTER MODAL (UPDATED VERSION)
        =========================== -->
   <div class="modal" id="auth-modal">
     <div class="modal-content">
@@ -66,6 +66,30 @@
 
         <button type="submit" class="btn" id="auth-submit-btn">Login</button>
       </form>
+
+      <!-- RESEND VERIFICATION SECTION -->
+      <div id="resend-verification" style="display: none; margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 6px; border: 1px solid #ffeaa7;">
+        <p style="margin: 0 0 10px 0; font-size: 14px; color: #856404;">📧 Your email is not verified.</p>
+        <button type="button" id="resend-verification-btn" class="btn-small" style="font-size: 12px;">Resend Verification Email</button>
+        <span id="resend-status" style="margin-left: 10px; font-size: 12px;"></span>
+      </div>
+
+      <!-- FORGOT PASSWORD LINK -->
+      <div style="margin-top: 15px; text-align: center;">
+        <a href="#" id="forgot-password-link" style="font-size: 14px; color: #666; text-decoration: none;">Forgot Password?</a>
+      </div>
+
+      <!-- RESET PASSWORD SECTION -->
+      <div id="reset-password" style="display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 6px; border: 1px solid #dee2e6;">
+        <h4 style="margin: 0 0 10px 0; font-size: 16px;">Reset Password</h4>
+        <p style="margin: 0 0 10px 0; font-size: 14px; color: #666;">Enter your email to receive a password reset link:</p>
+        <input type="email" id="reset-email" placeholder="Your email" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+        <div style="display: flex; gap: 10px;">
+          <button type="button" id="send-reset-btn" class="btn-small" style="flex: 1;">Send Reset Link</button>
+          <button type="button" id="cancel-reset-btn" style="background: #6c757d; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; color: white;">Cancel</button>
+        </div>
+        <span id="reset-status" style="display: block; margin-top: 10px; font-size: 12px;"></span>
+      </div>
 
       <hr>
 

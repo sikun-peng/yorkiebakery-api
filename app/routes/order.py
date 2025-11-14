@@ -26,7 +26,7 @@ def orders_view_page(request: Request, session: Session = Depends(get_session)):
     user_session = request.session.get("user")
     if not user_session:
         # No logged in session → redirect to login
-        return RedirectResponse("/auth/login", status_code=303)
+        return RedirectResponse("/auth/login?redirect_url=/cart/checkout", status_code=303)
 
     user_id = user_session["id"]
 
@@ -162,7 +162,7 @@ def get_order(order_id: UUID, session: Session = Depends(get_session)):
 def order_detail_page(order_id: UUID, request: Request, session: Session = Depends(get_session)):
     user_session = request.session.get("user")
     if not user_session:
-        return RedirectResponse("/auth/login", status_code=303)
+        return RedirectResponse("/auth/login?redirect_url=/cart/checkout", status_code=303)
 
     order = session.get(Order, order_id)
     if not order:

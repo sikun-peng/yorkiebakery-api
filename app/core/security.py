@@ -6,6 +6,8 @@ from fastapi import HTTPException, Request, status
 from jose import jwt
 from passlib.context import CryptContext
 import os
+import secrets
+
 
 # --- Password hashing ---
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -61,3 +63,14 @@ def verify_email_token(token: str, max_age=3600):
         return email
     except (SignatureExpired, BadSignature):
         return None
+
+def create_password_reset_token() -> str:
+    """Create a secure random token for password reset"""
+    return secrets.token_urlsafe(32)
+
+def verify_password_reset_token(token: str) -> str | None:
+    """Verify password reset token (you'll need to check database)"""
+    # This just validates format, actual verification happens in database
+    if len(token) >= 32:  # Basic validation
+        return token
+    return None

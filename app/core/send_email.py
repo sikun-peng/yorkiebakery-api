@@ -86,3 +86,39 @@ def send_owner_new_order_email(order_items: list, total: float, customer_email: 
             },
         },
     )
+
+
+def send_password_reset_email(email: str, reset_url: str):
+    print(f"DEBUG: Sending password reset email to {email}")
+    print(f"DEBUG: Reset URL: {reset_url}")
+
+    subject = "Reset Your Yorkie Bakery Password 🐶🥐"
+
+    ses.send_email(
+        Source=SES_SENDER,
+        Destination={"ToAddresses": [email]},
+        Message={
+            "Subject": {"Data": subject},
+            "Body": {
+                "Text": {
+                    "Data": f"Click here to reset your password:\n{reset_url}\n\nThis link expires in 1 hour."
+                },
+                "Html": {
+                    "Data": f"""
+                    <html>
+                    <body>
+                        <h2>Reset Your Password</h2>
+                        <p>Click the link below to reset your Yorkie Bakery password:</p>
+                        <p><a href="{reset_url}" style="background: #ffb36b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Reset Password</a></p>
+                        <p>Or copy and paste this URL in your browser:</p>
+                        <p><code>{reset_url}</code></p>
+                        <hr>
+                        <p><small>If you didn't request a password reset, please ignore this email.</small></p>
+                    </body>
+                    </html>
+                    """
+                }
+            }
+        }
+    )
+    print(f"DEBUG: Password reset email sent successfully to {email}")

@@ -4,14 +4,17 @@ from sqlmodel import Session, select
 from pydantic import BaseModel, EmailStr
 from starlette.templating import Jinja2Templates
 from starlette.config import Config
+from datetime import datetime, timedelta
+import secrets
 
 from app.core.db import get_session
 from app.core.security import (
     hash_password, verify_password, create_access_token,
     create_verification_token, verify_email_token
 )
-from app.core.send_email import send_verification_email
+from app.core.send_email import send_verification_email, send_password_reset_email
 from app.models.postgres.user import User
+from app.models.postgres.password_reset_token import PasswordResetToken
 
 templates = Jinja2Templates(directory="app/templates")
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -26,6 +29,14 @@ def absolute_url(request: Request, path: str = "") -> str:
     if path.startswith("/"):
         path = path[1:]
     return f"{base}/{path}"
+
+
+# --------------------------------------
+# Password Reset Token Functions
+# --------------------------------------
+def create_password_reset_token() -> str:
+    """Create a secure random token for password reset"""
+    return secrets.token_urlsafe(32)
 
 
 # --------------------------------------
@@ -75,12 +86,20 @@ class UserLoginRequest(BaseModel):
 
 
 # --------------------------------------
-# Legacy login endpoint
+# Login endpoint
 # --------------------------------------
 @router.get("/login")
-def login_page(_: Request):
-    return JSONResponse({"detail": "Use the in-page login modal."})
+def login_page(request: Request, redirect_url: str = None):
+    """Handle both modal and page-based login"""
+    # If it's an API request or AJAX, return JSON
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JSONResponse({"detail": "Use the in-page login modal."})
 
+    # If it's a redirect from checkout, show login page
+    return templates.TemplateResponse("login.html", {
+        "request": request,
+        "redirect_url": redirect_url or "/menu/view"
+    })
 
 # --------------------------------------
 # Login (modal -> JSON)
@@ -90,11 +109,18 @@ def login_form(
         request: Request,
         email: str = Form(...),
         password: str = Form(...),
+        redirect_url: str = Form(None),  # Add redirect parameter
         session: Session = Depends(get_session),
 ):
     user = session.exec(select(User).where(User.email == email)).first()
     if not user or not verify_password(password, user.password_hash):
         return JSONResponse({"success": False, "error": "Invalid email or password."}, status_code=400)
+
+    if not user.is_verified:
+        return JSONResponse({
+            "success": False,
+            "error": "Please verify your email before logging in. Check your inbox for the verification link."
+        }, status_code=403)
 
     # Set session
     request.session["user"] = {
@@ -108,7 +134,11 @@ def login_form(
     token = create_access_token({"sub": str(user.id), "email": user.email})
     request.session["access_token"] = token
 
-    return JSONResponse({"success": True})
+    # Redirect to intended URL or default
+    if redirect_url:
+        return RedirectResponse(redirect_url, status_code=303)
+
+    return JSONResponse({"success": True, "redirect": "/cart/checkout"})
 
 
 # --------------------------------------
@@ -137,7 +167,6 @@ def register_form(
     session.commit()
     session.refresh(user)
 
-    # FIXED: Proper URL construction
     token = create_verification_token(user.email)
     verify_url = absolute_url(request, f"/auth/verify?token={token}")
 
@@ -407,3 +436,237 @@ async def facebook_callback(request: Request, session: Session = Depends(get_ses
         import traceback
         print(f"Full traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=400, detail="Facebook login failed")
+
+
+# --------------------------------------
+# Forgot Password - FIXED VERSION
+# --------------------------------------
+@router.post("/forgot_password")
+async def forgot_password(
+        request: Request,
+        session: Session = Depends(get_session)
+):
+    try:
+        data = await request.json()
+        email = data.get('email')
+
+        if not email:
+            return JSONResponse(
+                {"success": False, "error": "Email is required"},
+                status_code=400
+            )
+
+        print(f"DEBUG: Password reset requested for: {email}")
+
+        user = session.exec(select(User).where(User.email == email)).first()
+
+        if user:
+            print(f"DEBUG: User found: {user.email}")
+
+            # Create secure reset token
+            reset_token = create_password_reset_token()
+            expires_at = datetime.utcnow() + timedelta(hours=1)
+
+            # Create reset token record
+            reset_token_record = PasswordResetToken(
+                user_id=user.id,
+                token=reset_token,
+                expires_at=expires_at
+            )
+
+            session.add(reset_token_record)
+            session.commit()  # ✅ CRITICAL: COMMIT THE TRANSACTION
+            print(f"DEBUG: Reset token created and committed to database")
+
+            # Create reset URL
+            reset_url = absolute_url(request, f"/auth/reset_password?token={reset_token}")
+            print(f"DEBUG: Reset URL: {reset_url}")
+
+            # Send email
+            try:
+                send_password_reset_email(user.email, reset_url)
+                print(f"DEBUG: Password reset email sent to {user.email}")
+            except Exception as email_error:
+                print(f"DEBUG: Failed to send email: {email_error}")
+                # Don't fail the request if email fails
+
+        else:
+            print(f"DEBUG: User not found for email: {email}")
+
+        # Always return success to prevent email enumeration
+        return JSONResponse({
+            "success": True,
+            "message": "If an account exists with this email, a reset link has been sent."
+        })
+
+    except Exception as e:
+        print(f"DEBUG: Error in forgot_password: {e}")
+        # Log the full error for debugging
+        import traceback
+        print(f"DEBUG: Full traceback: {traceback.format_exc()}")
+
+        session.rollback()
+        return JSONResponse({
+            "success": True,  # Still return success for security
+            "message": "If an account exists with this email, a reset link has been sent."
+        })
+
+
+# --------------------------------------
+# Reset Password Page - FIXED VERSION
+# --------------------------------------
+# --------------------------------------
+# Reset Password Page - FIXED VERSION
+# --------------------------------------
+@router.get("/reset_password")
+def reset_password_page(
+        request: Request,
+        token: str,
+        session: Session = Depends(get_session)  # ✅ ADD THIS DEPENDENCY
+):
+    # Basic token validation
+    if not token or len(token) < 10:
+        return templates.TemplateResponse("reset_password.html", {
+            "request": request,
+            "token": token,
+            "error": "Invalid reset token."
+        })
+
+    # Verify token is valid in database
+    try:
+        reset_token_record = session.exec(
+            select(PasswordResetToken)
+            .where(PasswordResetToken.token == token)
+            .where(PasswordResetToken.is_used == False)
+            .where(PasswordResetToken.expires_at > datetime.utcnow())
+        ).first()
+
+        if not reset_token_record:
+            return templates.TemplateResponse("reset_password.html", {
+                "request": request,
+                "token": token,
+                "error": "Invalid or expired reset link. Please request a new password reset."
+            })
+
+        return templates.TemplateResponse("reset_password.html", {
+            "request": request,
+            "token": token,
+            "error": None
+        })
+    except Exception as e:
+        print(f"DEBUG: Error in reset_password_page: {e}")
+        return templates.TemplateResponse("reset_password.html", {
+            "request": request,
+            "token": token,
+            "error": "Error validating reset token."
+        })
+
+
+
+# --------------------------------------
+# Process Password Reset - FIXED VERSION
+# --------------------------------------
+# --------------------------------------
+# Process Password Reset - FIXED VERSION
+# --------------------------------------
+@router.post("/reset_password")
+async def reset_password(
+        request: Request,
+        token: str = Form(...),
+        new_password: str = Form(...),
+        session: Session = Depends(get_session)
+):
+    try:
+        print(f"DEBUG: Password reset attempt with token: {token}")
+
+        if not token or len(token) < 10:
+            return JSONResponse({
+                "success": False,
+                "error": "Invalid reset token."
+            }, status_code=400)
+
+        # Find valid reset token
+        reset_token_record = session.exec(
+            select(PasswordResetToken)
+            .where(PasswordResetToken.token == token)
+            .where(PasswordResetToken.is_used == False)
+            .where(PasswordResetToken.expires_at > datetime.utcnow())
+        ).first()
+
+        if not reset_token_record:
+            print("DEBUG: Invalid or expired reset token")
+            return JSONResponse({
+                "success": False,
+                "error": "Invalid or expired reset link. Please request a new password reset."
+            }, status_code=400)
+
+        # Get user
+        user = session.get(User, reset_token_record.user_id)
+        if not user:
+            print("DEBUG: User not found for reset token")
+            return JSONResponse({
+                "success": False,
+                "error": "User not found."
+            }, status_code=404)
+
+        print(f"DEBUG: Resetting password for user: {user.email}")
+
+        # Update password
+        user.password_hash = hash_password(new_password)
+
+        # Mark token as used
+        reset_token_record.is_used = True
+
+        session.add(user)
+        session.add(reset_token_record)
+        session.commit()
+
+        print("DEBUG: Password reset successful")
+
+        # Return HTML response that shows success and redirects
+        return templates.TemplateResponse("reset_password.html", {
+            "request": request,
+            "token": token,
+            "success": True,
+            "message": "Password updated successfully! You can now login with your new password."
+        })
+
+    except Exception as e:
+        print(f"DEBUG: Error in reset_password: {e}")
+        session.rollback()
+        return templates.TemplateResponse("reset_password.html", {
+            "request": request,
+            "token": token,
+            "error": "An error occurred while resetting your password."
+        })
+
+
+# --------------------------------------
+# Debug Endpoints
+# --------------------------------------
+@router.get("/debug/tables")
+async def debug_tables(session: Session = Depends(get_session)):
+    """Check if password_reset_token table exists"""
+    try:
+        # Try to query the table
+        result = session.exec(select(PasswordResetToken).limit(1)).first()
+        return {"status": "Table exists", "sample": result is not None}
+    except Exception as e:
+        return {"status": "Table missing", "error": str(e)}
+
+
+@router.get("/test_email")
+async def test_email(request: Request):
+    """Test email configuration"""
+    test_email = "sikun.peng1990@yahoo.com"
+    test_url = absolute_url(request, "/auth/reset_password?token=test123")
+
+    print(f"TEST: Attempting to send email to {test_email}")
+    print(f"TEST: Reset URL would be: {test_url}")
+
+    try:
+        send_password_reset_email(test_email, test_url)
+        return {"status": "Email sent successfully", "to": test_email}
+    except Exception as e:
+        print(f"TEST EMAIL ERROR: {e}")
+        return {"status": "Email failed", "error": str(e)}

@@ -125,7 +125,7 @@ def checkout_page(request: Request):
     # Check login
     user_id = require_login(request)
     if not user_id:
-        return RedirectResponse("/auth/login", status_code=303)
+        return RedirectResponse("/auth/login?redirect_url=/cart/checkout", status_code=303)
 
     cart = _get_cart(request)
     if not cart:
@@ -161,7 +161,7 @@ def process_checkout(
     # Must be logged in
     user_id = require_login(request)
     if not user_id:
-        return RedirectResponse("/auth/login", status_code=303)
+        return RedirectResponse("/auth/login?redirect_url=/cart/checkout", status_code=303)
 
     cart = _get_cart(request)
     if not cart:
@@ -175,7 +175,7 @@ def process_checkout(
 
         user = session.get(User, user_id)
         if not user:
-            return RedirectResponse("/auth/login", status_code=303)
+            return RedirectResponse("/auth/login?redirect_url=/cart/checkout", status_code=303)
 
         # Store user info while session is active
         user_email = user.email
