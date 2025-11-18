@@ -10,8 +10,8 @@ Return JSON ONLY. If a field is not specified, return null.
 Fields:
 - origin (e.g., french, japanese, thai, chinese)
 - category (e.g., dessert, drink, pastry, bread, entree)
-- flavor_profile (word like sweet, nutty, spicy, light, rich)
-- dietary_restrictions (string or null)
+- flavor_profiles (word like sweet, nutty, spicy, light, rich)
+- dietary_features (string or null)
 - price_max (number or null)
 """
 

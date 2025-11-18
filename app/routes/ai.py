@@ -60,8 +60,8 @@ def format_cute_results(results):
         emoji = origin_emoji(origin)
 
         tags = normalize(item.get("tags"))
-        flavors = normalize(item.get("flavor_profile"))
-        diet = normalize(item.get("dietary_restrictions"))
+        flavors = normalize(item.get("flavor_profiles"))
+        diet = normalize(item.get("dietary_features"))
 
         response += f"{emoji} **{title}** — ${price:.2f}\n"
 

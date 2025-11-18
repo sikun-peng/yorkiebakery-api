@@ -1,34 +1,27 @@
 {% extends "base.html" %}
-
 {% block title %}Add Menu Item{% endblock %}
 
 {% block content %}
+<h2 style="text-align:center; margin-bottom:30px;">Add New Menu Item 🥐</h2>
 
-<a href="/menu/view" class="admin-back-link">← Back to Menu</a>
-<h1>Add New Menu Item 🥐</h1>
+<form action="/menu/" method="post" enctype="multipart/form-data" style="max-width:600px; margin:auto; display:flex; flex-direction:column; gap:15px;">
 
-<form action="/menu/" method="post" enctype="multipart/form-data" class="admin-form-simple">
+  <!-- BASIC INFORMATION -->
+  <label>🍽️ Title *</label>
+  <input type="text" name="title" placeholder="e.g. Croissant" required>
 
-  <!-- BASIC INFO -->
-  <h2 class="section-title">Basic Information</h2>
+  <label>📝 Description</label>
+  <textarea name="description" rows="2" placeholder="Brief description of this item..."></textarea>
 
-  <label>Title *</label>
-  <input type="text" name="title" required>
-
-  <label>Description</label>
-  <textarea name="description"></textarea>
-
-  <label>Price *</label>
-  <input type="number" name="price" step="0.01" required>
-
+  <label>💰 Price *</label>
+  <input type="number" name="price" step="0.01" placeholder="e.g. 12.99" required>
 
   <!-- CLASSIFICATION -->
-  <h2 class="section-title">Classification</h2>
-
-  <label>origin *</label>
+  <label>🌍 Origin *</label>
   <select name="origin" required>
-    <option value="">Choose origin</option>
+    <option value="">Select origin...</option>
     <option value="french">French</option>
+    <option value="italian">Italian</option>
     <option value="japanese">Japanese</option>
     <option value="chinese">Chinese</option>
     <option value="thai">Thai</option>
@@ -37,53 +30,177 @@
     <option value="fusion">Fusion</option>
   </select>
 
-  <label>Category *</label>
+  <label>📂 Category *</label>
   <select name="category" required>
-    <option value="">Select category</option>
+    <option value="">Select category...</option>
     <option value="pastry">Pastry</option>
     <option value="dessert">Dessert</option>
     <option value="drink">Drink</option>
     <option value="entree">Entrée</option>
     <option value="appetizer">Appetizer</option>
     <option value="side">Side</option>
-    <option value="bread">Bread</option>
+    <option value="bread">Rice & Noodles</option>
   </select>
 
-  <label>Tags (comma-separated)</label>
-  <input type="text" name="tags">
-
+  <label>🏷️ Tags (comma-separated)</label>
+  <input type="text" name="tags" placeholder="e.g. sweet, flaky, buttery">
 
   <!-- FLAVOR & DIETARY -->
-  <h2 class="section-title">Flavor & Dietary</h2>
+  <label>👅 Flavor Profile (comma-separated)</label>
+  <input type="text" name="flavor_profiles" placeholder="e.g. sweet, savory, spicy">
 
-  <label>Flavor Profile (comma-separated)</label>
-  <input type="text" name="flavor_profile">
+<label>🥗 Dietary Features</label>
+<div class="checkbox-group">
+    <!-- DIETARY PREFERENCES -->
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="vegetarian">
+        <span>🥬 Vegetarian</span>
+    </label>
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="vegan">
+        <span>🌱 Vegan</span>
+    </label>
 
-  <label>Dietary Restrictions (multi-select)</label>
-  <select name="dietary_restrictions" multiple class="multi-select">
-    <option value="vegetarian">Vegetarian</option>
-    <option value="vegan">Vegan</option>
-    <option value="contains_nuts">Contains Nuts</option>
-    <option value="gluten_free">Gluten-Free</option>
-    <option value="dairy_free">Dairy-Free</option>
-  </select>
-  <p class="help">Hold ⌘ (Mac) or CTRL (Win) to select multiple</p>
+    <!-- MAJOR ALLERGENS -->
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="gluten_free">
+        <span>✅ Gluten-Free</span>
+    </label>
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="contains_gluten">
+        <span>🌾 Contains Gluten</span>
+    </label>
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="contains_dairy">
+        <span>🥛 Contains Dairy</span>
+    </label>
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="contains_nuts">
+        <span>🥜 Contains Nuts</span>
+    </label>
 
+    <!-- PROTEIN SOURCES (only uncommon ones) -->
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="contains_pork">
+        <span>🐖 Contains Pork</span>
+    </label>
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="contains_shellfish">
+        <span>🦐 Contains Shellfish</span>
+    </label>
 
-  <!-- SETTINGS -->
-  <h2 class="section-title">Availability & Image</h2>
+    <!-- ALCOHOL CONTENT -->
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="contains_alcohol">
+        <span>🍷 Contains Alcohol</span>
+    </label>
 
-  <label>Available?</label>
+    <!-- FLAVOR PROFILE -->
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="spicy">
+        <span>🌶️ Spicy</span>
+    </label>
+</div>
+
+  <!-- AVAILABILITY & IMAGE -->
+  <label>🟢 Available?</label>
   <select name="is_available">
     <option value="true">Yes</option>
     <option value="false">No</option>
   </select>
 
-  <label>Image *</label>
+  <label>🖼️ Image *</label>
   <input type="file" name="image" accept="image/*" required>
 
-
-  <button type="submit" class="btn-submit">Create Item ✅</button>
+  <button type="submit" class="btn" style="margin-top:20px;">Create Item ✅</button>
 </form>
 
+<div style="text-align: center; margin-top: 20px;">
+  <a href="/menu/view" style="color: #666; text-decoration: none;">← Back to Menu</a>
+</div>
+
+<style>
+form {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+label {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #ffb36b;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  border: 1px solid #e9ecef;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: normal;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.checkbox-label:hover {
+  background: #e9ecef;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.checkbox-label span {
+  flex: 1;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  background: #ffb36b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background: #ffa04b;
+}
+</style>
 {% endblock %}

@@ -10,8 +10,49 @@
 {# Group items by category #}
 {% set categories = items | map(attribute='category') | unique | list %}
 
+{# --- Mapping dictionaries --- #}
+{% set origin_map = {
+    "chinese": "中国",
+    "french": "France",
+    "american": "United States",
+    "fusion": "Fusion",
+    "korean": "한국",
+    "japanese": "日本",
+    "italian": "Italia",
+    "thai": "ไทย",
+    "germany": "Deutschland",
+    "hong_kong": "香港",
+    "macau": "澳門"
+} %}
+
+{% set dietary_map = {
+    "vegetarian": "🥬 Vegetarian",
+    "vegan": "🌱 Vegan",
+    "gluten_free": "✅ Gluten-Free",
+    "contains_gluten": "🌾 Contains Gluten",
+    "contains_dairy": "🥛 Contains Dairy",
+    "contains_nuts": "🥜 Contains Nuts",
+    "contains_pork": "🐖 Contains Pork",
+    "contains_shellfish": "🦐 Contains Shellfish",
+    "contains_alcohol": "🍷 Contains Alcohol",
+    "spicy": "🌶️ Spicy"
+} %}
+
+{% set category_map = {
+    "pastry": "🧁 Pastry",
+    "dessert": "🍰 Dessert",
+    "entree": "🍽️ Entrée",
+    "drink": "🥤 Drinks",
+    "rice_and_noodles": "Rice 🍚  & Noodles 🍜 ",
+    "appetizer": "🥟 Appetizers",
+    "soup": "🍲 Soup",
+    "default": "🍴 Other"
+} %}
+
 {% for cat in categories %}
-  <h2 class="category-header">{{ cat }}</h2>
+  <h2 class="category-header">
+    {{ category_map[cat] if cat in category_map else cat|capitalize }}
+  </h2>
 
   <div class="menu-grid">
     {% for item in items if item.category == cat %}
@@ -32,19 +73,31 @@
       <div class="menu-meta">
 
         {% if item.origin %}
-        <p><strong>Origin:</strong> {{ item.origin }}</p>
+        <p><strong>Origin:</strong>
+          {{ origin_map[item.origin] if item.origin in origin_map else item.origin }}
+        </p>
         {% endif %}
 
         {% if item.tags %}
         <p><strong>Tags:</strong> {{ item.tags | join(", ") }}</p>
         {% endif %}
 
-        {% if item.flavor_profile %}
-        <p><strong>Flavor:</strong> {{ item.flavor_profile | join(", ") }}</p>
+        {% if item.flavor_profiles %}
+        <p><strong>Flavor:</strong> {{ item.flavor_profiles | join(", ") }}</p>
         {% endif %}
 
-        {% if item.dietary_restrictions %}
-        <p><strong>Dietary:</strong> {{ item.dietary_restrictions | join(", ") }}</p>
+        {% if item.dietary_features %}
+            {% set mapped = [] %}
+
+            {% for d in item.dietary_features %}
+                {% if d in dietary_map %}
+                    {% set _ = mapped.append(dietary_map[d]) %}
+                {% else %}
+                    {% set _ = mapped.append(d) %}
+                {% endif %}
+            {% endfor %}
+
+            <p><strong>Dietary:</strong> {{ mapped | join(", ") }}</p>
         {% endif %}
 
       </div>

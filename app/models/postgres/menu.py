@@ -13,7 +13,7 @@ class MenuItem(SQLModel, table=True):
     origin: Optional[str] = None
     category: Optional[str] = None
     tags: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
-    flavor_profile: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
-    dietary_restrictions: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
+    flavor_profiles: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
+    dietary_features: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
     price: Optional[float] = None
     is_available: bool = True

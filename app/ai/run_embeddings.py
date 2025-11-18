@@ -51,8 +51,8 @@ def build_embeddings():
             "category": item.category or "",
             "price": float(item.price) if item.price else None,
             "tags": ",".join(item.tags or []),
-            "flavor_profile": ",".join(item.flavor_profile or []),
-            "dietary_restrictions": ",".join(item.dietary_restrictions or []),
+            "flavor_profiles": ",".join(item.flavor_profiles or []),
+            "dietary_features": ",".join(item.dietary_features or []),
         })
 
     collection.add(

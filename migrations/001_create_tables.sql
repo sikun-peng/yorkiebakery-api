@@ -38,9 +38,9 @@ CREATE TABLE menu_item (
     image_url TEXT,
     origin TEXT,
     category TEXT,
-    tags TEXT,
-    flavor_profile TEXT,
-    dietary_restrictions TEXT,
+    tags TEXT[] DEFAULT ARRAY[]::TEXT[],
+    flavor_profiles TEXT[] DEFAULT ARRAY[]::TEXT[],
+    dietary_features TEXT[] DEFAULT ARRAY[]::TEXT[],
     price NUMERIC(10,2) NOT NULL,
     is_available BOOLEAN DEFAULT TRUE
 );

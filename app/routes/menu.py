@@ -60,8 +60,8 @@ def create_menu_item(
     category: Optional[str] = Form(None),
     origin: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),
-    flavor_profile: Optional[str] = Form(None),
-    dietary_restrictions: Optional[str] = Form(None),
+    flavor_profiles: Optional[str] = Form(None),
+    dietary_features: Optional[str] = Form(None),
     is_available: bool = Form(True),
     image: UploadFile = File(...),
     session: Session = Depends(get_session),
@@ -87,8 +87,8 @@ def create_menu_item(
         category=category,
         origin=origin,
         tags=parse_list(tags),
-        flavor_profile=parse_list(flavor_profile),
-        dietary_restrictions=parse_list(dietary_restrictions),
+        flavor_profiles=parse_list(flavor_profiles),
+        dietary_features=parse_list(dietary_features),
         image_url=image_url,
         is_available=is_available,
     )
@@ -146,9 +146,9 @@ def search_menu_items(
     if category:
         query = query.where(MenuItem.category == category)
     if dietary:
-        query = query.where(dietary == any_(MenuItem.dietary_restrictions))
+        query = query.where(dietary == any_(MenuItem.dietary_features))
     if flavor:
-        query = query.where(flavor == any_(MenuItem.flavor_profile))
+        query = query.where(flavor == any_(MenuItem.flavor_profiles))
     if min_price is not None:
         query = query.where(MenuItem.price >= min_price)
     if max_price is not None:
@@ -188,8 +188,8 @@ def update_menu_item(
     category: Optional[str] = Form(None),
     origin: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),
-    flavor_profile: Optional[str] = Form(None),
-    dietary_restrictions: Optional[str] = Form(None),
+    flavor_profiles: Optional[str] = Form(None),
+    dietary_features: Optional[str] = Form(None),
     is_available: Optional[bool] = Form(None),
     image: Optional[UploadFile] = File(None),
     session: Session = Depends(get_session),
@@ -219,10 +219,10 @@ def update_menu_item(
 
     if tags is not None:
         item.tags = parse_list(tags)
-    if flavor_profile is not None:
-        item.flavor_profile = parse_list(flavor_profile)
-    if dietary_restrictions is not None:
-        item.dietary_restrictions = parse_list(dietary_restrictions)
+    if flavor_profiles is not None:
+        item.flavor_profiles = parse_list(flavor_profiles)
+    if dietary_features is not None:
+        item.dietary_features = parse_list(dietary_features)
 
     # Availability
     if is_available is not None:
