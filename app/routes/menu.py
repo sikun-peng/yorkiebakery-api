@@ -31,22 +31,50 @@ S3_BUCKET_IMAGE = "yorkiebakery-image"
 # Public menu view (HTML Page)
 # -------------------------------
 @router.get("/view")
-def view_menu_page(request: Request, session: Session = Depends(get_session)):
-    items = session.exec(select(MenuItem).where(MenuItem.is_available == True)).all()
+def view_menu_page(
+        request: Request,
+        session: Session = Depends(get_session),
+        dietary: List[str] = Query(None)
+):
+    try:
+        # Get all items first
+        all_items = session.exec(select(MenuItem).where(MenuItem.is_available == True)).all()
 
-    cart = request.session.get("cart", {})
-    cart_count = sum(cart.values())
+        # Apply dietary filters in Python if provided
+        if dietary:
+            filtered_items = []
+            for item in all_items:
+                # Check if item has ALL of the requested dietary features (AND logic)
+                if item.dietary_features and all(diet in item.dietary_features for diet in dietary):
+                    filtered_items.append(item)
+            items = filtered_items
+        else:
+            items = all_items
 
-    return templates.TemplateResponse(
-        "menu.html",
-        {
-            "request": request,
-            "items": items,
-            "cart": cart,
-            "cart_count": cart_count,
-        },
-    )
+        cart = request.session.get("cart", {})
+        cart_count = sum(cart.values())
 
+        return templates.TemplateResponse(
+            "menu.html",
+            {
+                "request": request,
+                "items": items,
+                "cart": cart,
+                "cart_count": cart_count,
+            },
+        )
+    except Exception as e:
+        print(f"Error in view_menu_page: {e}")
+        # Return empty response on error
+        return templates.TemplateResponse(
+            "menu.html",
+            {
+                "request": request,
+                "items": [],
+                "cart": {},
+                "cart_count": 0,
+            },
+        )
 
 # -------------------------------
 # Create menu item (with image)

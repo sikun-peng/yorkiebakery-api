@@ -21,8 +21,8 @@
     "italian": "Italia",
     "thai": "ไทย",
     "germany": "Deutschland",
-    "hong_kong": "香港",
-    "macau": "澳門"
+    "macau": "澳門",
+    "hong_kong": "香港"
 } %}
 
 {% set dietary_map = {
@@ -48,6 +48,69 @@
     "soup": "🍲 Soup",
     "default": "🍴 Other"
 } %}
+
+<!-- Dietary Filter -->
+<div class="filter-section">
+    <h3>🥗 Filter by Dietary Features</h3>
+    <form method="GET" action="/menu/view" class="filter-form">
+        <div class="checkbox-group">
+            <!-- DIETARY PREFERENCES -->
+            <label class="checkbox-label">
+                <input type="checkbox" name="dietary" value="vegetarian">
+                <span>🥬 Vegetarian</span>
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="dietary" value="vegan">
+                <span>🌱 Vegan</span>
+            </label>
+
+            <!-- MAJOR ALLERGENS -->
+            <label class="checkbox-label">
+                <input type="checkbox" name="dietary" value="gluten_free">
+                <span>✅ Gluten-Free</span>
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="dietary" value="contains_gluten">
+                <span>🌾 Contains Gluten</span>
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="dietary" value="contains_dairy">
+                <span>🥛 Contains Dairy</span>
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="dietary" value="contains_nuts">
+                <span>🥜 Contains Nuts</span>
+            </label>
+
+            <!-- PROTEIN SOURCES -->
+            <label class="checkbox-label">
+                <input type="checkbox" name="dietary" value="contains_pork">
+                <span>🐖 Contains Pork</span>
+            </label>
+            <label class="checkbox-label">
+                <input type="checkbox" name="dietary" value="contains_shellfish">
+                <span>🦐 Contains Shellfish</span>
+            </label>
+
+            <!-- ALCOHOL CONTENT -->
+            <label class="checkbox-label">
+                <input type="checkbox" name="dietary" value="contains_alcohol">
+                <span>🍷 Contains Alcohol</span>
+            </label>
+
+            <!-- FLAVOR PROFILE -->
+            <label class="checkbox-label">
+                <input type="checkbox" name="dietary" value="spicy">
+                <span>🌶️ Spicy</span>
+            </label>
+        </div>
+
+        <div class="filter-actions">
+            <button type="submit" class="btn filter-btn">Apply Filters</button>
+            <a href="/menu/view" class="btn btn-outline clear-btn">Clear All</a>
+        </div>
+    </form>
+</div>
 
 {% for cat in categories %}
   <h2 class="category-header">

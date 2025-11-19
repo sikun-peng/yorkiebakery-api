@@ -5,7 +5,7 @@ INSERT INTO menu_item (title, description, image_url, origin, category, tags, fl
 ('Black Forest Cake', '黑森林蛋糕 - German chocolate cake with cherries and brandy', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/black_forest.jpg', 'german', 'pastry',
  ARRAY['chocolate','cherry','layered'], ARRAY['sweet','rich'], ARRAY['contains_alcohol','contains_gluten','contains_dairy'], 89.00),
 
-('Macarons', '意式马卡龙 - French almond meringue cookies with various fillings', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/macarons.jpg', 'french', 'pastry',
+('Macarons', '马卡龙 - French almond meringue cookies with various fillings', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/macarons.jpg', 'french', 'pastry',
  ARRAY['macaron','almond','delicate'], ARRAY['sweet','delicate'], ARRAY['contains_nuts','gluten_free','vegetarian'], 69.00),
 
 ('Cedric Grolet Pastry', '法式甜品慕斯 - French modernist fruit-inspired pastries', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/cedric_grolet.jpg', 'french', 'pastry',
@@ -71,7 +71,7 @@ INSERT INTO menu_item (title, description, image_url, origin, category, tags, fl
 -- ============================
 INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
 ('Korean Fried Chicken Wings', '韩式鸡翅 - Crispy fried chicken wings with Korean seasoning', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/chicken_wing.jpg', 'korean', 'entree',
- ARRAY['chicken','fried','spicy'], ARRAY['spicy','savory','crispy'], ARRAY['contains_gluten'], 99.00),
+ ARRAY['chicken','fried','spicy'], ARRAY['spicy','savory','crispy'], ARRAY['spicy'], 99.00),
 
 ('Steamed Sea Bass', '清蒸鲈鱼 - Fresh sea bass steamed with ginger and scallions', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/steaming_fish.jpg', 'chinese', 'entree',
  ARRAY['fish','steamed','healthy'], ARRAY['savory','umami','light'], ARRAY['gluten_free','contains_shellfish'], 99.00),
@@ -80,7 +80,7 @@ INSERT INTO menu_item (title, description, image_url, origin, category, tags, fl
  ARRAY['soup','beef','sour'], ARRAY['sour','spicy','savory'], ARRAY['gluten_free'], 49.00),
 
 ('Sichuan Spicy Chicken', '辣子鸡 - Crispy chicken with dried chilies and Sichuan peppercorns', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/spicy_chicken.jpg', 'chinese', 'entree',
- ARRAY['chicken','sichuan','spicy'], ARRAY['spicy','numbing','savory'], ARRAY['gluten_free'], 59.00),
+ ARRAY['chicken','sichuan','spicy'], ARRAY['spicy','numbing','savory'], ARRAY['spicy'], 59.00),
 
 ('Griddle Cooked Mushrooms', '干锅茶树菇 - Tea tree mushrooms cooked in a dry pot', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/mushrooms.jpg', 'chinese', 'entree',
  ARRAY['mushroom','griddle','vegetarian'], ARRAY['savory','umami','aromatic'], ARRAY['gluten_free','vegan'], 59.00),
@@ -98,7 +98,7 @@ INSERT INTO menu_item (title, description, image_url, origin, category, tags, fl
  ARRAY['bun','steamed','vegetable'], ARRAY['savory','soft','umami'], ARRAY['vegan','contains_gluten'], 69.00),
 
 ('Griddle Pork Intestines', '干锅肥肠 - Pork intestines cooked in a spicy dry pot', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/intestines.jpg', 'chinese', 'entree',
- ARRAY['pork','intestine','griddle'], ARRAY['spicy','savory','chewy'], ARRAY['contains_pork','gluten_free'], 59.00),
+ ARRAY['pork','intestine','griddle'], ARRAY['spicy','savory','chewy'], ARRAY['contains_pork','spicy'], 59.00),
 
 ('Yuxiang Shredded Pork', '鱼香肉丝 - Shredded pork in fish-fragrant sauce', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/shredded_pork.jpg', 'chinese', 'entree',
  ARRAY['pork','shredded','stir_fry'], ARRAY['sour','spicy','sweet'], ARRAY['contains_pork','gluten_free'], 49.00);
@@ -114,7 +114,52 @@ INSERT INTO menu_item (title, description, image_url, origin, category, tags, fl
  ARRAY['rice','japanese','haiga'], ARRAY['nutty','chewy'], ARRAY['vegan','gluten_free'], 3.99),
 
 ('Chongqing Noodles', '重庆小面 - Spicy Sichuan-style noodles with broth', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/chongqing_noodles.jpg', 'chinese', 'rice_and_noodles',
- ARRAY['noodles','spicy','sichuan'], ARRAY['spicy','numbing','savory'], ARRAY['contains_gluten'], 59.00),
+ ARRAY['noodles','spicy','sichuan'], ARRAY['spicy','numbing','savory'], ARRAY['contains_gluten', 'spicy'], 59.00),
 
 ('Beef Noodles', '李先生加州牛肉面 - Beef broth noodles with tender beef slices', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/beef_noodles.jpg', 'chinese', 'rice_and_noodles',
  ARRAY['noodles','beef','soup'], ARRAY['savory','rich','umami'], ARRAY['contains_gluten'], 59.00);
+
+
+-- ============================
+-- DRINKS
+-- ============================
+INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
+('Boba Milk Tea', '珍珠奶茶 - Sweet tea with tapioca pearls and milk', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/boba_milk_tea.jpg', 'taiwanese', 'drink',
+ ARRAY['bubble_tea','tapioca','milky'], ARRAY['sweet','creamy','chewy'], ARRAY['contains_dairy','vegetarian'], 6.99),
+
+('American Black Coffee', '美式黑咖啡 - Classic brewed black coffee', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/black_coffee.jpg', 'american', 'drink',
+ ARRAY['coffee','black','brewed'], ARRAY['bitter','bold','aromatic'], ARRAY['vegan','gluten_free'], 3.99),
+
+('Espresso', '意式浓缩咖啡 - Strong concentrated coffee shot', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/espresso.jpg', 'italian', 'drink',
+ ARRAY['espresso','strong','concentrated'], ARRAY['bitter','intense','rich'], ARRAY['vegan','gluten_free'], 4.49),
+
+('Latte', '拿铁咖啡 - Espresso with steamed milk', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/latte.jpg', 'italian', 'drink',
+ ARRAY['latte','milky','espresso'], ARRAY['creamy','smooth','balanced'], ARRAY['contains_dairy','vegetarian'], 5.99),
+
+('Cappuccino', '卡布奇诺 - Espresso with equal parts steamed milk and foam', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/cappuccino.jpg', 'italian', 'drink',
+ ARRAY['cappuccino','foamy','espresso'], ARRAY['creamy','light','balanced'], ARRAY['contains_dairy','vegetarian'], 5.99),
+
+('Matcha Latte', '抹茶拿铁 - Green tea powder with steamed milk', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/matcha_latte.jpg', 'japanese', 'drink',
+ ARRAY['matcha','green_tea','milky'], ARRAY['earthy','creamy','sweet'], ARRAY['contains_dairy','vegetarian'], 6.49),
+
+
+('Thai Iced Tea', '泰式冰奶茶 - Sweet spiced tea with condensed milk', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/thai_tea.jpg', 'thai', 'drink',
+ ARRAY['thai_tea','orange','sweet'], ARRAY['sweet','creamy','spiced'], ARRAY['contains_dairy','vegetarian'], 6.99),
+
+('Lemonade', '新鲜柠檬水 - Freshly squeezed lemon with sugar', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/lemonade.jpg', 'american', 'drink',
+ ARRAY['lemonade','refreshing','citrus'], ARRAY['sour','sweet','refreshing'], ARRAY['vegan','gluten_free'], 4.99),
+
+('Iced Americano', '冰美式咖啡 - Espresso shots over ice and water', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/americano_iced.jpg', 'american', 'drink',
+ ARRAY['iced_coffee','cold','refreshing'], ARRAY['bold','smooth','refreshing'], ARRAY['vegan','gluten_free'], 4.49),
+
+('Mocha', '摩卡咖啡 - Espresso with chocolate and steamed milk', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/mocha.jpg', 'italian', 'drink',
+ ARRAY['mocha','chocolate','coffee'], ARRAY['sweet','chocolatey','creamy'], ARRAY['contains_dairy','vegetarian'], 6.49),
+
+('Green Tea', '绿茶 - Traditional Japanese green tea', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/green_tea.jpg', 'japanese', 'drink',
+ ARRAY['green_tea','traditional','healthy'], ARRAY['earthy','grassy','light'], ARRAY['vegan','gluten_free'], 3.49),
+
+('Orange Juice', '鲜榨橙汁 - Freshly squeezed orange juice', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/orange_juice.jpg', 'american', 'drink',
+ ARRAY['orange_juice','fresh','vitamin_c'], ARRAY['sweet','tangy','refreshing'], ARRAY['vegan','gluten_free'], 4.99),
+
+('Soda', '汽水 - Various carbonated soft drinks', '', 'american', 'drink',
+ ARRAY['soda','carbonated','refreshing'], ARRAY['sweet','fizzy','cold'], ARRAY['vegan','gluten_free'], 2.99);
