@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}System Architecture – Yorkie Bakery AI{% endblock %}
+
+{% block content %}
+
+<section style="padding: 40px; max-width: 900px; margin: auto;">
+
+  <h1 class="text-3xl font-bold text-center mb-6">🏗️ Yorkie Bakery – System Architecture Overview</h1>
+
+  <p class="text-gray-700 text-lg mb-8 text-center">
+    This page provides a technical high-level overview (HLD) of the Yorkie Bakery platform,
+    including backend architecture, AI/ML pipeline, database design, and deployment infrastructure.
+    This is intended for recruiters and engineers evaluating my work.
+  </p>
+
+    <div style="text-align:center; margin: 30px 0;">
+      <a
+        href="https://github.com/sikun-peng/yorkiebakery-api/blob/main/HLD.md"
+        target="_blank"
+        class="btn"
+        style="padding: 10px 20px; background:#ffe8b3; border-radius:8px; text-decoration:none; color:#6b4f2f; font-weight:bold;"
+      >
+        📄 View Full System Design (HLD) on GitHub
+      </a>
+    </div>
+
+  <!-- =========================== -->
+  <!-- SECTION 1: High Level Diagram -->
+  <!-- =========================== -->
+
+  <h2 class="section-title">1. High-Level Architecture Diagram</h2>
+
+  <pre class="architecture-diagram">
+                ┌────────────────────────┐
+                │      React + Vite      │
+                │  (AI Demo Frontend)    │
+                └───────────┬────────────┘
+                            │  REST + JSON
+                            ▼
+                  ┌──────────────────────┐
+                  │       FastAPI        │
+                  │  Auth / Menu / AI    │
+                  └──────────┬───────────┘
+                             │
+     ┌─────────────┬─────────┼─────────┬──────────────┐
+     ▼             ▼         ▼          ▼               ▼
+PostgreSQL     ChromaDB   OpenAI    AWS S3 (Music)   AWS SES
+(Menu/Users)   Vectors    Vision /   Audio Store    Email Verify
+                         Embedding
+  </pre>
+
+  <!-- =========================== -->
+  <!-- SECTION 2: Backend Design -->
+  <!-- =========================== -->
+
+  <h2 class="section-title">2. Backend Architecture (FastAPI)</h2>
+
+  <p>
+    The backend is a modular FastAPI application deployed on AWS EC2 using Docker Compose.
+    It includes:
+  </p>
+
+  <ul class="bullet-list">
+    <li>🔹 **User authentication** (register, login, session cookies, email verification)</li>
+    <li>🔹 **Menu management** (admin CRUD, S3 image uploads)</li>
+    <li>🔹 **Music streaming** (S3 signed URLs)</li>
+    <li>🔹 **AI endpoints** for RAG, filters, and image matching</li>
+  </ul>
+
+  <h3>API Modules</h3>
+  <ul class="bullet-list">
+    <li><code>auth/</code> – login, register, session, email verification</li>
+    <li><code>menu/</code> – product CRUD, pagination, filters</li>
+    <li><code>ai/demo/</code> – AI pipeline (LLM filters + vector search)</li>
+    <li><code>ai/vision/</code> – image upload → OpenAI Vision model</li>
+  </ul>
+
+  <!-- =========================== -->
+  <!-- SECTION 3: AI Pipeline -->
+  <!-- =========================== -->
+
+  <h2 class="section-title">3. AI Menu Recommendation Pipeline</h2>
+
+  <p>
+    The AI system uses a two-stage hybrid retrieval approach combining LLM semantic understanding
+    with vector similarity search and strict backend filtering.
+  </p>
+
+  <h3>Pipeline Steps</h3>
+  <ol class="number-list">
+    <li>**User sends text or image** from the React demo.</li>
+    <li>FastAPI calls **OpenAI** to extract:
+      <ul>
+        <li>category (pastry / dessert / drink)</li>
+        <li>origin (japanese / french / thai / …)</li>
+        <li>flavor profile (sweet, fruity, chewy, creamy)</li>
+        <li>price range</li>
+      </ul>
+    </li>
+    <li>Use **ChromaDB vector store** to retrieve the top 50 candidate menu items.</li>
+    <li>Apply **server-side filtering** with `apply_all_filters()`.</li>
+    <li>Rank + return the final result set to React.</li>
+  </ol>
+
+  <h3>Vision Image Flow</h3>
+  <pre class="architecture-diagram">
+Upload Image → FastAPI → OpenAI Vision → Tags/Flavor → Vector Search → Recommendations
+  </pre>
+
+
+  <!-- =========================== -->
+  <!-- SECTION 4: Database -->
+  <!-- =========================== -->
+
+  <h2 class="section-title">4. Database Schema</h2>
+
+  <h3>PostgreSQL Tables</h3>
+  <ul class="bullet-list">
+    <li><code>user_account</code> – auth, email verification</li>
+    <li><code>menu_item</code> – title, description, price, tags</li>
+    <li><code>music_track</code> – title, s3_url</li>
+    <li><code>orders</code> + <code>order_items</code> (future extension)</li>
+  </ul>
+
+  <h3>ChromaDB Vectors</h3>
+  <p>The embedding store uses OpenAI embedding vectors for each menu item:</p>
+  <pre class="architecture-diagram">
+{ id, title, tags, flavor_profiles, embedding_vector[] }
+  </pre>
+
+  <!-- =========================== -->
+  <!-- SECTION 5: Deployment -->
+  <!-- =========================== -->
+
+  <h2 class="section-title">5. Deployment Architecture</h2>
+
+  <ul class="bullet-list">
+    <li>🐳 **Docker Compose** (FastAPI + Postgres + ChromaDB)</li>
+    <li>🐙 Hosted on **AWS EC2**</li>
+    <li>🌐 Domain: <code>yorkiebakery.com</code></li>
+    <li>🧪 Staging: <code>beta.yorkiebakery.com</code></li>
+    <li>📧 AWS SES – email verification & password reset</li>
+    <li>🪣 AWS S3 – music tracks + images</li>
+  </ul>
+
+  <!-- =========================== -->
+  <!-- SECTION 6: Future Plans -->
+  <!-- =========================== -->
+
+  <h2 class="section-title">6. Future Enhancements</h2>
+  <ul class="bullet-list">
+    <li>⭐ User preference profiles (learn from history)</li>
+    <li>⭐ Collaborative filtering recommendations</li>
+    <li>⭐ Better ranking using LLM scoring + vector similarity</li>
+    <li>⭐ Admin analytics dashboard</li>
+  </ul>
+
+</section>
+
+{% endblock %}

@@ -10,7 +10,7 @@ import os
 # Internal imports
 from app.core.db import engine
 from app.core.cart_utils import get_cart_count
-from app.routes import auth, menu, order, cart, music
+from app.routes import auth, menu, order, cart, music, about
 from app.ai.route import ai_demo, ai_chat, ai_vision, ai_debug
 
 # ===============================================
@@ -46,14 +46,6 @@ async def serve_react_assets(filename: str):
         return FileResponse(asset_path)
     else:
         return {"error": "Asset not found"}, 404
-
-# Serve other static files that might be in dist root
-@app.get("/{filename}")
-async def serve_root_files(filename: str):
-    file_path = os.path.join(frontend_dist_path, filename)
-    if os.path.exists(file_path) and filename != "index.html":
-        return FileResponse(file_path)
-    # Let the mount handle index.html and other routes
 
 # Catch-all for React Router - serve index.html for any unmatched ai-demo routes
 @app.get("/ai-demo/{full_path:path}")
@@ -99,12 +91,14 @@ app.include_router(menu.router)
 app.include_router(order.router)
 app.include_router(cart.router)
 app.include_router(music.router)
+app.include_router(about.router)
 
 # AI / RAG routers
 app.include_router(ai_demo.router)
 app.include_router(ai_chat.router)
 app.include_router(ai_vision.router)
 app.include_router(ai_debug.router)
+
 
 # ===============================================
 # HOME PAGE

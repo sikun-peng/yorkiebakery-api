@@ -1,27 +1,26 @@
-# 🐶 Yorkie Bakery — AI-Enhanced Web App
+# Yorkie Bakery — AI-Enhanced Web App
 
-Yorkie Bakery is a full-stack web application for bakery menu browsing, ordering, event campaigns, and an AI-powered chat assistant that helps users discover what to order. The system supports two roles: **Admin (Oscar)** and **Regular Users**, and includes a recommendation & RAG-based chat experience.
-
----
+## 🐶 Overview
+Yorkie Bakery is a full-stack AI-powered bakery application featuring menu browsing, ordering, music streaming, image-based recommendations, and a full RAG-powered chat assistant.
 
 ## ✨ Features
 
 ### Admin (Oscar)
-- Full admin dashboard
-- Add / update / delete menu items (with images)
-- Manage events + seasonal campaigns
-- Moderate reviews and comments
-- Upload music tracks for bakery ambiance
-- Receive notifications for new orders
+- Admin dashboard
+- CRUD menu management (with images)
+- Upload music tracks
+- Manage campaigns/events
+- Moderate reviews
+- Receive new order alerts
 
 ### Regular Users
-- Create an account & login
-- Browse menu with pagination (20–100 items)
-- Place orders & reservations
-- Leave reviews & set taste preferences
-- Subscribe to offers / events
-- Semantic search across menu & music
-- **Chat with Oscar** for recommendations & help
+- Register/login with email verification
+- Browse menu (20–100 items pagination)
+- Add to cart & checkout
+- Leave reviews & preferences
+- Subscribe to events/notifications
+- Chat-based AI assistant “Oscar”
+- Image recognition (OpenAI Vision)
 
 ---
 
@@ -29,115 +28,148 @@ Yorkie Bakery is a full-stack web application for bakery menu browsing, ordering
 
 | Layer | Technology |
 |------|------------|
-| Frontend | React (User UI), HTMX/Jinja2 (Admin Dashboard) |
-| Backend | **FastAPI** (Python) |
-| Database | **PostgreSQL** |
-| Storage | AWS S3 (images + music) |
-| AI | OpenAI GPT + **LangChain RAG** |
-| Vector Search | **FAISS** |
-| Auth | JWT + Role-based Access Control |
-| Deployment | Docker → EC2 / ECS / GCP / Fly.io |
+| Frontend | React (AI Demo), HTMX/Jinja2 |
+| Backend | FastAPI |
+| Database | PostgreSQL |
+| Storage | AWS S3 |
+| AI / LLM | OpenAI GPT + Vision |
+| Vector DB | ChromaDB |
+| Deployment | Docker + EC2 |
 
 ---
 
-## 🧠 AI Architecture (RAG)
+## 🤖 AI Architecture
 
-Yorkie uses **Retrieval-Augmented Generation** to give grounded, accurate, friendly answers.
+### Hybrid RAG Pipeline
+```
+User Query/Image
+     ↓
+OpenAI → Extract filters
+     ↓
+Vector Search (ChromaDB) Top-50
+     ↓
+Strict Backend Filters
+     ↓
+Rank + Final Recommendations
+```
 
-User → Chat UI → /chat API → Embedding → Vector Search (FAISS)
-↓
-Retrieve Top Matching Menu Items
-↓
-Construct Yorkie Personality Prompt → GPT Response
-↓
-UI displays reply
-
-- Prevents hallucination
-- Makes Yorkie *actually know the menu*
-- Allows natural questions like:
-  > *“I want something fluffy and sweet.”*
-
----
-
-## 🗄️ System Architecture
-
-┌────────────────────── UI ──────────────────────┐
-| React User App        | Admin Dashboard (HTMX) |
-└─────────────┬─────────┴───────────┬────────────┘
-│                     │
-▼                     ▼
-┌──────────────────────────────────┐
-│           FastAPI API            │
-│ (Auth, Menu, Orders, Chat, etc.) │
-└─────────────────┬────────────────┘
-│
-┌─────────────────────────────┐
-│     Core Infrastructure     │
-│   PostgreSQL (main data)    │
-│   S3 (images/music)         │
-│   FAISS (vector index)      │
-│   OpenAI (LLM + embeddings) │
-└─────────────────────────────┘
+### Vision Image Flow
+```
+Image Upload
+ → OpenAI Vision
+ → Flavor/Tag Extraction
+ → Vector Search
+ → Recommended Items
+```
 
 ---
 
-## 🗃️ Data Model (Simplified)
+## 🏗️ System Architecture
 
-User(id, email, password_hash, role, preferences)
-MenuItem(id, title, description, tags[], image_url, is_available)
-Order(id, user_id, items[], total_price, status)
-Review(id, user_id, menu_item_id, rating, text)
-Campaign(id, name, description, image, start_date, end_date)
-Music(id, title, audio_url)
-
----
-
-## 🚀 Milestone Plan
-
-| # | Milestone | Outcome |
-|---|---|---|
-| M1 | Auth & Roles | Users + Admin login |
-| M2 | Menu CRUD + Images | Admin menu mgmt + pagination |
-| M3 | Orders & Alerts | Order workflow + notifications |
-| M4 | Reviews + Preferences | Flavor profile + social reviews |
-| M5 | Search & Campaigns | Keyword + tag + semantic search |
-| **M6** | **AI Recommender + RAG Chat** | FAISS vector search + GPT chat |
-| M7 | Music Uploads | Admin ambient music |
-| M8 | Admin Dashboard | Full bakery operations UI |
-| M9 | Deployment | Cloud hosting + HTTPS |
-| M10 | Polish | Logging, UX, QA |
+```
+                React + Vite (AI Demo)
+                        │
+                        ▼
+                  FastAPI Backend
+     ┌─────────────┬───────────┬──────────────┬─────────┐
+     ▼             ▼           ▼              ▼         ▼
+PostgreSQL     ChromaDB     OpenAI        AWS S3    AWS SES
+ Menu DB       Vectors    GPT/Vision    Images/Music Email
+```
 
 ---
 
-## 🧭 Roadmap / Future Extensions
-- Yorkie ordering assistant ("Place this order for me")
-- Seasonal recommendation tuning
-- Voice chat (WebRTC + Whisper)
-- Loyalty rewards & referral perks
+## 🗄️ Database Schema
+
+### PostgreSQL Tables
+- `user_account`
+- `menu_item`
+- `music_track`
+- `orders`
+- `order_items`
+
+### ChromaDB Embeddings
+```
+{ id, title, tags[], flavor_profiles[], embedding_vector[] }
+```
 
 ---
 
-## 🐾 Personality Prompt (Yorkie Mode)
+## 🚀 API Reference
 
-Yorkie speaks in:
-- Warm, cute bakery tone
-- Encouraging language
-- Never robotic
+### 🔐 Authentication API
+```
+POST /auth/register_form
+POST /auth/login_form
+POST /auth/resend_verification
+POST /auth/forgot_password
+POST /auth/reset_password
+GET  /auth/login/google
+GET  /auth/login/google/callback
+```
 
-Example:
-> “WOOF! 🐾 I sniffed out the perfect bun for you.  
-> It’s fluffy, sweet, and full of love! 🍞💗 Want me to fetch it for your cart?”
+### 🍽 Menu API
+```
+GET  /menu/view
+GET  /menu/{id}
+POST /menu/new
+POST /menu/update/{id}
+POST /menu/delete/{id}
+```
+
+### 🛒 Cart & Orders API
+```
+GET  /cart/view
+POST /cart/add
+POST /cart/remove/{id}
+POST /cart/checkout
+```
+
+### 🤖 AI API
+```
+POST /ai/demo
+POST /ai/chat
+POST /ai/vision
+GET  /ai/debug
+```
 
 ---
 
-## ❤️ About This Project
-This project is being built to learn:
-- Real-world backend engineering patterns
-- AI + RAG integration
-- Scalable product system design
-- UI/UX for consumer-facing web apps
+## 🌐 Deployment
 
-Where Bakery Meets Intelligence ✨🐶🥐
+- Docker Compose
+- PostgreSQL + ChromaDB containers
+- Deployed on **AWS EC2**
+- Domains:
+  - https://yorkiebakery.com
+  - https://beta.yorkiebakery.com
+- S3 (images/music)
+- SES (emails + password reset)
 
-APIs
-http://localhost:8000/auth/login/google
+---
+
+## 📘 System Design Page
+Visit:
+```
+/system-design
+```
+Contains diagrams, HLD, and architecture explanations.
+
+---
+
+## 🧭 Future Enhancements
+- Personalized user taste model
+- Collaborative filtering
+- Voice ordering (Whisper)
+- Admin analytics dashboard
+- Advanced ranking model
+
+---
+
+## ❤️ About
+A showcase project combining:
+- Modern backend engineering  
+- AI/RAG techniques  
+- Practical product design  
+
+**Where bakery meets intelligence 🐾🥐✨**

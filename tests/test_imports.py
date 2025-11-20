@@ -9,6 +9,7 @@ def test_imports():
     import app.core.ddb
 
     # Routes (your real structure)
+    import app.routes.about
     import app.routes.auth
     import app.routes.menu
     import app.routes.order
