@@ -272,13 +272,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Production MAIN site
     else if (hostname === "yorkiebakery.com" || hostname === "www.yorkiebakery.com") {
-        link.href = "https://beta.yorkiebakery.com/";
+        link.href = "https://yorkiebakery.com/ai-demo/";
         link.target = "_blank";
         console.log("AI Demo link set to beta.yorkiebakery.com");
     }
 
     // If user is already ON beta site
-    else if (hostname === "beta.yorkiebakery.com") {
+    else if (hostname === "https://beta.yorkiebakery.com/ai-demo/") {
         link.href = "/";
         console.log("AI Demo link set to / because we are already inside beta");
     }
