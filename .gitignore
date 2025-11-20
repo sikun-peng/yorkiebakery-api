@@ -229,3 +229,9 @@ Pipfile.lock
 *.pem
 *.crt
 *.key
+
+# ChromaDB vector store
+app/ai/vector_store/
+app/ai/vector_store/chroma.sqlite3
+app/ai/vector_store/*.sqlite3
+app/ai/vector_store/*.db

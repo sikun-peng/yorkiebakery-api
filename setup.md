@@ -32,3 +32,7 @@ docker exec -it yorkiebakery-api-web python -m app.ai.run_embeddings
 curl -X POST http://localhost:8000/ai/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "thai food"}'
+
+# build frontend
+cd ai_demo_frontend/
+npm run build
