@@ -250,3 +250,42 @@ form?.addEventListener("submit", async (e) => {
         submitBtn.disabled = false;
     }
 });
+
+/* ===========================
+   AI Demo Link Environment Switch
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+    const link = document.getElementById("ai-demo-link");
+    console.log("AI Demo link element:", link);
+
+    if (!link) return;
+
+    const hostname = window.location.hostname;
+    console.log("Hostname detected:", hostname);
+
+    // Local development
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+        link.href = "http://localhost:5173/";
+        link.target = "_blank";
+        console.log("AI Demo link set to localhost:5173");
+    }
+
+    // Production MAIN site
+    else if (hostname === "yorkiebakery.com" || hostname === "www.yorkiebakery.com") {
+        link.href = "https://beta.yorkiebakery.com/";
+        link.target = "_blank";
+        console.log("AI Demo link set to beta.yorkiebakery.com");
+    }
+
+    // If user is already ON beta site
+    else if (hostname === "beta.yorkiebakery.com") {
+        link.href = "/";
+        console.log("AI Demo link set to / because we are already inside beta");
+    }
+
+    // Fallback
+    else {
+        link.href = "/ai-demo";
+        console.log("AI Demo fallback: /ai-demo");
+    }
+});
