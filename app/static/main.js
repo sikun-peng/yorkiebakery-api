@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
         link.target = "_blank";
         console.log("AI Demo link set to localhost:5173");
     }
-    
+
     else {
         link.href = "/ai-demo/";
         console.log("AI Demo fallback: /ai-demo");

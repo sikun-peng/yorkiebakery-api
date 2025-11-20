@@ -37,7 +37,6 @@ def build_embeddings():
     print("\n📦 Loading menu items from database...")
 
     with Session(engine) as session:
-        # Embed ALL items (real + mock)
         items = session.exec(select(MenuItem)).all()
 
     print(f"🔄 Processing {len(items)} items for vector embeddings...\n")
@@ -59,15 +58,41 @@ def build_embeddings():
     metadatas = []
 
     for item in items:
-        text = f"{item.title} {item.description or ''}".strip()
-        vec = embed_text(text)
 
-        if vec is None:
+        # -------------------------------
+        # BUILD RICH SEMANTIC TEXT
+        # -------------------------------
+        text_parts = [
+            item.title or "",
+            item.description or "",
+            " ".join(item.tags or []),
+            " ".join(item.flavor_profiles or []),
+            " ".join(item.dietary_features or []),
+            item.category or "",
+            item.origin or "",
+            f"price {item.price}" if item.price else "",
+        ]
+
+        # join and clean
+        combined_text = " ".join([p for p in text_parts if p]).lower().strip()
+
+        if not combined_text:
+            print(f"⚠️ Skipping item (empty text): {item.title}")
+            continue
+
+        # LOG DETAILS FOR DEBUG
+        print("--------------------------------------------------")
+        print(f"🍰 ITEM: {item.title}")
+        print(f"🔤 Text used for embedding:\n{combined_text}\n")
+
+        vector = embed_text(combined_text)
+
+        if vector is None:
             print(f"⚠️ Skipping item (no vector): {item.title}")
             continue
 
         ids.append(str(item.id))
-        vectors.append(vec)
+        vectors.append(vector)
 
         metadatas.append({
             "title": item.title,

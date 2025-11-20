@@ -8,6 +8,14 @@ export default function AIInput({ setTrace }: Props) {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const examplePrompts = [
+    "Recommend something fruity",
+    "Show me Taiwanese desserts",
+    "Find pastry under $10",
+    "Suggest something with matcha",
+    "What’s similar to macarons?",
+  ];
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!message.trim()) return;
@@ -53,6 +61,21 @@ export default function AIInput({ setTrace }: Props) {
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
+
+      {/* ---- Example Prompts ---- */}
+      <div className="flex flex-wrap gap-2 text-sm">
+        {examplePrompts.map((prompt) => (
+          <button
+            key={prompt}
+            type="button"
+            onClick={() => setMessage(prompt)}
+            className="px-3 py-1 rounded-full bg-amber-100 border border-amber-300
+                       text-yorkieBrown hover:bg-amber-200 shadow-sm transition"
+          >
+            {prompt}
+          </button>
+        ))}
+      </div>
 
       <button
         type="submit"
