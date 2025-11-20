@@ -1,4 +1,3 @@
-import React from "react";
 import type { AIDebugTrace } from "../types";
 
 interface Props {
