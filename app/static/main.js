@@ -269,23 +269,9 @@ document.addEventListener("DOMContentLoaded", () => {
         link.target = "_blank";
         console.log("AI Demo link set to localhost:5173");
     }
-
-    // Production MAIN site
-    else if (hostname === "yorkiebakery.com" || hostname === "www.yorkiebakery.com") {
-        link.href = "https://yorkiebakery.com/ai-demo/";
-        link.target = "_blank";
-        console.log("AI Demo link set to beta.yorkiebakery.com");
-    }
-
-    // If user is already ON beta site
-    else if (hostname === "https://beta.yorkiebakery.com/ai-demo/") {
-        link.href = "/";
-        console.log("AI Demo link set to / because we are already inside beta");
-    }
-
-    // Fallback
+    
     else {
-        link.href = "/ai-demo";
+        link.href = "/ai-demo/";
         console.log("AI Demo fallback: /ai-demo");
     }
 });
