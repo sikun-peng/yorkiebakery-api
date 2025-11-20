@@ -1,29 +1,31 @@
-# app/ai/rag.py
-
-from chromadb import PersistentClient
+from typing import List, Dict, Any
 from app.ai.emb_model import embed_text
-
-CHROMA_PATH = "app/ai/vector_store"
-COLLECTION_NAME = "menu_items"
-
-
-def get_collection():
-    client = PersistentClient(path=CHROMA_PATH)
-    return client.get_or_create_collection(COLLECTION_NAME)
-
+from app.ai.vecstore import get_collection
 
 def retrieve_with_filters(query: str, filters: dict = None, top_k: int = 5):
     collection = get_collection()
-    vec = embed_text(query)
-    if vec is None:
+
+    q_emb = embed_text(query)
+
+    if q_emb is None:
         return []
 
-    where = {k: v for k, v in (filters or {}).items() if v}
+    where = {"$and": []}
 
-    result = collection.query(
-        query_embeddings=[vec],
+    if filters:
+        for key, val in filters.items():
+            if val:
+                where["$and"].append({key: val})
+
+    if not where["$and"]:
+        where = None
+
+    res = collection.query(
+        query_embeddings=[q_emb],
         n_results=top_k,
-        where=where if where else None,
+        where=where,
+        include=["metadatas", "distances"],
     )
 
-    return result.get("metadatas", [[]])[0]
+    metas = res.get("metadatas", [[]])[0]
+    return metas

@@ -1,16 +1,29 @@
 # app/ai/emb_model.py
+
 import os
+from dotenv import load_dotenv
+
+# Always load .env when this module is imported
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
+ENV_PATH = os.path.join(BASE_DIR, ".env")
+
+load_dotenv(dotenv_path=ENV_PATH)
+print("🔑 Loaded .env for emb_model from:", ENV_PATH)
+
 from openai import OpenAI
 
-# Load OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+api_key = os.getenv("OPENAI_API_KEY")
+print("DEBUG API KEY IN emb_model:", api_key)
 
-MODEL_NAME = "text-embedding-3-small"  # cheap + good
+if not api_key:
+    raise ValueError("❌ OPENAI_API_KEY is missing. Check your .env file.")
+
+client = OpenAI(api_key=api_key)
+
+MODEL_NAME = "text-embedding-3-small"
+
 
 def embed_text(text: str):
-    """
-    Returns a vector embedding for a text string.
-    """
     text = text.strip()
     if not text:
         return None

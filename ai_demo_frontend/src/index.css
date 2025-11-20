@@ -1,0 +1,29 @@
+/* index.css */
+@import "tailwindcss";
+
+/* Yorkie Theme Variables */
+:root {
+  --yorkie-bg: #faf7f2;
+  --yorkie-brown: #7a5c42;
+  --yorkie-yellow: #f8e8b0;
+  --yorkie-border: #f1e6c8;
+  --yorkie-card: #ffffffee;
+}
+
+body {
+  background: var(--yorkie-bg);
+  font-family: system-ui, sans-serif;
+  margin: 0;
+}
+
+.text-yorkieBrown {
+  color: var(--yorkie-brown);
+}
+
+.yorkie-card {
+  background: var(--yorkie-card);
+  border: 1px solid var(--yorkie-border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.04);
+}

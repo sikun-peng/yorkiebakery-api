@@ -3,39 +3,229 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+*.pyc
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
 # Virtual environments
 .venv/
 venv/
 env/
+ENV/
+env.bak/
+venv.bak/
 
 # macOS metadata
 .DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # IDE/editor
 .idea/
 .vscode/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+*.tmproj
+*.tmProject
+*.sublime-workspace
+*.code-workspace
 
 # Test artifacts
 *.db
 test_app.db
 .coverage
 htmlcov/
-pytest_cache/
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
 
 # Docker
 *.pid
 *.log
-
-# Distribution / packaging
-*.egg
-*.egg-info/
-dist/
-build/
+docker-compose.override.yml
 
 # Environment files (if secrets included, keep out of git!)
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.venv
 
 # Local notebooks or temp files
 *.ipynb_checkpoints
-*.swp
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+*.ipynb
+!*.ipynb
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Database files
+*.sqlite3
+*.db
+*.sqlite
+app/ai/vector_store/
+chroma.sqlite3
+
+# Vector stores and embeddings
+*.pkl
+*.pickle
+embeddings/
+chroma-data/
+vector_store/
+
+# Frontend dependencies and build artifacts
+ai_demo_frontend/node_modules/
+ai_demo_frontend/dist/
+ai_demo_frontend/build/
+ai_demo_frontend/.env
+ai_demo_frontend/.env.local
+ai_demo_frontend/.env.development.local
+ai_demo_frontend/.env.test.local
+ai_demo_frontend/.env.production.local
+ai_demo_frontend/.eslintcache
+ai_demo_frontend/coverage/
+ai_demo_frontend/.nyc_output
+ai_demo_frontend/.parcel-cache
+
+# OS generated files
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# PyCharm
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# PDFs and documents
+*.pdf
+*.doc
+*.docx
+
+# Images (unless they are intended for the project)
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.bmp
+*.tiff
+
+# Audio files
+*.mp3
+*.wav
+*.ogg
+
+# Video files
+*.mp4
+*.avi
+*.mov
+
+# Archives
+*.zip
+*.tar.gz
+*.rar
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.sav
+
+# Certificate files
+*.pem
+*.crt
+*.key

@@ -13,8 +13,9 @@ docker-compose down && docker-compose build && docker-compose up -d
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/001_create_tables.sql
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/002_seed_menu.sql
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/003_seed_music.sql
+docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/004_mock_menu.sql
 
-
+# SSH into Postgres container and reset database
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery
 
 SELECT pg_terminate_backend(pid)
@@ -31,7 +32,3 @@ docker exec -it yorkiebakery-api-web python -m app.ai.run_embeddings
 curl -X POST http://localhost:8000/ai/chat \
   -H "Content-Type: application/json" \
   -d '{"message": "thai", "top_k": 5, "filters": {"origin": "thai"}}'
-
-
-# facebook app https://developers.facebook.com/apps/1307678087403930/settings/basic/
-
