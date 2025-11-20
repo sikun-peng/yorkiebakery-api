@@ -275,3 +275,21 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("AI Demo fallback: /ai-demo");
     }
 });
+
+/* ===========================
+   AI Demo Button (if using <button>)
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("ai-demo-btn");
+    if (!btn) return;
+
+    const hostname = window.location.hostname;
+
+    btn.addEventListener("click", () => {
+        if (hostname === "localhost" || hostname === "127.0.0.1") {
+            window.open("http://localhost:5173/", "_blank");
+        } else {
+            window.location.href = "/ai-demo/";
+        }
+    });
+});
