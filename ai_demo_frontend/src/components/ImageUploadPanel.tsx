@@ -13,6 +13,23 @@ export default function ImageUploadPanel({ onAnalysisComplete }: Props) {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // ---- VALIDATION: Allowed Formats ----
+    const allowedTypes = ["image/jpeg", "image/png"];
+
+    if (!allowedTypes.includes(file.type)) {
+    alert("❌ Unsupported file format. Please upload JPEG or PNG.");
+    e.target.value = ""; // clear input
+    return;
+    }
+
+    // Optional: check file size (e.g., 20MB)
+    const maxSizeMB = 20;
+    if (file.size > maxSizeMB * 1024 * 1024) {
+    alert(`❌ File too large. Max allowed size is ${maxSizeMB} MB.`);
+    e.target.value = "";
+    return;
+    }
+
     // show preview
     setPreview(URL.createObjectURL(file));
     setLoading(true);
