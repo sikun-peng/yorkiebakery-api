@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { API_BASE } from "../config";
 
 interface Props {
   setTrace: (trace: any) => void;
@@ -23,7 +24,7 @@ export default function AIInput({ setTrace }: Props) {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/ai/demo", {
+      const res = await fetch(`${API_BASE}/ai/demo`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message }),
@@ -46,10 +47,7 @@ export default function AIInput({ setTrace }: Props) {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="yorkie-card w-full flex flex-col space-y-3"
-    >
+    <form onSubmit={handleSubmit} className="yorkie-card w-full flex flex-col space-y-3">
       <label className="font-semibold text-yorkieBrown">
         Ask Yorkie something:
       </label>
@@ -62,7 +60,6 @@ export default function AIInput({ setTrace }: Props) {
         onChange={(e) => setMessage(e.target.value)}
       />
 
-      {/* ---- Example Prompts ---- */}
       <div className="flex flex-wrap gap-2 text-sm">
         {examplePrompts.map((prompt) => (
           <button
