@@ -8,7 +8,9 @@ pip install -r requirements.txt
 docker stop $(docker ps -q)
 docker rm $(docker ps -a -q)
 docker-compose down && docker-compose build && docker-compose up -d
+docker-compose down && docker-compose build --no-cache && docker-compose up -d
 docker image prune -f
+
 
 # Run migrations
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/001_create_tables.sql

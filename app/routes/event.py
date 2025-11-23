@@ -171,3 +171,39 @@ async def admin_create_event(
         session.commit()
 
     return RedirectResponse("/events", status_code=303)
+
+# ======================================================
+# Admin: Send Notification to Event RSVPs
+# ======================================================
+@router.post("/notify/{event_id}")
+def notify_event_attendees(
+    event_id: UUID,
+    request: Request,
+    message: str = Form(...)
+):
+    require_admin(request)
+
+    with Session(engine) as session:
+        event = session.get(Event, event_id)
+        if not event:
+            raise HTTPException(404, "Event not found")
+
+        rsvps = session.exec(
+            select(EventRSVP).where(EventRSVP.event_id == event_id)
+        ).all()
+
+    # Send email to each RSVP
+    from app.core.send_email import send_event_notice
+
+    sent = 0
+    for r in rsvps:
+        try:
+            send_event_notice(r.email, event.title, message)
+            sent += 1
+        except Exception as e:
+            print("Failed to send to", r.email, e)
+
+    return RedirectResponse(
+        f"/events?notified={sent}",
+        status_code=303
+    )

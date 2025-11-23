@@ -23,6 +23,25 @@ def send_email(to: str, subject: str, body: str):
     )
     print("[SES] Email sent!")
 
+def send_event_notice(email: str, event_title: str, message: str):
+    subject = f"Update for {event_title} — Yorkie Bakery"
+    body = (
+        f"Hello,\n\n"
+        f"There is an update regarding the event:\n"
+        f"📌 {event_title}\n\n"
+        f"{message}\n\n"
+        f"— Yorkie Bakery"
+    )
+
+    ses.send_email(
+        Source=SES_SENDER,
+        Destination={"ToAddresses": [email]},
+        Message={
+            "Subject": {"Data": subject},
+            "Body": {"Text": {"Data": body}}
+        },
+    )
+
 def send_verification_email(email: str, verify_url: str):  # Changed parameter name
     print(f"DEBUG: Sending verification email to {email}")
     print(f"DEBUG: Verification URL: {verify_url}")

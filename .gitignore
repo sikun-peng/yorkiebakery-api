@@ -190,29 +190,6 @@ ipython_config.py
 # pipenv
 Pipfile.lock
 
-# PDFs and documents
-*.pdf
-*.doc
-*.docx
-
-# Images (unless they are intended for the project)
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.bmp
-*.tiff
-
-# Audio files
-*.mp3
-*.wav
-*.ogg
-
-# Video files
-*.mp4
-*.avi
-*.mov
-
 # Archives
 *.zip
 *.tar.gz
