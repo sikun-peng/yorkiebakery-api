@@ -79,3 +79,35 @@ CREATE TABLE music_track (
     cover_url TEXT,
     uploaded_at TIMESTAMP DEFAULT NOW()
 );
+
+
+-- ============ EVENTS TABLE ============
+DROP TABLE IF EXISTS event CASCADE;
+CREATE TABLE IF NOT EXISTS event (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title TEXT NOT NULL,
+    description TEXT,
+    event_datetime TIMESTAMP,
+    location TEXT,
+    event_type TEXT,
+    image_url TEXT,
+    is_public BOOLEAN DEFAULT TRUE,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+-- ============ EVENT RSVPs ============
+DROP TABLE IF EXISTS event_rsvp CASCADE;
+CREATE TABLE IF NOT EXISTS event_rsvp (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    event_id UUID NOT NULL REFERENCES event(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    message TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+CREATE INDEX IF NOT EXISTS idx_event_active ON event(is_active);
+CREATE INDEX IF NOT EXISTS idx_rsvp_event_id ON event_rsvp(event_id);

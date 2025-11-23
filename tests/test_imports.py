@@ -15,6 +15,7 @@ def test_imports():
     import app.routes.order
     import app.routes.cart
     import app.routes.music
+    import app.routes.event
 
     # AI / RAG modules
     import app.ai.emb_model

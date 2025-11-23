@@ -8,6 +8,21 @@ SES_SENDER = f"Yorkie Bakery <noreply@beta.yorkiebakery.com>"
 
 ses = boto3.client("ses", region_name=AWS_REGION)
 
+def send_email(to: str, subject: str, body: str):
+    print(f"[SES] Sending email to: {to}")
+    print(f"[SES] Subject: {subject}")
+    print(f"[SES] Body preview: {body[:80]}...")
+
+    ses.send_email(
+        Source=SES_SENDER,
+        Destination={"ToAddresses": [to]},
+        Message={
+            "Subject": {"Data": subject},
+            "Body": {"Text": {"Data": body}}
+        }
+    )
+    print("[SES] Email sent!")
+
 def send_verification_email(email: str, verify_url: str):  # Changed parameter name
     print(f"DEBUG: Sending verification email to {email}")
     print(f"DEBUG: Verification URL: {verify_url}")

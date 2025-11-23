@@ -36,4 +36,5 @@ curl -X POST http://localhost:8000/ai/chat \
 
 # build frontend
 cd ai_demo_frontend/
+npm install
 npm run build

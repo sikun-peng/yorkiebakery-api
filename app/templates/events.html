@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Events{% endblock %}
+
+{% block content %}
+
+<h2 style="text-align:center; margin-bottom:25px;">🍰 Upcoming Events</h2>
+
+{% if request.query_params.get("success") %}
+<div style="background:#d4edda; padding:12px; border-radius:6px; color:#155724; margin-bottom:20px;">
+  ✅ Your RSVP has been submitted!
+</div>
+{% endif %}
+
+{% if not events %}
+<p style="text-align:center; color:#666;">No events available right now.</p>
+{% endif %}
+
+<div class="events-container">
+  {% for event in events %}
+
+  {% set img = event.image_url or '/static/images/default_event_image.jpg' %}
+
+  <div class="event-card">
+
+    <!-- IMAGE -->
+    <img src="{{ img }}"
+         class="event-img"
+         onclick="openModal('{{ img }}')">
+
+    <h3>{{ event.title }}</h3>
+
+    <p class="event-date">
+      📅
+      {% if event.event_datetime %}
+        {{ event.event_datetime.strftime("%B %d, %Y %I:%M %p") }}
+      {% else %}
+        Date TBD
+      {% endif %}
+    </p>
+
+    <p class="event-location">📍 {{ event.location }}</p>
+
+    <p class="event-desc">{{ event.description }}</p>
+
+    <!-- RSVP FORM -->
+    <form method="post" action="/events/rsvp/{{ event.id }}" class="rsvp-form">
+      <input type="text" name="name" placeholder="Your name" required>
+      <input type="email" name="email" placeholder="Your email" required>
+      <textarea name="message" placeholder="Optional message"></textarea>
+      <button type="submit">RSVP ✉️</button>
+    </form>
+
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ======================= -->
+<!-- IMAGE VIEW MODAL        -->
+<!-- ======================= -->
+<div id="imgModal" class="modal" onclick="closeModal()">
+  <span class="modal-close">×</span>
+  <img id="modalImg" class="modal-content">
+</div>
+
+<style>
+.events-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+}
+
+.event-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.event-card h3 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.event-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.event-img:hover { opacity: 0.85; }
+
+.event-date, .event-location {
+  margin: 4px 0;
+  color: #444;
+}
+
+.event-desc {
+  margin: 10px 0 15px;
+  color: #555;
+}
+
+.rsvp-form input,
+.rsvp-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.rsvp-form button {
+  width: 100%;
+  padding: 10px;
+  background: #ffb36b;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.rsvp-form button:hover {
+  background: #ff9c3a;
+}
+
+/* IMAGE MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  padding-top: 60px;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.85);
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 85%;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  font-size: 40px;
+  color: white;
+  cursor: pointer;
+}
+</style>
+
+<script>
+// Open image modal
+function openModal(url) {
+  document.getElementById("modalImg").src = url;
+  document.getElementById("imgModal").style.display = "block";
+}
+
+// Close modal
+function closeModal() {
+  document.getElementById("imgModal").style.display = "none";
+}
+</script>
+
+{% endblock %}

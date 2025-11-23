@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Create Event{% endblock %}
+
+{% block content %}
+<h2 style="text-align:center; margin-bottom:30px;">🎉 Create New Event</h2>
+
+<form action="/events/new"
+      method="post"
+      enctype="multipart/form-data"
+      style="max-width:650px; margin:auto; display:flex; flex-direction:column; gap:18px;">
+
+  <!-- TITLE -->
+  <label class="form-label">📛 Event Title *</label>
+  <input type="text" name="title" placeholder="e.g. Mochi & Music Night" required>
+
+  <!-- DESCRIPTION -->
+  <label class="form-label">📝 Description *</label>
+  <textarea name="description" rows="3"
+            placeholder="Describe the event — food, music, special guests…"
+            required></textarea>
+
+  <!-- LOCATION -->
+  <label class="form-label">📍 Location *</label>
+  <input type="text" name="location" placeholder="e.g. Yorkie Bakery, Round Rock, TX" required>
+
+  <!-- DATE -->
+  <label class="form-label">📅 Event Date *</label>
+  <input type="datetime-local" name="date" required>
+
+  <!-- IMAGE -->
+  <label class="form-label">🖼️ Event Image (optional)</label>
+  <input type="file" name="image" accept="image/*">
+
+  <button type="submit" class="btn-main" style="margin-top:25px;">
+    Create Event 🎉
+  </button>
+</form>
+
+<div style="text-align:center; margin-top:25px;">
+  <a href="/events/view" style="color:#666;">← Back to Events</a>
+</div>
+
+<style>
+  form {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+  }
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+  }
+  input, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+  input:focus, textarea:focus {
+    border-color: #ffb36b;
+    outline: none;
+  }
+  .btn-main {
+    width: 100%;
+    padding: 12px;
+    background: #ffb36b;
+    border: none;
+    border-radius: 6px;
+    font-size: 17px;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .btn-main:hover {
+    background: #ff9c3a;
+  }
+</style>
+{% endblock %}

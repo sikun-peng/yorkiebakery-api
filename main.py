@@ -10,7 +10,7 @@ import os
 # Internal imports
 from app.core.db import engine
 from app.core.cart_utils import get_cart_count
-from app.routes import auth, menu, order, cart, music, about
+from app.routes import auth, menu, order, cart, music, about, event
 from app.ai.route import ai_demo, ai_chat, ai_vision, ai_debug
 
 # ===============================================
@@ -92,6 +92,7 @@ app.include_router(order.router)
 app.include_router(cart.router)
 app.include_router(music.router)
 app.include_router(about.router)
+app.include_router(event.router)
 
 # AI / RAG routers
 app.include_router(ai_demo.router)

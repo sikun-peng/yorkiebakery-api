@@ -27,6 +27,7 @@
             {{ cart_count or 0 }}
           </span>
         </a>
+        <a href="/events/view" class="nav-link">🎉 Events</a>
         {% if request.session.get("user") %}
           <a href="/orders/view" class="nav-link">My Orders</a>
         {% endif %}
