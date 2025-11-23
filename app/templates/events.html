@@ -23,7 +23,6 @@
 
 <div class="events-container">
   {% for event in events %}
-
   {% set img = event.image_url or '/static/images/default_event_image.jpg' %}
 
   <div class="event-card">
@@ -92,10 +91,17 @@
 </div>
 
 <!-- ======================= -->
-<!-- IMAGE VIEW MODAL        -->
+<!-- IMAGE VIEW MODAL (+/- zoom) -->
 <!-- ======================= -->
-<div id="imgModal" class="modal" onclick="closeModal()">
-  <span class="modal-close">×</span>
+<div id="imgModal" class="modal" onclick="closeModal(event)">
+  <span class="modal-close" onclick="closeModal(event)">×</span>
+
+  <!-- Zoom Buttons -->
+  <div class="zoom-controls">
+    <button onclick="zoomIn(event)">＋</button>
+    <button onclick="zoomOut(event)">－</button>
+  </div>
+
   <img id="modalImg" class="modal-content">
 </div>
 
@@ -131,13 +137,11 @@
   cursor: pointer;
   transition: opacity 0.2s;
 }
-
 .event-img:hover { opacity: 0.85; }
 
 /* Text sections */
 .event-date,
 .event-location { margin: 4px 0; color: #444; }
-
 .event-desc { margin: 10px 0 15px; color: #555; }
 
 /* RSVP form */
@@ -149,7 +153,6 @@
   border: 1px solid #ccc;
   border-radius: 6px;
 }
-
 .rsvp-form button {
   width: 100%;
   padding: 10px;
@@ -160,15 +163,14 @@
   font-weight: bold;
   cursor: pointer;
 }
-
 .rsvp-form button:hover { background: #ff9c3a; }
 
-/* Image modal */
+/* MODAL */
 .modal {
   display: none;
   position: fixed;
   z-index: 9999;
-  padding-top: 60px;
+  padding-top: 20px;
   left: 0; top: 0;
   width: 100%; height: 100%;
   background-color: rgba(0,0,0,0.85);
@@ -177,28 +179,72 @@
 .modal-content {
   margin: auto;
   display: block;
-  max-width: 90%;
-  max-height: 85%;
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  transition: transform 0.2s ease;
 }
 
 .modal-close {
   position: absolute;
-  top: 10px;
-  right: 25px;
-  font-size: 40px;
+  top: 20px;
+  right: 32px;
+  font-size: 48px;
+  font-weight: bold;
   color: white;
   cursor: pointer;
+}
+
+/* ZOOM BUTTONS */
+.zoom-controls {
+  position: absolute;
+  top: 20px;
+  left: 30px;
+  display: flex;
+  gap: 10px;
+}
+
+.zoom-controls button {
+  font-size: 26px;
+  padding: 6px 16px;
+  background: rgba(255,255,255,0.85);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.zoom-controls button:hover {
+  background: white;
 }
 </style>
 
 <script>
+let zoomLevel = 1;
+
 function openModal(url) {
-  document.getElementById("modalImg").src = url;
+  const img = document.getElementById("modalImg");
+  img.src = url;
+  zoomLevel = 1;
+  img.style.transform = "scale(1)";
   document.getElementById("imgModal").style.display = "block";
 }
 
-function closeModal() {
+function closeModal(event) {
+  if (event && event.target !== event.currentTarget) return;
   document.getElementById("imgModal").style.display = "none";
+}
+
+function zoomIn(event) {
+  event.stopPropagation();
+  zoomLevel += 0.2;
+  document.getElementById("modalImg").style.transform = `scale(${zoomLevel})`;
+}
+
+function zoomOut(event) {
+  event.stopPropagation();
+  zoomLevel = Math.max(0.4, zoomLevel - 0.2);
+  document.getElementById("modalImg").style.transform = `scale(${zoomLevel})`;
 }
 </script>
 
