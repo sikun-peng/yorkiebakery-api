@@ -85,7 +85,7 @@ def submit_rsvp(
             f"Email: {email}\n"
             f"Message:\n{message}\n"
         )
-        send_email("oscar@yorkiebakery.com", f"New RSVP — {event_title}", admin_body)
+        send_email("yorkiebakery@gmail.com", f"New RSVP — {event_title}", admin_body)
     except Exception as e:
         print("⚠️ Failed to send admin RSVP email:", e)
 
