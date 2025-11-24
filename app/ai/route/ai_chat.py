@@ -1,9 +1,16 @@
+# app/ai/route/ai_chat.py
+
 from fastapi import APIRouter
 from pydantic import BaseModel
+
 from app.ai.rag import retrieve_with_filters
 from app.ai.chat_model import chat_response
+from app.ai.vecstore import get_collection
+from app.ai.emb_model import embed_text
+
 
 router = APIRouter(prefix="/ai", tags=["AI Chat"])
+
 
 class ChatRequest(BaseModel):
     message: str
@@ -12,10 +19,10 @@ class ChatRequest(BaseModel):
 
 
 def normalize(value):
-    if value is None:
+    if not value:
         return []
     if isinstance(value, list):
-        return [v for v in value if v]
+        return [v.strip() for v in value if v.strip()]
     if isinstance(value, str):
         return [v.strip() for v in value.split(",") if v.strip()]
     return []
@@ -36,68 +43,81 @@ def origin_emoji(origin: str):
     return mapping.get((origin or "").lower(), "🍽️")
 
 
-def format_yorkie_context(results):
-    if not results:
+def format_yorkie_context(items):
+    if not items:
         return "No matching menu items were found."
 
-    lines = []
-    for item in results:
-        title = item.get("title", "Unknown")
-        price = float(item.get("price", 0))
-        origin = item.get("origin", "")
-        emoji = origin_emoji(origin)
+    blocks = []
+    for meta in items:
+        block = f"{origin_emoji(meta.get('origin'))} {meta.get('title')} — ${float(meta.get('price', 0)):.2f}\n"
 
-        tags = normalize(item.get("tags"))
-        flavors = normalize(item.get("flavor_profiles"))
-        diet = normalize(item.get("dietary_features"))
+        for key, label in [
+            ("tags", "tags"),
+            ("flavor_profiles", "flavors"),
+            ("dietary_features", "dietary"),
+        ]:
+            vals = normalize(meta.get(key))
+            if vals:
+                block += f"  • {label}: {', '.join(vals)}\n"
 
-        block = f"{emoji} {title} — ${price:.2f}\n"
-        if tags:
-            block += f"  • tags: {', '.join(tags)}\n"
-        if flavors:
-            block += f"  • flavors: {', '.join(flavors)}\n"
-        if diet:
-            block += f"  • dietary: {', '.join(diet)}\n"
+        blocks.append(block)
 
-        lines.append(block)
-
-    return "\n".join(lines)
+    return "\n".join(blocks)
 
 
-def yorkie_prompt(message: str, cute_context: str):
+def yorkie_prompt(message: str, ctx: str):
     return f"""
-You are Yorkie 🐶, the cutest bakery puppy helper.
-
-Your job:
-- Read the menu context
-- Recommend items the user will love
-- Be playful, warm, and friendly — BUT still specific
+You are Yorkie 🐶 the pastry helper.
 
 Menu Context:
-{cute_context}
+{ctx}
 
-User asked: "{message}"
+User said: "{message}"
 
-Now answer as Yorkie:
-"""
+Reply as Yorkie:
+""".strip()
 
 
 @router.post("/chat")
 def chat(req: ChatRequest):
-    # 1. Vector search
-    results = retrieve_with_filters(req.message, req.filters, top_k=req.top_k)
+    """
+    Chatbot RAG endpoint — fallback mode keeps rag.py untouched.
+    """
 
-    # 2. Build Yorkie context + prompt
-    cute_context = format_yorkie_context(results)
-    prompt = yorkie_prompt(req.message, cute_context)
+    try:
+        # Normal path — exact same rag.py behavior
+        rag_results = retrieve_with_filters(req.message, req.filters, top_k=req.top_k)
+        items = rag_results.get("metadatas", [])
+    except Exception as e:
+        print(f"[WARN] ai_chat fallback (rag include issue): {e}")
 
-    # 3. LLM reply
+        # SAFE fallback (same as /ai/demo)
+        embedding = embed_text(req.message)
+        col = get_collection()
+
+        qr = col.query(
+            query_embeddings=[embedding],
+            n_results=req.top_k,
+            include=["metadatas", "distances"],  # SAFE
+        )
+
+        items = qr.get("metadatas", [[]])[0]
+        rag_results = {
+            "ids": [],
+            "metadatas": items,
+            "distances": qr.get("distances", [[]])[0]
+        }
+
+    # Convert items → text context
+    context = format_yorkie_context(items)
+
+    # Create final Yorkie prompt
+    prompt = yorkie_prompt(req.message, context)
+
+    # LLM response
     reply = chat_response(
-        system_prompt="You are Yorkie, the adorable pastry-recommending bakery dog.",
+        system_prompt="You are Yorkie, cute pastry dog 🍪",
         user_message=prompt,
     )
 
-    return {
-        "reply": reply,
-        "results": results,
-    }
+    return {"reply": reply, "results": rag_results}

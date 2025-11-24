@@ -4,13 +4,17 @@ from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.templating import Jinja2Templates
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel, select
+from sqlalchemy.sql import func
 import os
 
 # Internal imports
 from app.core.db import engine
+from app.core.db import get_session
 from app.core.cart_utils import get_cart_count
-from app.routes import auth, menu, order, cart, music, about, event
+from app.models.postgres.menu import MenuItem
+from app.models.postgres.music import MusicTrack
+from app.routes import auth, menu, order, cart, music, about, event, health
 from app.ai.route import ai_demo, ai_chat, ai_vision, ai_debug
 
 # ===============================================
@@ -93,6 +97,7 @@ app.include_router(cart.router)
 app.include_router(music.router)
 app.include_router(about.router)
 app.include_router(event.router)
+app.include_router(health.router)
 
 # AI / RAG routers
 app.include_router(ai_demo.router)
@@ -107,7 +112,33 @@ app.include_router(ai_debug.router)
 @app.get("/")
 def home(request: Request):
     cart_count = get_cart_count(request)
+
+    # --- FIX: get_session() is a generator ---
+    session = next(get_session())
+
+    # 🎂 Featured menu — only pastry category AND available items
+    menu_items = session.exec(
+        select(MenuItem)
+        .where(MenuItem.category == "pastry")
+        .where(MenuItem.is_available == True)
+        .order_by(func.random())
+        .limit(3)
+    ).all()
+
+    # 🎵 Featured music — only tracks with audio file (non-null s3_url)
+    tracks = session.exec(
+        select(MusicTrack)
+        .where(MusicTrack.file_url != "")
+        .order_by(func.random())
+        .limit(4)
+    ).all()
+
     return templates.TemplateResponse(
         "index.html",
-        {"request": request, "cart_count": cart_count}
+        {
+            "request": request,
+            "cart_count": cart_count,
+            "menu_items": menu_items,
+            "tracks": tracks,
+        }
     )
