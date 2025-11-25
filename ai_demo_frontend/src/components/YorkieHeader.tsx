@@ -1,7 +1,7 @@
 export const HOME_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:8000"
-    : "";  // production → relative → same domain
+    : "/";
 
 export default function YorkieHeader() {
   return (
