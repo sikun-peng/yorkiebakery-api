@@ -71,16 +71,21 @@
         <button type="submit"
                 style="
                   width:100%;
-                  padding:10px;
-                  background:#6b9cff;
-                  border:none;
-                  border-radius:6px;
-                  color:white;
-                  font-weight:bold;
-                  cursor:pointer;
-                  margin-top:8px;
-                ">
-          Send Update 🔔
+                  padding:12px;
+                  background: linear-gradient(135deg, #ffb36b, #ff9d41);
+                  border: 1px solid #f1b46b;
+                  border-radius: 10px;
+                  color: #2b2521;
+                  font-weight: 800;
+                  letter-spacing: 0.3px;
+                  cursor: pointer;
+                  margin-top: 10px;
+                  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+                  transition: transform 0.1s ease, box-shadow 0.2s ease;
+                "
+                onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 14px rgba(0,0,0,0.14)';"
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.12)';">
+          🔔 Send Update
         </button>
       </form>
     </div>

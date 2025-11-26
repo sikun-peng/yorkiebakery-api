@@ -10,95 +10,110 @@
   Baked fresh every day — let our Yorkie Chef 🐶✨ help you pick the perfect treat 🐾🍰
 </p>
 
-<h2 style="text-align:center;"> 🐾 Menu Recommendation 👨‍🍳</h2>
-<div style="text-align:center; margin-bottom:40px;">
-  <button id="ai-demo-btn" class="btn"
-          style="padding: 20px 40px; font-size: 20px;">
-     🤖 AI Menu & Image Match
-  </button>
-</div>
-
-<!-- 🍰 Featured Menu Section -->
-<h2 style="text-align:center;">🍰 Featured Menu 😍</h2>
-<div style="text-align:center; margin-bottom:40px;">
-  <a href="/menu/view" class="btn">🍽️Browse Our Menu 🌸</a>
-</div>
-<div class="menu-grid" style="margin-bottom:50px;">
-  {% for item in menu_items %}
-  <div class="menu-card">
-    <img src="{{ item.image_url or '/static/default_menu_image.jpg' }}" alt="{{ item.title }}">
-    <h3>{{ item.title }}</h3>
-    <p>{{ item.description or '' }}</p>
-    {% if item.price is not none %}
-      <p class="price">${{ "%.2f"|format(item.price) }}</p>
-    {% endif %}
+<section class="home-section">
+  <h2 style="text-align:center;"> 🐾 Menu Recommendation 👨‍🍳</h2>
+  <div style="text-align:center; margin-bottom:24px;">
+    <button id="ai-demo-btn" class="btn"
+            style="padding: 20px 40px; font-size: 20px;">
+       🤖 AI Menu & Image Match
+    </button>
   </div>
-  {% endfor %}
-</div>
+
+  <!-- 🍰 Featured Menu Section -->
+  <h2 style="text-align:center;">🍰 Featured Menu 😍</h2>
+  <div style="text-align:center; margin-bottom:24px;">
+    <a href="/menu/view" class="btn">🍽️Browse Our Menu 🌸</a>
+  </div>
+  <div class="menu-grid" style="margin-bottom:16px;">
+    {% for item in menu_items %}
+    <div class="menu-card">
+      <img src="{{ item.image_url or '/static/default_menu_image.jpg' }}" alt="{{ item.title }}">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.description or '' }}</p>
+      {% if item.price is not none %}
+        <p class="price">${{ "%.2f"|format(item.price) }}</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
 
 <!-- 🎵 Music Section -->
-<h2 style="text-align:center;">🎼 Café Music</h2>
-<div style="text-align:center; margin-bottom:40px;">
-  <a href="/music/listen" class="btn">🎵 Oscar's Music 🎹🎻</a>
-</div>
-
-<div style="
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 25px;
-  max-width: 900px;
-  margin: 0 auto 50px auto;
-">
-  {% for track in tracks %}
-  <div style="
-    background: #fff;
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    text-align: center;
-  ">
-
-    <!-- Cover Image (small + clean) -->
-    {% if track.cover_url %}
-      <img src="{{ track.cover_url }}"
-           alt="{{ track.title }}"
-           style="width:120px; height:auto; border-radius:10px; margin-bottom:10px;">
-    {% else %}
-      <img src="/static/images/default_music_cover.jpg"
-           alt="No cover"
-           style="width:120px; height:auto; border-radius:10px; margin-bottom:10px;">
-    {% endif %}
-
-    <h3 style="font-size:18px; margin-bottom:5px;">{{ track.title }}</h3>
-
-    {% if track.composer or track.performer %}
-      <p style="font-size:14px; color:#555; margin-top:0;">
-        {{ track.composer }}
-        {% if track.composer and track.performer %} — {% endif %}
-        {{ track.performer }}
-      </p>
-    {% endif %}
-
-    {% if track.file_url %}
-      <audio controls style="width:140px; margin-top:8px;">
-        <source src="{{ track.file_url }}" type="audio/mpeg">
-      </audio>
-    {% else %}
-      <p class="text-gray-500 italic">Track unavailable</p>
-    {% endif %}
-
+<section class="home-section home-section-alt">
+  <h2 style="text-align:center;">🎼 Café Music</h2>
+  <div style="text-align:center; margin-bottom:24px;">
+    <a href="/music/listen" class="btn">🎵 Oscar's Music 🎹🎻</a>
   </div>
-  {% endfor %}
-</div>
+
+  <div style="
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+    max-width: 900px;
+    margin: 0 auto;
+  ">
+    {% for track in tracks %}
+    <div style="
+      background: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      text-align: center;
+      border: 1px solid var(--border);
+    ">
+
+      <!-- Cover Image (small + clean) -->
+      {% if track.cover_url %}
+        <img src="{{ track.cover_url }}"
+             alt="{{ track.title }}"
+             style="width:120px; height:auto; border-radius:10px; margin-bottom:10px;">
+      {% else %}
+        <img src="/static/images/default_music_cover.jpg"
+             alt="No cover"
+             style="width:120px; height:auto; border-radius:10px; margin-bottom:10px;">
+      {% endif %}
+
+      <h3 style="font-size:18px; margin-bottom:5px;">{{ track.title }}</h3>
+
+      {% if track.composer or track.performer %}
+        <p style="font-size:14px; color:#555; margin-top:0;">
+          {{ track.composer }}
+          {% if track.composer and track.performer %} — {% endif %}
+          {{ track.performer }}
+        </p>
+      {% endif %}
+
+      {% if track.file_url %}
+        <audio controls style="width:140px; margin-top:8px;">
+          <source src="{{ track.file_url }}" type="audio/mpeg">
+        </audio>
+      {% else %}
+        <p class="text-gray-500 italic">Track unavailable</p>
+      {% endif %}
+
+    </div>
+    {% endfor %}
+  </div>
+</section>
 
 <!-- 📱 Mobile App Section -->
-<section style="background:#fff9f3; padding:60px 0; text-align:center;">
-  <h2 class="cursive-font">📱 Yorkie Bakery App 💌</h2>
-  <p style="font-size:18px;">Our mobile app is now unavailable! 😂</p>
-  <img src="/static/images/iphone.png" alt="Yorkie App" style="width:200px; margin:20px auto;">
-  <div style="margin-top:20px;">
-    <a href="#"><img src="/static/images/google.png" alt="Google Play" style="height:50px; margin-right:10px;"></a>
-    <a href="#"><img src="/static/images/apps.png" alt="App Store" style="height:50px;"></a>
+<section style="background:#2f2f2f; color:#e6e6e6; padding:80px 0;">
+  <div style="max-width:1100px; margin:0 auto; display:flex; gap:48px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;">
+    <div style="flex:1 1 320px; display:flex; justify-content:center;">
+      <img src="/static/images/iphone.png" alt="Yorkie Bakery App preview" style="width:320px; max-width:100%; display:block;">
+    </div>
+    <div style="flex:1 1 360px; min-width:320px;">
+      <p style="margin:0 0 8px 0; color:#c8c8c8; letter-spacing:0.3px;">Happy to Announce</p>
+      <h2 style="margin:0 0 18px 0; font-size:34px; font-weight:600; color:#f1f1f1;">Mobile App is coming up on neither OS platform 😂 </h2>
+      <div style="display:flex; gap:16px; flex-wrap:nowrap; align-items:flex-start; margin-top:4px;">
+        <a href="#" aria-label="Google Play badge">
+          <img src="/static/images/google.png" alt="Google Play" style="height:60px; display:block;">
+        </a>
+        <a href="#" aria-label="App Store badge">
+          <img src="/static/images/apps.png" alt="App Store" style="height:60px; display:block;">
+        </a>
+      </div>
+    </div>
   </div>
 </section>
 
