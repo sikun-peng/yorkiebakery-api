@@ -354,12 +354,12 @@ def update_menu_item(
     if is_available is not None:
         item.is_available = is_available
 
-    # Image upload (replace existing set if new files provided)
+    # Image upload (append gallery; replace hero only if primary image provided)
     uploaded_files: List[UploadFile] = []
-    if images:
-        uploaded_files.extend(images)
     if image:
         uploaded_files.append(image)
+    if images:
+        uploaded_files.extend(images)
 
     if uploaded_files:
         uploaded_urls: List[str] = []
@@ -368,8 +368,18 @@ def update_menu_item(
                 raise HTTPException(status_code=400, detail="Only image files are allowed")
             uploaded_urls.append(upload_file_to_s3(f, folder="menu", bucket=S3_BUCKET_IMAGE))
 
-        item.image_url = uploaded_urls[0]
-        item.gallery_urls = uploaded_urls[1:] if len(uploaded_urls) > 1 else []
+        existing_gallery = item.gallery_urls or []
+
+        # If admin uploaded a new primary image, replace hero with first uploaded
+        if image:
+            item.image_url = uploaded_urls[0]
+            new_gallery = uploaded_urls[1:]
+        else:
+            # No primary image provided; treat all as gallery additions
+            new_gallery = uploaded_urls
+
+        # Append new gallery images to existing list
+        item.gallery_urls = existing_gallery + new_gallery
 
     session.commit()
     session.refresh(item)

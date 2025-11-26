@@ -114,6 +114,25 @@
                 </div>
             {% endif %}
 
+            {% if request.session.get("user") and request.session.get("user").get("is_admin") %}
+            <div style="margin-top:16px; padding:14px; border:1px solid var(--border); border-radius:10px; background:#fff;">
+                <h4 style="margin-top:0;">Admin: Update Recipe & Gallery</h4>
+                <form id="admin-update-form"
+                      enctype="multipart/form-data"
+                      method="post"
+                      action="/menu/{{ item.id }}">
+                    <label style="display:block; margin-bottom:6px;">Recipe / Notes</label>
+                    <textarea name="recipe" rows="3" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:8px; margin-bottom:10px;">{{ item.recipe or "" }}</textarea>
+
+                    <label style="display:block; margin-bottom:6px;">Add Gallery Images</label>
+                    <input type="file" name="images" accept="image/*" multiple style="margin-bottom:10px;">
+
+                    <button type="submit" class="btn btn-outline">Save</button>
+                    <span id="admin-update-status" style="margin-left:10px; font-size:12px; color: var(--text-light);"></span>
+                </form>
+            </div>
+            {% endif %}
+
             <!-- Add to Cart -->
             {% if qty == 0 %}
               <form action="/cart/add/{{ item.id }}" method="post" class="cart-form" data-cart-action="add" data-item-id="{{ item.id }}">
@@ -201,5 +220,34 @@
             mainImg.src = btn.dataset.full;
         });
     });
+
+    // Admin update form (recipe + gallery)
+    const adminForm = document.getElementById("admin-update-form");
+    if (adminForm) {
+        adminForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const statusEl = document.getElementById("admin-update-status");
+            statusEl.textContent = "Saving...";
+            const fd = new FormData();
+            const recipe = adminForm.querySelector('textarea[name="recipe"]').value || "";
+            fd.append("recipe", recipe);
+            const files = adminForm.querySelector('input[name=\"images\"]').files;
+            for (let i = 0; i < files.length; i++) {
+                fd.append("images", files[i]);
+            }
+            try {
+                const res = await fetch("/menu/{{ item.id }}", {
+                    method: "PUT",
+                    body: fd,
+                });
+                if (!res.ok) throw new Error("Save failed");
+                statusEl.textContent = "Saved!";
+                window.location.reload();
+            } catch (err) {
+                statusEl.textContent = "Error saving";
+                console.error(err);
+            }
+        });
+    }
 </script>
 {% endblock %}

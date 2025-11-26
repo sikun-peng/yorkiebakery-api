@@ -45,7 +45,7 @@
 <section class="home-section home-section-alt">
   <h2 style="text-align:center;">🎼 Café Music</h2>
   <div style="text-align:center; margin-bottom:24px;">
-    <a href="/music/listen" class="btn">🎵 Oscar's Music 🎹🎻</a>
+    <a href="/music/listen" class="btn-outline">🎵 Oscar's Music 🎹🎻</a>
   </div>
 
   <div style="
@@ -66,15 +66,15 @@
     ">
 
       <!-- Cover Image (small + clean) -->
-      {% if track.cover_url %}
-        <img src="{{ track.cover_url }}"
-             alt="{{ track.title }}"
-             style="width:120px; height:auto; border-radius:10px; margin-bottom:10px;">
-      {% else %}
-        <img src="/static/images/default_music_cover.jpg"
-             alt="No cover"
-             style="width:120px; height:auto; border-radius:10px; margin-bottom:10px;">
-      {% endif %}
+    {% if track.cover_url %}
+      <img src="{{ track.cover_url }}"
+           alt="{{ track.title }}"
+           style="width:120px; height:120px; object-fit:cover; border-radius:12px; margin-bottom:10px;">
+    {% else %}
+      <img src="/static/images/default_music_cover.jpg"
+           alt="No cover"
+           style="width:120px; height:120px; object-fit:cover; border-radius:12px; margin-bottom:10px;">
+    {% endif %}
 
       <h3 style="font-size:18px; margin-bottom:5px;">{{ track.title }}</h3>
 
@@ -108,12 +108,12 @@
     <div style="flex:1 1 360px; min-width:320px;">
       <p style="margin:0 0 8px 0; color:#c8c8c8; letter-spacing:0.3px;">Happy to Announce</p>
       <h2 style="margin:0 0 18px 0; font-size:34px; font-weight:600; color:#f1f1f1;">Mobile App is coming up on neither OS platform 😂 </h2>
-      <div style="display:flex; gap:16px; flex-wrap:nowrap; align-items:flex-start; margin-top:4px;">
+      <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; margin-top:4px;">
         <a href="#" aria-label="Google Play badge">
-          <img src="/static/images/google.png" alt="Google Play" style="height:60px; display:block;">
+          <img src="/static/images/badge_google_store.jpg" alt="Google Play" style="height:60px; display:block;">
         </a>
         <a href="#" aria-label="App Store badge">
-          <img src="/static/images/apps.png" alt="App Store" style="height:60px; display:block;">
+          <img src="/static/images/badge_apple_store.jpg" alt="App Store" style="height:60px; display:block;">
         </a>
       </div>
     </div>
