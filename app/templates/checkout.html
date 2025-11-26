@@ -54,14 +54,27 @@
               </td>
               <td class="text-center">{{ item.qty }}</td>
               <td class="text-right">
-                ${{ "%.2f"|format(item.price * item.qty) }}
+                <span class="old-price">${{ "%.2f"|format(item.price * item.qty) }}</span>
+                <span class="free-pill">0.00</span>
               </td>
             </tr>
             {% endfor %}
             <tr class="total-row">
+              <td colspan="2"><strong>Subtotal</strong></td>
+              <td class="text-right total-amount">
+                <span class="old-price">${{ "%.2f"|format(original_total) }}</span>
+              </td>
+            </tr>
+            <tr class="total-row">
+              <td colspan="2"><strong>Discount</strong></td>
+              <td class="text-right total-amount">
+                <strong>100% off</strong>
+              </td>
+            </tr>
+            <tr class="total-row">
               <td colspan="2"><strong>Total</strong></td>
               <td class="text-right total-amount">
-                <strong>${{ "%.2f"|format(total) }}</strong>
+                <span class="free-pill large">Free</span>
               </td>
             </tr>
           </tbody>

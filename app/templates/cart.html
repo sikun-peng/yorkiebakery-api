@@ -20,9 +20,15 @@
       {% for i in items %}
       <tr>
         <td>{{ i.title }}</td>
-        <td>${{ "%.2f"|format(i.price) }}</td>
+        <td>
+          <span class="old-price">${{ "%.2f"|format(i.price) }}</span>
+          <span class="free-pill">Free</span>
+        </td>
         <td>{{ i.quantity }}</td>
-        <td>${{ "%.2f"|format(i.subtotal) }}</td>
+        <td>
+          <span class="old-price">${{ "%.2f"|format(i.subtotal) }}</span>
+          <span class="free-pill">0.00</span>
+        </td>
         <td>
           <form action="/cart/remove/{{ i.id }}" method="post">
             <button type="submit" class="btn-small">− Remove</button>
@@ -34,7 +40,9 @@
   </table>
 
   <div class="cart-summary">
-    <h2>Total: ${{ "%.2f"|format(total) }}</h2>
+    <p class="muted">Original: <span class="old-price">${{ "%.2f"|format(original_total) }}</span></p>
+    <p class="muted">Discount: 100% off</p>
+    <h2>Total: <span class="free-pill large">Free</span></h2>
     <a href="/cart/checkout" class="btn checkout-btn">✅ Proceed to Checkout</a>
   </div>
 

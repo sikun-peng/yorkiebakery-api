@@ -11,11 +11,17 @@
   <h3 style="margin-top:24px;">Order Summary</h3>
   <ul style="list-style:none; padding:0;">
     {% for item in cart %}
-      <li>{{ item.qty }} × {{ item.title }} — ${{ "%.2f"|format(item.price * item.qty) }}</li>
+      <li>
+        {{ item.qty }} × {{ item.title }} —
+        <span class="old-price">${{ "%.2f"|format(item.price * item.qty) }}</span>
+        <span class="free-pill">0.00</span>
+      </li>
     {% endfor %}
   </ul>
 
-  <h3>Total: ${{ "%.2f"|format(total) }}</h3>
+  <p class="muted">Original: <span class="old-price">${{ "%.2f"|format(original_total) }}</span></p>
+  <p class="muted">Discount: 100% off</p>
+  <h3>Total: <span class="free-pill large">Free</span></h3>
 
   <a href="/menu/view" class="btn" style="margin-top:24px;">🍰 Back to Menu</a>
 </div>

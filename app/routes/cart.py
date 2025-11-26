@@ -61,12 +61,14 @@ def view_cart_page(request: Request):
                     "subtotal": item.price * qty,
                 })
 
-    total = sum(i["subtotal"] for i in items)
+    original_total = sum(i["subtotal"] for i in items)
+    total = 0  # 100% off promotion
     cart_count = sum(cart.values())
 
     return templates.TemplateResponse("cart.html", {
         "request": request,
         "items": items,
+        "original_total": original_total,
         "total": total,
         "cart": cart,
         "cart_count": cart_count,
@@ -165,12 +167,15 @@ def checkout_page(request: Request):
             for i in items
         ]
 
-    total = sum(i["price"] * i["qty"] for i in detailed_cart)
+    original_total = sum(i["price"] * i["qty"] for i in detailed_cart)
+    total = 0  # 100% off promotion
 
     return templates.TemplateResponse("checkout.html", {
         "request": request,
         "cart": detailed_cart,
+        "original_total": original_total,
         "total": total,
+        "discount_percent": 100,
     })
 
 
@@ -210,12 +215,13 @@ def process_checkout(
         ).all()
 
         cart_items = []
-        total = 0
+        original_total = 0
+        total = 0  # after 100% discount
 
         for item in items:
             qty = cart.get(str(item.id), 0)
             subtotal = item.price * qty
-            total += subtotal
+            original_total += subtotal
 
             cart_items.append({
                 "title": item.title,
@@ -274,7 +280,9 @@ def process_checkout(
     return templates.TemplateResponse("confirm.html", {
         "request": request,
         "cart": cart_items,
+        "original_total": original_total,
         "total": total,
+        "discount_percent": 100,
         "email": user_email,
         "name": user_name
     })

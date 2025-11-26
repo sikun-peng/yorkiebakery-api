@@ -13,6 +13,9 @@
   <label>📝 Description</label>
   <textarea name="description" rows="2" placeholder="Brief description of this item..."></textarea>
 
+  <label>📜 Recipe / Notes</label>
+  <textarea name="recipe" rows="3" placeholder="Internal recipe steps or ingredients (optional)"></textarea>
+
   <label>💰 Price *</label>
   <input type="number" name="price" step="0.01" placeholder="e.g. 12.99" required>
 
@@ -109,8 +112,11 @@
     <option value="false">No</option>
   </select>
 
-  <label>🖼️ Image *</label>
+  <label>🖼️ Primary Image *</label>
   <input type="file" name="image" accept="image/*" required>
+
+  <label>📸 Gallery Images (optional)</label>
+  <input type="file" name="images" accept="image/*" multiple>
 
   <button type="submit" class="btn" style="margin-top:20px;">Create Item ✅</button>
 </form>

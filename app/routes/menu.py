@@ -116,17 +116,31 @@ def create_menu_item(
     tags: Optional[str] = Form(None),
     flavor_profiles: Optional[str] = Form(None),
     dietary_features: Optional[str] = Form(None),
+    recipe: Optional[str] = Form(None),
     is_available: bool = Form(True),
-    image: UploadFile = File(...),
+    image: Optional[UploadFile] = File(None),
+    images: Optional[List[UploadFile]] = File(None),
     session: Session = Depends(get_session),
     user=Depends(require_admin),
 ):
-    # Validate image type
-    if not image.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Only image files are allowed")
+    # Normalize uploaded files (support single or multi)
+    uploaded_files: List[UploadFile] = []
+    if images:
+        uploaded_files.extend(images)
+    if image:
+        uploaded_files.append(image)
 
-    # Upload image to S3
-    image_url = upload_file_to_s3(image, folder="menu", bucket=S3_BUCKET_IMAGE)
+    if not uploaded_files:
+        raise HTTPException(status_code=400, detail="At least one image is required")
+
+    uploaded_urls: List[str] = []
+    for f in uploaded_files:
+        if not f.content_type.startswith("image/"):
+            raise HTTPException(status_code=400, detail="Only image files are allowed")
+        uploaded_urls.append(upload_file_to_s3(f, folder="menu", bucket=S3_BUCKET_IMAGE))
+
+    image_url = uploaded_urls[0]
+    gallery_urls = uploaded_urls[1:] if len(uploaded_urls) > 1 else []
 
     # Convert CSV → list[]
     def parse_list(value: Optional[str]):
@@ -143,7 +157,9 @@ def create_menu_item(
         tags=parse_list(tags),
         flavor_profiles=parse_list(flavor_profiles),
         dietary_features=parse_list(dietary_features),
+        recipe=recipe,
         image_url=image_url,
+        gallery_urls=gallery_urls,
         is_available=is_available,
     )
 
@@ -296,8 +312,10 @@ def update_menu_item(
     tags: Optional[str] = Form(None),
     flavor_profiles: Optional[str] = Form(None),
     dietary_features: Optional[str] = Form(None),
+    recipe: Optional[str] = Form(None),
     is_available: Optional[bool] = Form(None),
     image: Optional[UploadFile] = File(None),
+    images: Optional[List[UploadFile]] = File(None),
     session: Session = Depends(get_session),
     user=Depends(require_admin),
 ):
@@ -329,16 +347,29 @@ def update_menu_item(
         item.flavor_profiles = parse_list(flavor_profiles)
     if dietary_features is not None:
         item.dietary_features = parse_list(dietary_features)
+    if recipe is not None:
+        item.recipe = recipe
 
     # Availability
     if is_available is not None:
         item.is_available = is_available
 
-    # Image upload
+    # Image upload (replace existing set if new files provided)
+    uploaded_files: List[UploadFile] = []
+    if images:
+        uploaded_files.extend(images)
     if image:
-        if not image.content_type.startswith("image/"):
-            raise HTTPException(status_code=400, detail="Only image files are allowed")
-        item.image_url = upload_file_to_s3(image, folder="menu", bucket=S3_BUCKET_IMAGE)
+        uploaded_files.append(image)
+
+    if uploaded_files:
+        uploaded_urls: List[str] = []
+        for f in uploaded_files:
+            if not f.content_type.startswith("image/"):
+                raise HTTPException(status_code=400, detail="Only image files are allowed")
+            uploaded_urls.append(upload_file_to_s3(f, folder="menu", bucket=S3_BUCKET_IMAGE))
+
+        item.image_url = uploaded_urls[0]
+        item.gallery_urls = uploaded_urls[1:] if len(uploaded_urls) > 1 else []
 
     session.commit()
     session.refresh(item)

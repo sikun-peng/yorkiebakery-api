@@ -39,13 +39,16 @@ CREATE TABLE menu_item (
     title TEXT NOT NULL,
     description TEXT,
     image_url TEXT,
+    gallery_urls TEXT[] DEFAULT ARRAY[]::TEXT[],
     origin TEXT,
     category TEXT,
     tags TEXT[] DEFAULT ARRAY[]::TEXT[],
     flavor_profiles TEXT[] DEFAULT ARRAY[]::TEXT[],
     dietary_features TEXT[] DEFAULT ARRAY[]::TEXT[],
     price NUMERIC(10,2) NOT NULL,
-    is_available BOOLEAN DEFAULT TRUE
+    is_available BOOLEAN DEFAULT TRUE,
+    recipe TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
 -- ============ ORDERS ============

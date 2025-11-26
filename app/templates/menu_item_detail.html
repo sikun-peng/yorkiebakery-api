@@ -5,16 +5,63 @@
 {% block content %}
 {% set cart = request.session.get("cart", {}) %}
 {% set qty = cart.get(item.id|string, 0) %}
+{% set images = ([item.image_url] if item.image_url else []) + (item.gallery_urls or []) %}
+{% set primary_image = images[0] if images else "/static/images/default_menu_image.jpg" %}
+<style>
+    .gallery-thumbs {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+    .thumb-btn {
+        border: 1px solid #eee;
+        padding: 2px;
+        background: #fafafa;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    .thumb-btn:focus { outline: 2px solid #d9bfa9; }
+    .thumb-img {
+        height: 70px;
+        width: 70px;
+        object-fit: cover;
+        border-radius: 4px;
+        display: block;
+    }
+    .recipe-card {
+        margin-top: 16px;
+        padding: 14px 16px;
+        background: #faf7f2;
+        border: 1px solid #e7dbcf;
+        border-radius: 8px;
+        white-space: pre-wrap;
+        line-height: 1.6;
+        font-family: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 14px;
+    }
+    .recipe-card h3 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-family: inherit;
+    }
+</style>
 <div class="menu-item-detail">
     <a href="/menu/view" class="back-link">← Back to Menu</a>
 
     <div class="item-container">
         <!-- Left: Image and Basic Info -->
         <div class="item-main">
-            {% if item.image_url %}
-                <img src="{{ item.image_url }}" alt="{{ item.title }}" class="item-image">
-            {% else %}
-                <img src="/static/images/default_menu_image.jpg" alt="No Image Available" class="item-image">
+            <img src="{{ primary_image }}" alt="{{ item.title }}" class="item-image main-image">
+
+            {% if images|length > 1 %}
+                <div class="gallery-thumbs">
+                    {% for img in images %}
+                        <button type="button" class="thumb-btn" data-full="{{ img }}">
+                            <img src="{{ img }}" alt="{{ item.title }} thumbnail {{ loop.index }}" class="thumb-img">
+                        </button>
+                    {% endfor %}
+                </div>
             {% endif %}
 
             <h1>{{ item.title }}</h1>
@@ -44,17 +91,27 @@
                     <p><strong>Tags:</strong> {{ item.tags | join(", ") }}</p>
                 {% endif %}
 
-                {% if item.flavor_profiles %}
-                    <p><strong>Flavor:</strong> {{ item.flavor_profiles | join(", ") }}</p>
-                {% endif %}
+            {% if item.flavor_profiles %}
+                <p><strong>Flavor:</strong> {{ item.flavor_profiles | join(", ") }}</p>
+            {% endif %}
 
-                {% if item.dietary_features %}
+            {% if item.dietary_features %}
                     <p><strong>Dietary:</strong> {{ item.dietary_features | join(", ") }}</p>
                 {% endif %}
             </div>
 
             {% if item.price is not none %}
-                <p class="price">${{ "%.2f"|format(item.price) }}</p>
+                <p class="price">
+                    <span class="old-price">${{ "%.2f"|format(item.price) }}</span>
+                    <span class="free-pill">Free</span>
+                </p>
+            {% endif %}
+
+            {% if item.recipe %}
+                <div class="recipe-card">
+                    <h3>Recipe / Notes</h3>
+                    {{ item.recipe }}
+                </div>
             {% endif %}
 
             <!-- Add to Cart -->
@@ -136,4 +193,13 @@
         </div>
     </div>
 </div>
+<script>
+    const mainImg = document.querySelector(".main-image");
+    const thumbs = document.querySelectorAll(".thumb-btn");
+    thumbs.forEach(btn => {
+        btn.addEventListener("click", () => {
+            mainImg.src = btn.dataset.full;
+        });
+    });
+</script>
 {% endblock %}

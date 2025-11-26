@@ -3,6 +3,7 @@ from typing import List, Optional
 from uuid import UUID, uuid4
 from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import ARRAY
+from datetime import datetime
 
 class MenuItem(SQLModel, table=True):
     __tablename__ = "menu_item"
@@ -10,6 +11,7 @@ class MenuItem(SQLModel, table=True):
     title: str
     description: str
     image_url: Optional[str] = None
+    gallery_urls: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
     origin: Optional[str] = None
     category: Optional[str] = None
     tags: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
@@ -17,3 +19,5 @@ class MenuItem(SQLModel, table=True):
     dietary_features: List[str] = Field(default_factory=list, sa_column=Column(ARRAY(String)))
     price: Optional[float] = None
     is_available: bool = True
+    recipe: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)

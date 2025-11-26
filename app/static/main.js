@@ -376,3 +376,36 @@ document.addEventListener("DOMContentLoaded", () => {
         updateCart(action, itemId, form);
     });
 });
+
+/* ===========================
+   MENU CARD CLICK THRU
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+    const cards = Array.from(document.querySelectorAll(".menu-card[data-item-link]"));
+    if (!cards.length) return;
+
+    const isInteractive = (el) => {
+        const tag = el.tagName?.toLowerCase();
+        if (!tag) return false;
+        return ["a", "button", "input", "select", "textarea", "label"].includes(tag) || el.closest("form");
+    };
+
+    cards.forEach((card) => {
+        const href = card.dataset.itemLink;
+        if (!href) return;
+
+        card.addEventListener("click", (e) => {
+            if (isInteractive(e.target)) return;
+            window.location.href = href;
+        });
+
+        card.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !isInteractive(e.target)) {
+                e.preventDefault();
+                window.location.href = href;
+            }
+        });
+
+        card.style.cursor = "pointer";
+    });
+});
