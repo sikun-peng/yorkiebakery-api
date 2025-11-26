@@ -724,6 +724,45 @@ h1, h2, h3, h4 {
   border-radius: var(--radius-sm);
 }
 
+.social-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: transform 0.1s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.social-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.social-btn .social-icon img {
+  height: 18px;
+  width: 18px;
+  display: block;
+}
+
+.google-btn {
+  color: var(--text-dark);
+  background: #fff;
+}
+
+.facebook-btn {
+  background: #1877f2;
+  color: #fff;
+  border: 1px solid #1560c9;
+}
+
 /* ===========================
    CHAT WIDGET
    =========================== */
