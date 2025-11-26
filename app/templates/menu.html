@@ -3,7 +3,7 @@
 {% block title %}Menu · Yorkie Bakery{% endblock %}
 
 {% block content %}
-<h1>🍽️ Our Menu</h1>
+<h1 class="cute-title">🍽️ Our Menu</h1>
 
 {% set cart = request.session.get("cart", {}) %}
 
@@ -114,13 +114,14 @@
 </div>
 
 {% for cat in categories %}
-  <h2 class="category-header">
-    {{ category_map[cat] if cat in category_map else cat|capitalize }}
-  </h2>
+  <div class="menu-category-block">
+    <h2 class="category-header cute-title">
+      {{ category_map[cat] if cat in category_map else cat|capitalize }}
+    </h2>
 
-  <div class="menu-grid">
-    {% for item in items if item.category == cat %}
-    <div class="menu-card" data-item-link="/menu/item/{{ item.id }}" role="link" tabindex="0">
+    <div class="menu-grid">
+      {% for item in items if item.category == cat %}
+      <div class="menu-card" data-item-link="/menu/item/{{ item.id }}" role="link" tabindex="0">
 
       <!-- Image (clickable) -->
       <div class="item-image-link">
@@ -132,7 +133,7 @@
       </div>
 
       <!-- Title + Desc -->
-      <h2 class="item-title-link">{{ item.title }}</h2>
+      <h2 class="item-title-link cute-subtitle">{{ item.title }}</h2>
 
       <!-- Reviews Summary -->
       {% set stats = review_stats.get(item.id|string, {"count": 0, "avg_rating": 0}) %}
@@ -219,10 +220,23 @@
         </div>
       {% endif %}
 
+      </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
 
 {% endfor %}
+
+<!-- 🤝 Sponsors -->
+<div class="sponsor-strip">
+  <div class="sponsor-strip-inner">
+    <p class="sponsor-label">Proudly Sponsored By</p>
+    <div class="sponsor-badges">
+      <img src="/static/images/logo_juilliard.jpg" alt="Juilliard">
+      <img src="/static/images/logo_bucees.jpg" alt="Buc-ee's">
+      <img src="/static/images/logo_white.jpg" alt="Yorkie Bakery">
+    </div>
+  </div>
+</div>
 
 {% endblock %}

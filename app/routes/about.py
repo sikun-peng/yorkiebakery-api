@@ -10,3 +10,10 @@ def system_design(request: Request):
         "about.html",      # keep filename short
         {"request": request}
     )
+
+@router.get("/data-deletion")
+def data_deletion(request: Request):
+    return templates.TemplateResponse(
+        "data_deletion.html",
+        {"request": request}
+    )

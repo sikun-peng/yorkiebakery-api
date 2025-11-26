@@ -2,7 +2,7 @@
 {% block title %}🎵 Music · Yorkie Bakery{% endblock %}
 
 {% block content %}
-<h1 class="cursive-font text-center mb-6">🎶 Our Music Playlist  🌟️💕</h1>
+<h1 class="cute-title text-center mb-6">🎶 Our Music Playlist  🌟️💕</h1>
 
 {# Mapping: DB category → Display name #}
 {% set category_map = {
@@ -18,8 +18,8 @@
   {% set cat_tracks = tracks | selectattr("category", "equalto", raw_cat) | list %}
 
   {% if cat_tracks %}
-  <section class="music-section">
-    <h2>{{ display_cat }}</h2>
+  <section class="music-section music-category-block">
+    <h2 class="cute-title">{{ display_cat }}</h2>
     <div class="track-grid">
 
       {% for track in cat_tracks %}
@@ -71,4 +71,16 @@
 {% if not tracks %}
   <p class="text-center text-gray-600 mt-8 italic">No tracks uploaded yet 🎧</p>
 {% endif %}
+
+<!-- 🤝 Sponsors -->
+<div class="sponsor-strip">
+  <div class="sponsor-strip-inner">
+    <p class="sponsor-label">Proudly Sponsored By</p>
+    <div class="sponsor-badges">
+      <img src="/static/images/logo_juilliard.jpg" alt="Juilliard">
+      <img src="/static/images/logo_bucees.jpg" alt="Buc-ee's">
+      <img src="/static/images/logo_white.jpg" alt="Yorkie Bakery">
+    </div>
+  </div>
+</div>
 {% endblock %}

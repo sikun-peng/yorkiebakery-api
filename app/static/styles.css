@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&family=Baloo+2:wght@600;700&display=swap');
 
 /* ===========================
    VARIABLES & RESET
@@ -68,6 +68,58 @@ h1, h2, h3, h4 {
   color: var(--text-dark);
   margin: 0 0 1rem 0;
   font-family: "Playfair Display", "DM Sans", serif;
+}
+
+.cute-title {
+  font-family: "Baloo 2", "Playfair Display", "DM Sans", cursive;
+  letter-spacing: 0.4px;
+}
+
+.cute-subtitle {
+  font-family: "Baloo 2", "Playfair Display", "DM Sans", cursive;
+  letter-spacing: 0.2px;
+}
+
+.rainbow-text {
+  animation: rainbowShift 12s linear infinite, floatBlink 2.8s ease-in-out infinite;
+  background: linear-gradient(90deg, #ffb36b, #ff9dd4, #9b6bff, #6bd3ff, #7ce8b6, #ffb36b);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  text-align: center;
+  transform-origin: center;
+}
+
+@keyframes rainbowShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes floatBlink {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  45% { transform: translateY(-2px) scale(1.01); opacity: 0.95; }
+  55% { transform: translateY(-2px) scale(1.01); opacity: 0.95; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.menu-category-block, .music-category-block {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 16px 10px;
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+
+.menu-category-block h2,
+.music-category-block h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
 }
 
 /* ===========================
@@ -384,6 +436,46 @@ h1, h2, h3, h4 {
   font-weight: 700;
   letter-spacing: 0.3px;
   text-align: center;
+}
+
+.sponsor-strip {
+  margin: 0 auto;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  padding: 24px 12px 30px;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+}
+
+.sponsor-strip-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.sponsor-label {
+  margin: 0 0 12px 0;
+  color: var(--text-lighter);
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.sponsor-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.sponsor-badges img {
+  height: 112px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--white);
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
 .payment-row {
@@ -815,6 +907,76 @@ h1, h2, h3, h4 {
   align-items: center;
   color: #3b2d1f;
   font-size: 15px;
+}
+
+.chat-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(0,0,0,0.05);
+  background: #fff;
+}
+
+.chat-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+}
+
+.msg-bot, .msg-user {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+  max-width: 100%;
+}
+
+.msg-bot {
+  justify-content: flex-start;
+}
+
+.msg-bot::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: url('/static/images/logo_black.jpg') center/cover no-repeat;
+  flex-shrink: 0;
+  border: 1px solid #f0e6dc;
+}
+
+.msg-user {
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.msg-bot span, .msg-user span {
+  background: #fffdf9;
+  border: 1px solid #f0e6dc;
+  padding: 8px 10px;
+  border-radius: 12px;
+  color: var(--text);
+  line-height: 1.4;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.msg-user span {
+  background: var(--primary-light);
+  border-color: var(--primary);
 }
 
 .close-chat {

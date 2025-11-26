@@ -2,27 +2,27 @@
 
 {% block content %}
 
-<h1 style="text-align:center; margin-top:40px;">
+<h1 class="cute-title rainbow-text" style="text-align:center; margin-top:40px;">
   🌸🍉 Welcome to Yorkie Bakery 🍓🎀
 </h1>
 
-<p style="text-align:center; margin-bottom:32px;">
+<p class="cute-subtitle" style="text-align:center; margin-bottom:32px;">
   Baked fresh every day — let our Yorkie Chef 🐶✨ help you pick the perfect treat 🐾🍰
 </p>
 
 <section class="home-section">
-  <h2 style="text-align:center;"> 🐾 Menu Recommendation 👨‍🍳</h2>
+  <h2 class="cute-title" style="text-align:center;"> 🐾 Menu Recommendation 👨‍🍳</h2>
   <div style="text-align:center; margin-bottom:24px;">
-    <button id="ai-demo-btn" class="btn"
+    <button id="ai-demo-btn" class="btn-outline"
             style="padding: 20px 40px; font-size: 20px;">
        🤖 AI Menu & Image Match
     </button>
   </div>
 
   <!-- 🍰 Featured Menu Section -->
-  <h2 style="text-align:center;">🍰 Featured Menu 😍</h2>
+  <h2 class="cute-title" style="text-align:center;">🍰 Featured Menu 😍</h2>
   <div style="text-align:center; margin-bottom:24px;">
-    <a href="/menu/view" class="btn">🍽️Browse Our Menu 🌸</a>
+    <a href="/menu/view" class="btn-outline">🍽️Browse Our Menu 🌸</a>
   </div>
   <div class="menu-grid" style="margin-bottom:16px;">
     {% for item in menu_items %}
@@ -43,7 +43,7 @@
 
 <!-- 🎵 Music Section -->
 <section class="home-section home-section-alt">
-  <h2 style="text-align:center;">🎼 Café Music</h2>
+  <h2 class="cute-title" style="text-align:center;">🎼 Café Music</h2>
   <div style="text-align:center; margin-bottom:24px;">
     <a href="/music/listen" class="btn-outline">🎵 Oscar's Music 🎹🎻</a>
   </div>
@@ -101,14 +101,18 @@
 
 <!-- 📱 Mobile App Section -->
 <section style="background:#2f2f2f; color:#e6e6e6; padding:80px 0;">
-  <div style="max-width:1100px; margin:0 auto; display:flex; gap:48px; align-items:flex-start; justify-content:space-between; flex-wrap:wrap;">
+  <div style="max-width:1100px; margin:0 auto; display:flex; gap:40px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
     <div style="flex:1 1 320px; display:flex; justify-content:center;">
       <img src="/static/images/iphone.png" alt="Yorkie Bakery App preview" style="width:320px; max-width:100%; display:block;">
     </div>
-    <div style="flex:1 1 360px; min-width:320px;">
-      <p style="margin:0 0 8px 0; color:#c8c8c8; letter-spacing:0.3px;">Happy to Announce</p>
-      <h2 style="margin:0 0 18px 0; font-size:34px; font-weight:600; color:#f1f1f1;">Mobile App is coming up on neither OS platform 😂 </h2>
-      <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:flex-start; margin-top:4px;">
+    <div style="flex:1 1 360px; min-width:320px; max-width:500px; text-align:left; margin:0 auto;">
+      <p style="margin:0 0 10px 0; color:#f1f1f1; letter-spacing:0.3px; font-size:26px; font-weight:800; font-family:'DM Sans','Playfair Display',sans-serif;">
+        Happy to Announce
+      </p>
+      <h2 style="margin:0 0 10px 0; font-size:20px; font-weight:600; color:#dcdcdc; line-height:1.35; font-family:'DM Sans','Playfair Display',sans-serif;">
+        Mobile App is coming up on neither OS platform 😂
+      </h2>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; align-items:center; margin-top:10px;">
         <a href="#" aria-label="Google Play badge">
           <img src="/static/images/badge_google_store.jpg" alt="Google Play" style="height:60px; display:block;">
         </a>
@@ -134,7 +138,7 @@
 <!-- 🐾 About Me -->
 <section style="background:#fffaf4; padding:60px 0; text-align:center;">
   <h2 class="cursive-font">🐾 About Me</h2>
-  <img src="/static/images/img_oscar.jpg" alt="Chef Oscar" style="width:150px; border-radius:50%; margin-bottom:10px;">
+  <img src="/static/images/img_oscar.jpg" alt="Chef Oscar" style="width:300px; border-radius:50%; margin-bottom:10px;">
   <p>
     Oscar is a full-time Yorkshire Terrier 🐶 and part-time culinary mastermind 🍰 born under the sunny skies of California. While most dogs chase mailmen, Oscar chased Michelin stars — eventually settling into life as the proud Owner & CEO of Yorkie Bakery.
 
@@ -142,11 +146,11 @@
 
     When he’s not in the kitchen, Oscar enjoys classical music🎶, piano improvisation, and barking at pigeons who clearly underestimate his artistic brilliance. He insists that every dessert at Yorkie Bakery is made with “a sprinkle of love and a whole lot of yum,” which — according to customers — is a surprisingly effective recipe.
   </p>
-  <img src="/static/images/store.jpeg" alt="Bakery Store" style="width:250px; border-radius:10px; margin-top:20px;">
+  <img src="/static/images/store.jpeg" alt="Bakery Store" style="width:500px; border-radius:10px; margin-top:20px;">
 </section>
 
 <!-- 🕒 Store Hours -->
-<section style="background:#fff; padding:40px 0; text-align:center;">
+<section style="background:#fff3e3; padding:40px 0; text-align:center;">
   <h2 class="cursive-font">🕒 Store Hours </h2>
   <p>Mon – Sun: CLOSED 😂 (Appointments Only)</p>
   <p>Contact us to book private tastings or baking classes!</p>
@@ -162,5 +166,17 @@
     <a href="/events/new" class="btn btn-admin">➕ Create Event</a>
   </div>
 {% endif %}
+
+<!-- 🤝 Sponsors -->
+<div class="sponsor-strip">
+  <div class="sponsor-strip-inner">
+    <p class="sponsor-label">Proudly Sponsored By</p>
+    <div class="sponsor-badges">
+      <img src="/static/images/logo_juilliard.jpg" alt="Juilliard">
+      <img src="/static/images/logo_bucees.jpg" alt="Buc-ee's">
+      <img src="/static/images/logo_white.jpg" alt="Yorkie Bakery">
+    </div>
+  </div>
+</div>
 
 {% endblock %}

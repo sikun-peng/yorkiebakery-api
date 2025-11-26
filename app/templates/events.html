@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<h2 style="text-align:center; margin-bottom:25px;">🍰 Upcoming Events</h2>
+<h1 class="cute-title" style="margin-bottom:25px;">🍰 Upcoming Events</h1>
 
 {% if request.query_params.get("success") %}
 <div style="background:#d4edda; padding:12px; border-radius:6px; color:#155724; margin-bottom:20px;">
@@ -30,7 +30,7 @@
     <!-- IMAGE -->
     <img src="{{ img }}" class="event-img" onclick="openModal('{{ img }}')">
 
-    <h3>{{ event.title }}</h3>
+    <h3 class="cute-title">{{ event.title }}</h3>
 
     <p class="event-date">
       📅
@@ -137,6 +137,19 @@ function zoomOut(event) {
   zoomLevel = Math.max(0.4, zoomLevel - 0.2);
   document.getElementById("modalImg").style.transform = `scale(${zoomLevel})`;
 }
+
+// Sponsor strip (matches homepage)
 </script>
+
+<div class="sponsor-strip">
+  <div class="sponsor-strip-inner">
+    <p class="sponsor-label">Proudly Sponsored By</p>
+    <div class="sponsor-badges">
+      <img src="/static/images/logo_juilliard.jpg" alt="Juilliard">
+      <img src="/static/images/logo_bucees.jpg" alt="Buc-ee's">
+      <img src="/static/images/logo_white.jpg" alt="Yorkie Bakery">
+    </div>
+  </div>
+</div>
 
 {% endblock %}
