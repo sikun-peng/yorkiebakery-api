@@ -3,6 +3,8 @@
 {% block title %}{{ item.title }} · Yorkie Bakery{% endblock %}
 
 {% block content %}
+{% set cart = request.session.get("cart", {}) %}
+{% set qty = cart.get(item.id|string, 0) %}
 <div class="menu-item-detail">
     <a href="/menu/view" class="back-link">← Back to Menu</a>
 
@@ -56,9 +58,23 @@
             {% endif %}
 
             <!-- Add to Cart -->
-            <form action="/cart/add/{{ item.id }}" method="post">
-                <button type="submit" class="btn btn-primary">Add to Cart 🛍️</button>
-            </form>
+            {% if qty == 0 %}
+              <form action="/cart/add/{{ item.id }}" method="post" class="cart-form" data-cart-action="add" data-item-id="{{ item.id }}">
+                  <button type="submit" class="btn btn-primary">Add to Cart 🛍️</button>
+              </form>
+            {% else %}
+              <div class="qty-controls">
+                  <form action="/cart/remove/{{ item.id }}" method="post" class="cart-form" data-cart-action="remove" data-item-id="{{ item.id }}" style="display:inline;">
+                      <button type="submit" class="qty-btn" {% if qty == 0 %}disabled{% endif %}>−</button>
+                  </form>
+
+                  <span class="qty-display">{{ qty }}</span>
+
+                  <form action="/cart/add/{{ item.id }}" method="post" class="cart-form" data-cart-action="add" data-item-id="{{ item.id }}" style="display:inline;">
+                      <button type="submit" class="qty-btn">+</button>
+                  </form>
+              </div>
+            {% endif %}
         </div>
 
         <!-- Right: Reviews Section -->

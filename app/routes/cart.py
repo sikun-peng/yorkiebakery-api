@@ -100,7 +100,30 @@ def add_item_button(menu_item_id: str, request: Request):
     cart = _get_cart(request)
     cart[menu_item_id] = cart.get(menu_item_id, 0) + 1
     request.session["cart"] = cart
-    return RedirectResponse(url="/menu/view", status_code=303)
+    referer = request.headers.get("referer", "/menu/view")
+    return RedirectResponse(url=referer, status_code=303)
+
+
+# ---------------------------------------------
+# REMOVE ITEM (AJAX)
+# ---------------------------------------------
+@router.post("/remove")
+async def remove_item_json(request: Request):
+    data = await request.json()
+    menu_item_id = str(data["menu_item_id"])
+
+    cart = _get_cart(request)
+    if menu_item_id in cart:
+        cart[menu_item_id] -= 1
+        if cart[menu_item_id] <= 0:
+            del cart[menu_item_id]
+    request.session["cart"] = cart
+
+    return {
+        "ok": True,
+        "cart_count": sum(cart.values()),
+        "item_count": cart.get(menu_item_id, 0)
+    }
 
 
 # ---------------------------------------------
@@ -114,7 +137,8 @@ def remove_item_button(menu_item_id: str, request: Request):
         if cart[menu_item_id] <= 0:
             del cart[menu_item_id]
     request.session["cart"] = cart
-    return RedirectResponse(url="/menu/view", status_code=303)
+    referer = request.headers.get("referer", "/menu/view")
+    return RedirectResponse(url=referer, status_code=303)
 
 
 # ---------------------------------------------

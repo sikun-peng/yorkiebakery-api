@@ -293,3 +293,86 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+/* ===========================
+   CART: AJAX add/remove on menu cards
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+    const badge = document.getElementById("global-cart-count");
+
+    async function updateCart(action, itemId, form) {
+        const endpoint = action === "add" ? "/cart/add" : "/cart/remove";
+        const payload = { menu_item_id: itemId };
+        try {
+            const res = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            if (!res.ok) throw new Error("Request failed");
+            const data = await res.json();
+            if (!data.ok) throw new Error("Bad response");
+
+            // Update badge
+            if (badge) {
+                const count = data.cart_count || 0;
+                badge.textContent = count;
+                badge.style.display = count > 0 ? "inline-flex" : "none";
+            }
+
+            // Update qty display inside the same card
+            const card = form.closest(".menu-card") || form.closest(".item-main");
+            const itemCount = data.item_count || 0;
+
+            if (card) {
+                const qtyDisplay = card.querySelector(".qty-display");
+                const qtyBadge = card.querySelector(".item-qty-badge");
+                const addForm = card.querySelector('.cart-form[data-cart-action="add"]');
+                const minusForm = card.querySelector('.cart-form[data-cart-action="remove"]');
+                const addButton = addForm?.querySelector("button");
+                const minusButton = minusForm?.querySelector("button");
+                const hadQtyDisplay = Boolean(qtyDisplay);
+
+                // If we were in "Add to Cart" state (no qty display) and we just added, reload to show controls
+                if (!hadQtyDisplay && action === "add" && itemCount > 0) {
+                    window.location.reload();
+                    return;
+                }
+
+                if (qtyDisplay) {
+                    qtyDisplay.textContent = itemCount;
+                }
+                if (qtyBadge) {
+                    qtyBadge.textContent = itemCount;
+                    qtyBadge.style.display = itemCount > 0 ? "inline-flex" : "none";
+                }
+
+                // Toggle disabled state when zero
+                if (addButton) addButton.disabled = false;
+                if (minusButton) minusButton.disabled = itemCount <= 0;
+
+                // If we had controls and count dropped to zero, reload to restore single add button
+                if (hadQtyDisplay && itemCount <= 0) {
+                    window.location.reload();
+                }
+            }
+        } catch (err) {
+            console.error("Cart update failed:", err);
+            // Fallback to normal form submit
+            form.submit();
+        }
+    }
+
+    document.body.addEventListener("submit", (e) => {
+        const form = e.target;
+        if (!form.classList.contains("cart-form")) return;
+        e.preventDefault();
+        const action = form.dataset.cartAction;
+        const itemId = form.dataset.itemId;
+        if (!action || !itemId) {
+            form.submit();
+            return;
+        }
+        updateCart(action, itemId, form);
+    });
+});
