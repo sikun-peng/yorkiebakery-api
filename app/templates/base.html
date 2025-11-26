@@ -12,35 +12,41 @@
        HEADER / NAVIGATION
        =========================== -->
   <header>
-    <nav class="nav-bar">
-      <div class="nav-left">
+    <nav class="nav-bar" id="main-nav">
+      <div class="nav-brand">
         <a href="/" class="logo">Yorkie Bakery 🐾🍪</a>
-        <a id="ai-demo-link" class="nav-link">🤖 AI Demo</a>
-        <a href="/system-design/view" class="nav-link">📘 System Design</a>
-        <a href="/menu/view" class="nav-link">🍽️ Menu</a>
-        <a href="/music/listen" class="nav-link">🎵 Music</a>
-        <a href="/events/view" class="nav-link">🎉 Events</a>
-        <a href="/cart/view" class="nav-link cart-link">
-          Cart 🛒
-          <span id="global-cart-count"
-            class="cart-badge"
-            style="{% if not cart_count %}display:none;{% endif %}">
-            {{ cart_count or 0 }}
-          </span>
-        </a>
-        {% if request.session.get("user") %}
-          <a href="/orders/view" class="nav-link">My Orders</a>
-        {% endif %}
+        <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">☰</button>
       </div>
 
-      <div class="nav-right">
-        {% if request.session.get("user") %}
-          <span class="nav-user">👋 {{ request.session['user']['first_name'] }}</span>
-          <a href="/auth/logout" class="btn-small">Logout</a>
-        {% else %}
-          <button id="open-login" class="btn-small">Login</button>
-          <button id="open-register" class="btn-small">Register</button>
-        {% endif %}
+      <div class="nav-links" id="nav-links">
+        <div class="nav-primary">
+          <a id="ai-demo-link" class="nav-link">🤖 AI Demo</a>
+          <a href="/system-design/view" class="nav-link">📘 System Design</a>
+          <a href="/menu/view" class="nav-link">🍽️ Menu</a>
+          <a href="/music/listen" class="nav-link">🎵 Music</a>
+          <a href="/events/view" class="nav-link">🎉 Events</a>
+          <a href="/cart/view" class="nav-link cart-link">
+            Cart 🛒
+            <span id="global-cart-count"
+              class="cart-badge"
+              style="{% if not cart_count %}display:none;{% endif %}">
+              {{ cart_count or 0 }}
+            </span>
+          </a>
+          {% if request.session.get("user") %}
+            <a href="/orders/view" class="nav-link">My Orders</a>
+          {% endif %}
+        </div>
+
+        <div class="nav-right">
+          {% if request.session.get("user") %}
+            <span class="nav-user">👋 {{ request.session['user']['first_name'] }}</span>
+            <a href="/auth/logout" class="btn-small">Logout</a>
+          {% else %}
+            <button id="open-login" class="btn-small">Login</button>
+            <button id="open-register" class="btn-small">Register</button>
+          {% endif %}
+        </div>
       </div>
     </nav>
   </header>

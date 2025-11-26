@@ -409,3 +409,24 @@ document.addEventListener("DOMContentLoaded", () => {
         card.style.cursor = "pointer";
     });
 });
+
+/* ===========================
+   NAV: MOBILE TOGGLE
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("nav-toggle");
+    const links = document.getElementById("nav-links");
+    if (!toggle || !links) return;
+
+    toggle.addEventListener("click", () => {
+        links.classList.toggle("nav-open");
+    });
+
+    // Close menu when a link is clicked (mobile)
+    links.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target && target.classList.contains("nav-link")) {
+            links.classList.remove("nav-open");
+        }
+    });
+});
