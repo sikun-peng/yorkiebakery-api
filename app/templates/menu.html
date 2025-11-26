@@ -39,77 +39,78 @@
 } %}
 
 {% set category_map = {
-    "pastry": "🧁 Pastry",
-    "dessert": "🍰 Dessert",
-    "entree": "🍽️ Entrée",
-    "drink": "🥤 Drinks",
-    "rice_and_noodles": "Rice 🍚  & Noodles 🍜 ",
-    "appetizer": "🥟 Appetizers",
-    "soup": "🍲 Soup",
+    "pastry": "🍰 Pastry 😋💖 ",
+    "dessert": "🥮 Dessert 🍮🥐",
+    "entree": "🍽️ Entrée 👨‍🍳",
+    "drink": "🧋 Drinks 😎🍹",
+    "rice_and_noodles": "Rice 🍚 & Noodles 🍜 ",
+    "appetizer": "🥟 Appetizers 🥳 ",
+    "soup": "🍲 Soup 🥣",
     "default": "🍴 Other"
 } %}
 
 <!-- Dietary Filter -->
-<div class="filter-section">
-    <h3>🥗 Filter by Dietary Features</h3>
-    <form method="GET" action="/menu/view" class="filter-form">
-        <div class="checkbox-group">
-            <!-- DIETARY PREFERENCES -->
-            <label class="checkbox-label">
-                <input type="checkbox" name="dietary" value="vegetarian">
-                <span>🥬 Vegetarian</span>
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" name="dietary" value="vegan">
-                <span>🌱 Vegan</span>
-            </label>
+<div class="filter-shell">
+  <details class="filter-section">
+    <summary>
+      <div class="filter-title">
+        <span>🥗 Dietary filters</span>
+      </div>
+      <span class="filter-chevron">▼</span>
+    </summary>
 
-            <!-- MAJOR ALLERGENS -->
-            <label class="checkbox-label">
-                <input type="checkbox" name="dietary" value="gluten_free">
-                <span>✅ Gluten-Free</span>
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" name="dietary" value="contains_gluten">
-                <span>🌾 Contains Gluten</span>
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" name="dietary" value="contains_dairy">
-                <span>🥛 Contains Dairy</span>
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" name="dietary" value="contains_nuts">
-                <span>🥜 Contains Nuts</span>
-            </label>
+    <div class="filter-body">
+      <form method="GET" action="/menu/view" class="filter-form">
+          <div class="checkbox-group">
+              <label class="checkbox-label">
+                  <input type="checkbox" name="dietary" value="vegetarian">
+                  <span>🥬 Vegetarian</span>
+              </label>
+              <label class="checkbox-label">
+                  <input type="checkbox" name="dietary" value="vegan">
+                  <span>🌱 Vegan</span>
+              </label>
+              <label class="checkbox-label">
+                  <input type="checkbox" name="dietary" value="gluten_free">
+                  <span>✅ Gluten-Free</span>
+              </label>
+              <label class="checkbox-label">
+                  <input type="checkbox" name="dietary" value="contains_gluten">
+                  <span>🌾 Contains Gluten</span>
+              </label>
+              <label class="checkbox-label">
+                  <input type="checkbox" name="dietary" value="contains_dairy">
+                  <span>🥛 Contains Dairy</span>
+              </label>
+              <label class="checkbox-label">
+                  <input type="checkbox" name="dietary" value="contains_nuts">
+                  <span>🥜 Contains Nuts</span>
+              </label>
+              <label class="checkbox-label">
+                  <input type="checkbox" name="dietary" value="contains_pork">
+                  <span>🐖 Contains Pork</span>
+              </label>
+              <label class="checkbox-label">
+                  <input type="checkbox" name="dietary" value="contains_shellfish">
+                  <span>🦐 Contains Shellfish</span>
+              </label>
+              <label class="checkbox-label">
+                  <input type="checkbox" name="dietary" value="contains_alcohol">
+                  <span>🍷 Contains Alcohol</span>
+              </label>
+              <label class="checkbox-label">
+                  <input type="checkbox" name="dietary" value="spicy">
+                  <span>🌶️ Spicy</span>
+              </label>
+          </div>
 
-            <!-- PROTEIN SOURCES -->
-            <label class="checkbox-label">
-                <input type="checkbox" name="dietary" value="contains_pork">
-                <span>🐖 Contains Pork</span>
-            </label>
-            <label class="checkbox-label">
-                <input type="checkbox" name="dietary" value="contains_shellfish">
-                <span>🦐 Contains Shellfish</span>
-            </label>
-
-            <!-- ALCOHOL CONTENT -->
-            <label class="checkbox-label">
-                <input type="checkbox" name="dietary" value="contains_alcohol">
-                <span>🍷 Contains Alcohol</span>
-            </label>
-
-            <!-- FLAVOR PROFILE -->
-            <label class="checkbox-label">
-                <input type="checkbox" name="dietary" value="spicy">
-                <span>🌶️ Spicy</span>
-            </label>
-        </div>
-
-        <div class="filter-actions">
-            <button type="submit" class="btn filter-btn">Apply Filters</button>
-            <a href="/menu/view" class="btn btn-outline clear-btn">Clear All</a>
-        </div>
-    </form>
+          <div class="filter-actions">
+              <button type="submit" class="btn filter-btn">Apply Filters</button>
+              <a href="/menu/view" class="btn btn-outline clear-btn">Clear All</a>
+          </div>
+      </form>
+    </div>
+  </details>
 </div>
 
 {% for cat in categories %}
@@ -121,16 +122,32 @@
     {% for item in items if item.category == cat %}
     <div class="menu-card">
 
-      <!-- Image -->
-      {% if item.image_url %}
-        <img src="{{ item.image_url }}" alt="{{ item.title }}">
-      {% else %}
-        <img src="/static/images/default_menu_image.jpg" alt="No Image Available">
-      {% endif %}
+      <!-- Image (clickable) -->
+      <a href="/menu/item/{{ item.id }}" class="item-image-link">
+        {% if item.image_url %}
+          <img src="{{ item.image_url }}" alt="{{ item.title }}">
+        {% else %}
+          <img src="/static/images/default_menu_image.jpg" alt="No Image Available">
+        {% endif %}
+      </a>
 
       <!-- Title + Desc -->
-      <h2>{{ item.title }}</h2>
-      <p>{{ item.description }}</p>
+      <h2><a href="/menu/item/{{ item.id }}" class="item-title-link">{{ item.title }}</a></h2>
+
+      <!-- Reviews Summary -->
+      {% set stats = review_stats.get(item.id|string, {"count": 0, "avg_rating": 0}) %}
+      {% if stats.count > 0 %}
+        <div class="review-summary">
+          <span class="stars-small">{{ "⭐" * stats.avg_rating|int }}</span>
+          <span class="review-info">{{ stats.avg_rating }} ({{ stats.count }} review{{ "s" if stats.count != 1 else "" }})</span>
+        </div>
+      {% else %}
+        <div class="review-summary">
+          <a href="/menu/item/{{ item.id }}" class="no-reviews-link">No reviews yet - Be the first!</a>
+        </div>
+      {% endif %}
+
+      <p class="item-description">{{ item.description }}</p>
 
       <!-- Metadata row -->
       <div class="menu-meta">

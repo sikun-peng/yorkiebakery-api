@@ -16,8 +16,11 @@ from uuid import UUID
 from sqlalchemy import any_
 
 from app.models.postgres.menu import MenuItem
+from app.models.postgres.review import Review
+from app.models.postgres.user import User
 from app.core.db import get_session
 from app.core.security import require_admin
+from app.core.cart_utils import get_cart_count
 from app.utils.s3_util import upload_file_to_s3
 
 templates = Jinja2Templates(directory="app/templates")
@@ -51,6 +54,27 @@ def view_menu_page(
         else:
             items = all_items
 
+        # Get review counts and average ratings for all items
+        review_stats = {}
+        for item in items:
+            reviews = session.exec(
+                select(Review)
+                .where(Review.menu_item_id == item.id)
+            ).all()
+
+            if reviews:
+                total_rating = sum(r.rating for r in reviews)
+                avg_rating = round(total_rating / len(reviews), 1)
+                review_stats[str(item.id)] = {
+                    "count": len(reviews),
+                    "avg_rating": avg_rating
+                }
+            else:
+                review_stats[str(item.id)] = {
+                    "count": 0,
+                    "avg_rating": 0
+                }
+
         cart = request.session.get("cart", {})
         cart_count = sum(cart.values())
 
@@ -61,6 +85,7 @@ def view_menu_page(
                 "items": items,
                 "cart": cart,
                 "cart_count": cart_count,
+                "review_stats": review_stats,
             },
         )
     except Exception as e:
@@ -73,6 +98,7 @@ def view_menu_page(
                 "items": [],
                 "cart": {},
                 "cart_count": 0,
+                "review_stats": {},
             },
         )
 
@@ -194,7 +220,59 @@ def admin_new_menu_page(request: Request, user=Depends(require_admin)):
 
 
 # -------------------------------
-# Get item by ID
+# Individual menu item detail page (HTML)
+# -------------------------------
+@router.get("/item/{item_id}")
+def view_menu_item_page(
+    item_id: UUID,
+    request: Request,
+    session: Session = Depends(get_session)
+):
+    # Get menu item
+    item = session.get(MenuItem, item_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    # Get reviews with user info
+    reviews_query = session.exec(
+        select(Review, User)
+        .join(User, Review.user_id == User.id)
+        .where(Review.menu_item_id == item_id)
+        .order_by(Review.created_at.desc())
+    ).all()
+
+    reviews = []
+    total_rating = 0
+    for review, user in reviews_query:
+        reviews.append({
+            "rating": review.rating,
+            "comment": review.comment,
+            "created_at": review.created_at,
+            "user_name": f"{user.first_name or ''} {user.last_name or ''}".strip() or user.email.split('@')[0]
+        })
+        total_rating += review.rating
+
+    avg_rating = round(total_rating / len(reviews), 1) if reviews else 0
+
+    cart_count = get_cart_count(request)
+    logged_in_user = request.session.get("user")
+
+    return templates.TemplateResponse(
+        "menu_item_detail.html",
+        {
+            "request": request,
+            "item": item,
+            "reviews": reviews,
+            "avg_rating": avg_rating,
+            "review_count": len(reviews),
+            "cart_count": cart_count,
+            "user": logged_in_user,
+        },
+    )
+
+
+# -------------------------------
+# Get item by ID (API JSON)
 # -------------------------------
 @router.get("/{item_id}", response_model=MenuItem)
 def get_menu_item(item_id: UUID, session: Session = Depends(get_session)):

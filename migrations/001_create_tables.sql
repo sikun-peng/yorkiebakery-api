@@ -11,7 +11,10 @@ CREATE TABLE user_account (
     last_name TEXT,
     is_admin BOOLEAN DEFAULT FALSE,
     is_verified BOOLEAN DEFAULT FALSE,
-    verification_token TEXT
+    verification_token TEXT,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP,
+    last_login TIMESTAMP
 );
 
 -- ============ PASSWORD RESET TOKENS ============
@@ -111,3 +114,20 @@ CREATE TABLE IF NOT EXISTS event_rsvp (
 
 CREATE INDEX IF NOT EXISTS idx_event_active ON event(is_active);
 CREATE INDEX IF NOT EXISTS idx_rsvp_event_id ON event_rsvp(event_id);
+
+
+-- ============ Menu Review ============
+DROP TABLE IF EXISTS review CASCADE;
+CREATE TABLE IF NOT EXISTS review (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    menu_item_id UUID NOT NULL,
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_review_user_menu UNIQUE (user_id, menu_item_id),
+    CONSTRAINT fk_review_user FOREIGN KEY(user_id)
+        REFERENCES user_account(id) ON DELETE CASCADE,
+    CONSTRAINT fk_review_menu FOREIGN KEY(menu_item_id)
+        REFERENCES menu_item(id) ON DELETE CASCADE
+);

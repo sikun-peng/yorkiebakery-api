@@ -122,6 +122,11 @@ def login_form(
             "error": "Please verify your email before logging in. Check your inbox for the verification link."
         }, status_code=403)
 
+    # Update last login timestamp
+    user.last_login = datetime.utcnow()
+    session.add(user)
+    session.commit()
+
     # Set session
     request.session["user"] = {
         "id": str(user.id),
@@ -284,6 +289,11 @@ def api_login(payload: UserLoginRequest, request: Request, session: Session = De
     if not user.is_verified:
         raise HTTPException(status_code=403, detail="Email not verified")
 
+    # Update last login timestamp
+    user.last_login = datetime.utcnow()
+    session.add(user)
+    session.commit()
+
     token = create_access_token({"sub": str(user.id), "email": user.email})
 
     request.session["user"] = {
@@ -338,6 +348,11 @@ async def google_callback(request: Request, session: Session = Depends(get_sessi
             user.is_verified = True
             session.add(user)
             session.commit()
+
+    # Update last login timestamp
+    user.last_login = datetime.utcnow()
+    session.add(user)
+    session.commit()
 
     request.session["user"] = {
         "id": str(user.id),
@@ -416,6 +431,11 @@ async def facebook_callback(request: Request, session: Session = Depends(get_ses
                 session.add(user)
                 session.commit()
             print(f"DEBUG: Existing Facebook user: {user.email}")
+
+        # Update last login timestamp
+        user.last_login = datetime.utcnow()
+        session.add(user)
+        session.commit()
 
         # Set session
         request.session["user"] = {

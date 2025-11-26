@@ -14,7 +14,7 @@ from app.core.db import get_session
 from app.core.cart_utils import get_cart_count
 from app.models.postgres.menu import MenuItem
 from app.models.postgres.music import MusicTrack
-from app.routes import auth, menu, order, cart, music, about, event, health
+from app.routes import auth, menu, order, cart, music, about, event, health, review
 from app.ai.route import ai_demo, ai_chat, ai_vision, ai_debug
 
 # ===============================================
@@ -98,6 +98,7 @@ app.include_router(music.router)
 app.include_router(about.router)
 app.include_router(event.router)
 app.include_router(health.router)
+app.include_router(review.router)
 
 # AI / RAG routers
 app.include_router(ai_demo.router)

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.title }} · Yorkie Bakery{% endblock %}
+
+{% block content %}
+<div class="menu-item-detail">
+    <a href="/menu/view" class="back-link">← Back to Menu</a>
+
+    <div class="item-container">
+        <!-- Left: Image and Basic Info -->
+        <div class="item-main">
+            {% if item.image_url %}
+                <img src="{{ item.image_url }}" alt="{{ item.title }}" class="item-image">
+            {% else %}
+                <img src="/static/images/default_menu_image.jpg" alt="No Image Available" class="item-image">
+            {% endif %}
+
+            <h1>{{ item.title }}</h1>
+
+            {% if avg_rating > 0 %}
+                <div class="rating-summary">
+                    <span class="stars">{{ "⭐" * avg_rating|int }}</span>
+                    <span class="rating-text">{{ avg_rating }} / 5</span>
+                    <span class="review-count">({{ review_count }} reviews)</span>
+                </div>
+            {% else %}
+                <p class="no-reviews">No reviews yet</p>
+            {% endif %}
+
+            <p class="item-description">{{ item.description }}</p>
+
+            <div class="item-meta">
+                {% if item.origin %}
+                    <p><strong>Origin:</strong> {{ item.origin|capitalize }}</p>
+                {% endif %}
+
+                {% if item.category %}
+                    <p><strong>Category:</strong> {{ item.category|capitalize }}</p>
+                {% endif %}
+
+                {% if item.tags %}
+                    <p><strong>Tags:</strong> {{ item.tags | join(", ") }}</p>
+                {% endif %}
+
+                {% if item.flavor_profiles %}
+                    <p><strong>Flavor:</strong> {{ item.flavor_profiles | join(", ") }}</p>
+                {% endif %}
+
+                {% if item.dietary_features %}
+                    <p><strong>Dietary:</strong> {{ item.dietary_features | join(", ") }}</p>
+                {% endif %}
+            </div>
+
+            {% if item.price is not none %}
+                <p class="price">${{ "%.2f"|format(item.price) }}</p>
+            {% endif %}
+
+            <!-- Add to Cart -->
+            <form action="/cart/add/{{ item.id }}" method="post">
+                <button type="submit" class="btn btn-primary">Add to Cart 🛍️</button>
+            </form>
+        </div>
+
+        <!-- Right: Reviews Section -->
+        <div class="reviews-section">
+            <h2>Reviews</h2>
+
+            {% if user %}
+                <!-- Review Form (only for logged-in users) -->
+                <div class="review-form">
+                    <h3>Write a Review</h3>
+                    <form action="/reviews/create" method="post">
+                        <input type="hidden" name="menu_item_id" value="{{ item.id }}">
+
+                        <div class="form-group">
+                            <label for="rating">Rating:</label>
+                            <select name="rating" id="rating" required>
+                                <option value="">Select rating</option>
+                                <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                                <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                                <option value="3">⭐⭐⭐ (3/5)</option>
+                                <option value="2">⭐⭐ (2/5)</option>
+                                <option value="1">⭐ (1/5)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comment">Your Review:</label>
+                            <textarea name="comment" id="comment" rows="4" required placeholder="Share your experience..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-submit">Submit Review</button>
+                    </form>
+                </div>
+            {% else %}
+                <p class="login-prompt">
+                    <a href="/auth/login_form">Log in</a> to write a review
+                </p>
+            {% endif %}
+
+            <!-- Display Reviews -->
+            <div class="reviews-list">
+                {% if reviews %}
+                    {% for review in reviews %}
+                        <div class="review-card">
+                            <div class="review-header">
+                                <span class="review-author">{{ review.user_name }}</span>
+                                <span class="review-date">{{ review.created_at.strftime('%B %d, %Y') }}</span>
+                            </div>
+                            <div class="review-rating">
+                                {{ "⭐" * review.rating }}
+                            </div>
+                            <p class="review-comment">{{ review.comment }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-reviews">No reviews yet. Be the first to review!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="container">
-    <h1>📦 My Orders</h1>
+    <h1>📦 My Orders </h1>
 
     {% if not orders_with_items %}
         <div class="empty-state">
@@ -14,7 +14,7 @@
         {% for order_data in orders_with_items %}
         <div class="order-card">
             <div class="order-header">
-                <h3>Order #{{ order_data['order']['id'][:8] }}...</h3>
+                <h3> 🎁 Order #{{ order_data['order']['id'][:8] }}...</h3>
                 <div class="order-meta">
                     <span class="status {{ order_data['order']['status'] }}">{{ order_data['order']['status'].title() }}</span>
                     <span class="date">
