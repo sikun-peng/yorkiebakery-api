@@ -5,11 +5,11 @@ export const HOME_URL =
 
 export default function YorkieHeader() {
   return (
-    <header className="mb-8">
+    <header className="mb-6">
       <div className="flex items-center justify-between">
         <a
           href={HOME_URL}
-          className="text-2xl font-bold text-[var(--yorkie-brown)] hover:underline"
+          className="text-3xl font-bold text-[var(--yorkie-brown)] tracking-wide"
         >
           Yorkie Bakery 🐾🍪
         </a>

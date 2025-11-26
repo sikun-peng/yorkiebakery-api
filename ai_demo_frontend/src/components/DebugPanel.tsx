@@ -7,7 +7,7 @@ interface Props {
 export default function DebugPanel({ trace }: Props) {
   return (
     <section className="yorkie-card text-xs space-y-2">
-      <details open>
+      <details>
         <summary className="cursor-pointer font-bold text-yorkieBrown">
           🐾 Debug Panel
         </summary>

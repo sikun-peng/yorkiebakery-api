@@ -55,7 +55,7 @@ export default function ImageUploadPanel({ onAnalysisComplete }: Props) {
         Upload a dessert photo to find similar menu items.
       </p>
 
-      <label className="block border-2 border-dashed border-gray-400 rounded-xl p-6 text-center cursor-pointer hover:bg-gray-50 transition">
+      <label className="block dashed-upload rounded-xl p-6 text-center cursor-pointer">
         👉 Click to upload image (JPG / PNG)
         <input type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
       </label>

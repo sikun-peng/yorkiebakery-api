@@ -48,14 +48,14 @@ export default function AIInput({ setTrace }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="yorkie-card w-full flex flex-col space-y-3">
-      <label className="font-semibold text-yorkieBrown">
+      <label className="font-semibold text-yorkieBrown text-lg">
         Ask Yorkie something:
       </label>
 
       <input
         type="text"
         placeholder="e.g. 'Recommend something fruity'"
-        className="border border-gray-300 rounded-lg p-3 w-full focus:ring-2 focus:ring-yellow-300"
+        className="border border-[var(--yorkie-border)] rounded-xl p-3 w-full focus:ring-2 focus:ring-yellow-300 shadow-sm bg-white"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
       />
@@ -66,8 +66,7 @@ export default function AIInput({ setTrace }: Props) {
             key={prompt}
             type="button"
             onClick={() => setMessage(prompt)}
-            className="px-3 py-1 rounded-full bg-amber-100 border border-amber-300
-                       text-yorkieBrown hover:bg-amber-200 shadow-sm transition"
+            className="pill-btn"
           >
             {prompt}
           </button>
@@ -77,7 +76,7 @@ export default function AIInput({ setTrace }: Props) {
       <button
         type="submit"
         disabled={loading}
-        className="bg-yellow-300 hover:bg-yellow-400 text-yorkieBrown font-bold py-2 px-4 rounded-lg transition disabled:opacity-50"
+        className="primary-btn disabled:opacity-50"
       >
         {loading ? "Thinking..." : "Ask"}
       </button>

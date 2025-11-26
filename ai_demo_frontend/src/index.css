@@ -1,19 +1,27 @@
 /* index.css */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
 /* Yorkie Theme Variables */
 :root {
   --yorkie-bg: #faf7f2;
+  --yorkie-bg-2: #fdfaf5;
   --yorkie-brown: #7a5c42;
+  --yorkie-brown-soft: #8c6b4d;
   --yorkie-yellow: #f8e8b0;
   --yorkie-border: #f1e6c8;
   --yorkie-card: #ffffffee;
 }
 
 body {
-  background: var(--yorkie-bg);
-  font-family: system-ui, sans-serif;
+  background: linear-gradient(180deg, var(--yorkie-bg) 0%, var(--yorkie-bg-2) 100%);
+  font-family: "DM Sans", system-ui, sans-serif;
   margin: 0;
+  color: #3b322a;
+}
+
+h1, h2, h3 {
+  font-family: "Baloo 2", "DM Sans", sans-serif;
 }
 
 .text-yorkieBrown {
@@ -25,5 +33,43 @@ body {
   border: 1px solid var(--yorkie-border);
   border-radius: 1rem;
   padding: 1.25rem;
-  box-shadow: 0 2px 4px rgb(0 0 0 / 0.04);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.08);
+}
+
+.pill-btn {
+  @apply px-3 py-1.5 text-sm rounded-full transition shadow-sm border;
+  border-color: #f3d9a2;
+  background: #fff9ed;
+  color: var(--yorkie-brown-soft);
+}
+
+.pill-btn:hover {
+  background: #ffeec7;
+  border-color: #f5cf86;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.08);
+}
+
+.primary-btn {
+  @apply w-full py-3 font-bold rounded-xl transition;
+  background: linear-gradient(135deg, #ffd766, #ffbe4d);
+  color: #5b3e21;
+  box-shadow: 0 10px 20px rgb(255 190 77 / 0.35);
+  border: 1px solid #f6c35a;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgb(255 190 77 / 0.4);
+}
+
+.dashed-upload {
+  border: 2px dashed #c9b7a0;
+  background: #fffdf7;
+  transition: all 0.2s ease;
+}
+
+.dashed-upload:hover {
+  background: #fff7e6;
+  border-color: #bfa27c;
 }
