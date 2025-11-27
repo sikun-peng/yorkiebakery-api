@@ -54,6 +54,10 @@
   box-sizing: border-box;
 }
 
+html, body {
+  min-height: 100vh;
+}
+
 body {
   font-family: "DM Sans", "Inter", system-ui, -apple-system, sans-serif;
   background: var(--bg);
@@ -62,6 +66,16 @@ body {
   padding: 24px;
   color: var(--text);
   line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: clamp(16px, 3vw, 32px);
 }
 
 h1, h2, h3, h4 {
@@ -420,7 +434,7 @@ h1, h2, h3, h4 {
 }
 
 .payment-strip {
-  margin: 36px auto 0 auto;
+  margin: 0 auto 0 auto;
   background: #fff;
   border-top: 1px solid var(--border);
   border-bottom: 0;
@@ -428,6 +442,7 @@ h1, h2, h3, h4 {
   width: 100vw;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
+  margin-top: auto;
 }
 
 .payment-strip-inner {
@@ -874,10 +889,10 @@ h1, h2, h3, h4 {
   right: 24px;
   background: var(--primary);
   border-radius: 50%;
-  width: 56px;
-  height: 56px;
+  width: 72px;
+  height: 72px;
   border: none;
-  font-size: 22px;
+  font-size: 28px;
   cursor: pointer;
   display: flex;
   align-items: center;

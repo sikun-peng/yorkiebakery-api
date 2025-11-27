@@ -45,3 +45,10 @@ curl -X POST http://localhost:8000/ai/chat \
 cd ai_demo_frontend/
 npm install
 npm run build
+
+
+# purge css
+curl -X POST "https://api.cloudflare.com/client/v4/zones/8547f59bcabb275c176448c50fa99867/purge_cache" \
+  -H "Authorization: Bearer {}" \
+  -H "Content-Type: application/json" \
+  --data '{"files":["https://beta.yorkiebakery.com/static/styles.css"]}'
