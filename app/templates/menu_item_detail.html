@@ -186,7 +186,7 @@
                 </div>
             {% else %}
                 <p class="login-prompt">
-                    <a href="/auth/login_form">Log in</a> to write a review
+                    <a href="/auth/login?redirect_url=/menu/item/{{ item.id }}">Log in</a> to write a review
                 </p>
             {% endif %}
 
