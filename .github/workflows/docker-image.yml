@@ -1,0 +1,65 @@
+# ================================
+# STAGE 1 — Build React Frontend
+# ================================
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /app/frontend
+
+COPY ai_demo_frontend/package*.json ./
+RUN npm ci
+
+COPY ai_demo_frontend ./
+RUN npm run build
+
+
+# ================================
+# STAGE 2 — Backend Builder
+# ================================
+FROM python:3.11-slim AS builder
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install deps first for caching
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install --prefix=/install -r requirements.txt
+
+
+# ================================
+# STAGE 3 — Final Runtime Image
+# ================================
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy Python deps from builder
+COPY --from=builder /install /usr/local
+
+# Copy backend code
+COPY app/ ./app/
+COPY main.py .
+COPY migrations/ ./migrations/
+COPY requirements.txt .
+
+# Copy built frontend
+COPY --from=frontend-builder /app/frontend/dist/ ./ai_demo_frontend/dist/
+
+# Create app user
+RUN adduser --disabled-password appuser && chown -R appuser /app
+USER appuser
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=60s --timeout=60s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
