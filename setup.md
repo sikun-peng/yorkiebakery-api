@@ -2,20 +2,20 @@
 source venv/bin/activate
 pip install -r requirements.txt
 
-# docker exec -it yorkiebakery-api-web /bin/bash
+# shell into container
+docker exec -it yorkiebakery-api-web /bin/bash
 
 # docker build and run
 docker stop $(docker ps -q)
 docker rm $(docker ps -a -q)
 docker image prune -f
 
-
 # nuclear cleanup
 docker-compose down --volumes
 docker rmi $(docker images -q yorkiebakery-api_web)
 docker builder prune -af
 
-
+# docker build cmd
 docker-compose down &&  docker image prune -f && docker-compose build --no-cache && docker-compose up -d
 docker-compose down && docker-compose build && docker-compose up -d
 
@@ -25,9 +25,10 @@ docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrati
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/003_seed_music.sql
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/004_mock_menu.sql
 
-# SSH into Postgres container and reset database
+# SSH into Postgres container
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery
 
+# Reset database (Danger!)
 SELECT pg_terminate_backend(pid)
 FROM pg_stat_activity
 WHERE datname = 'yorkiebakery';
