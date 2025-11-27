@@ -9,6 +9,8 @@ docker stop $(docker ps -q)
 docker rm $(docker ps -a -q)
 docker image prune -f
 
+
+# nuclear cleanup
 docker-compose down --volumes
 docker rmi $(docker images -q yorkiebakery-api_web)
 docker builder prune -af

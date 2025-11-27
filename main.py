@@ -131,7 +131,7 @@ def home(request: Request):
         select(MusicTrack)
         .where(MusicTrack.file_url != "")
         .order_by(func.random())
-        .limit(4)
+        .limit(3)
     ).all()
 
     return templates.TemplateResponse(

@@ -288,11 +288,17 @@ h1, h2, h3, h4 {
 /* ===========================
    CARDS & GRIDS
    =========================== */
-.menu-grid, .track-grid {
+.menu-grid, .track-grid, .music-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 22px;
-  margin-top: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin: 24px auto 0;
+  max-width: 1040px;
+  width: 100%;
+}
+
+.music-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .menu-card, .music-track-card, .order-card,
@@ -1174,7 +1180,7 @@ h1, h2, h3, h4 {
     margin: 0;
   }
 
-  .menu-grid, .track-grid {
+  .menu-grid, .track-grid, .music-grid {
     grid-template-columns: 1fr;
     gap: 16px;
   }

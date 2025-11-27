@@ -48,13 +48,7 @@
     <a href="/music/listen" class="btn-outline">🎵 Oscar's Music 🎹🎻</a>
   </div>
 
-  <div style="
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 25px;
-    max-width: 900px;
-    margin: 0 auto;
-  ">
+  <div class="music-grid">
     {% for track in tracks %}
     <div style="
       background: #fff;
