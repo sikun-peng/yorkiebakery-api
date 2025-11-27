@@ -8,8 +8,8 @@ export default function DebugPanel({ trace }: Props) {
   return (
     <section className="yorkie-card text-xs space-y-2">
       <details>
-        <summary className="cursor-pointer font-bold text-yorkieBrown">
-          🐾 Debug Panel
+        <summary className="cursor-pointer font-semibold text-yorkieBrown text-lg">
+          🐾 Debug Panel - Click for details
         </summary>
 
         <div className="mt-3 space-y-3">
