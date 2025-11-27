@@ -2074,6 +2074,32 @@ h1, h2, h3, h4 {
   background: var(--white);
 }
 
+/* Event image modal overrides */
+#imgModal {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+#imgModal .modal-content {
+  margin: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
+#imgModal .modal-close {
+  top: 20px;
+  right: 24px;
+}
+
+#imgModal .zoom-controls {
+  top: 20px;
+  left: 24px;
+}
+
 /* ===========================
    CREATE EVENT PAGE
    =========================== */
