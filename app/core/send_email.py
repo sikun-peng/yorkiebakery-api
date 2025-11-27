@@ -4,7 +4,7 @@ from starlette.config import Config
 config = Config(".env")
 
 AWS_REGION = "us-west-2"
-SES_SENDER = f"Yorkie Bakery <noreply@beta.yorkiebakery.com>"
+SES_SENDER = f"Yorkie Bakery <noreply@yorkiebakery.com>"
 
 ses = boto3.client("ses", region_name=AWS_REGION)
 
