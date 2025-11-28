@@ -1,6 +1,7 @@
 import os
 import sys
 import types
+from pathlib import Path
 from uuid import uuid4
 
 import pytest
@@ -8,6 +9,13 @@ from fastapi.testclient import TestClient
 
 # Ensure a DATABASE_URL exists so main import doesn't fail; session is overridden in tests.
 os.environ.setdefault("DATABASE_URL", "sqlite://")
+
+# Ensure frontend dist exists so StaticFiles mount in main.py doesn't fail
+frontend_dist = Path("ai_demo_frontend/dist")
+frontend_dist.mkdir(parents=True, exist_ok=True)
+index_file = frontend_dist / "index.html"
+if not index_file.exists():
+    index_file.write_text("<!doctype html><html><body>placeholder</body></html>")
 
 # Stub out problematic type annotations (Python 3.9 lacks `str | None` support)
 if "app.models.postgres.music" not in sys.modules:
