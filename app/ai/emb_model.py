@@ -9,12 +9,10 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
 ENV_PATH = os.path.join(BASE_DIR, ".env")
 
 load_dotenv(dotenv_path=ENV_PATH)
-print("🔑 Loaded .env for emb_model from:", ENV_PATH)
 
 from openai import OpenAI
 
 api_key = os.getenv("OPENAI_API_KEY")
-print("DEBUG API KEY IN emb_model:", api_key)
 
 if not api_key:
     raise ValueError("❌ OPENAI_API_KEY is missing. Check your .env file.")

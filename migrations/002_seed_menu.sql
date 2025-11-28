@@ -100,6 +100,9 @@ INSERT INTO menu_item (title, description, image_url, origin, category, tags, fl
 ('Griddle Pork Intestines', '干锅肥肠 - Pork intestines cooked in a spicy dry pot', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/intestines.jpg', 'chinese', 'entree',
  ARRAY['pork','intestine','griddle'], ARRAY['spicy','savory','chewy'], ARRAY['contains_pork','spicy'], 59.00),
 
+('Yangcheng Lake Hairy Crab', '阳澄湖大闸蟹 - Steamed premium hairy crab known for its sweet, delicate meat and rich golden roe', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/hairy_crab.jpg', 'chinese', 'entree',
+ ARRAY['crab','steamed','premium'], ARRAY['sweet','delicate','rich'], ARRAY['gluten_free','contains_shellfish'], 99.00),
+
 ('Yuxiang Shredded Pork', '鱼香肉丝 - Shredded pork in fish-fragrant sauce', 'https://yorkiebakery-image.s3.us-west-2.amazonaws.com/menu/shredded_pork.jpg', 'chinese', 'entree',
  ARRAY['pork','shredded','stir_fry'], ARRAY['sour','spicy','sweet'], ARRAY['contains_pork','gluten_free'], 49.00);
 

@@ -1,17 +1,21 @@
 import boto3
 from starlette.config import Config
+from app.core.logger import get_logger
+
+logger = get_logger(__name__)
 
 config = Config(".env")
 
 AWS_REGION = "us-west-2"
 SES_SENDER = f"Yorkie Bakery <noreply@yorkiebakery.com>"
+SES_CONFIG_SET = "my-first-configuration-set"
 
 ses = boto3.client("ses", region_name=AWS_REGION)
 
 def send_email(to: str, subject: str, body: str):
-    print(f"[SES] Sending email to: {to}")
-    print(f"[SES] Subject: {subject}")
-    print(f"[SES] Body preview: {body[:80]}...")
+    logger.info(f"Sending email to: {to}")
+    logger.debug(f"Subject: {subject}")
+    logger.debug(f"Body preview: {body[:80]}...")
 
     ses.send_email(
         Source=SES_SENDER,
@@ -21,7 +25,7 @@ def send_email(to: str, subject: str, body: str):
             "Body": {"Text": {"Data": body}}
         }
     )
-    print("[SES] Email sent!")
+    logger.info(f"Email sent successfully to {to}")
 
 def send_event_notice(email: str, event_title: str, message: str):
     subject = f"Update for {event_title} — Yorkie Bakery"
@@ -40,11 +44,12 @@ def send_event_notice(email: str, event_title: str, message: str):
             "Subject": {"Data": subject},
             "Body": {"Text": {"Data": body}}
         },
+        ConfigurationSetName=SES_CONFIG_SET
     )
 
 def send_verification_email(email: str, verify_url: str):  # Changed parameter name
-    print(f"DEBUG: Sending verification email to {email}")
-    print(f"DEBUG: Verification URL: {verify_url}")
+    logger.debug(f"Sending verification email to {email}")
+    logger.debug(f"Verification URL: {verify_url}")
 
     ses.send_email(
         Source=SES_SENDER,
@@ -71,7 +76,8 @@ def send_verification_email(email: str, verify_url: str):  # Changed parameter n
                     """
                 }
             }
-        }
+        },
+        ConfigurationSetName=SES_CONFIG_SET
     )
 
 def send_order_confirmation_email(email: str, order_items: list, total: float):
@@ -92,7 +98,8 @@ def send_order_confirmation_email(email: str, order_items: list, total: float):
         Message={
             "Subject": {"Data": "Yorkie Bakery — Order Confirmation"},
             "Body": {"Text": {"Data": body}}
-        }
+        },
+        ConfigurationSetName=SES_CONFIG_SET
     )
 
 def send_owner_new_order_email(order_items: list, total: float, customer_email: str):
@@ -123,8 +130,8 @@ def send_owner_new_order_email(order_items: list, total: float, customer_email: 
 
 
 def send_password_reset_email(email: str, reset_url: str):
-    print(f"DEBUG: Sending password reset email to {email}")
-    print(f"DEBUG: Reset URL: {reset_url}")
+    logger.debug(f"Sending password reset email to {email}")
+    logger.debug(f"Reset URL: {reset_url}")
 
     subject = "Reset Your Yorkie Bakery Password 🐶🥐"
 
@@ -155,4 +162,4 @@ def send_password_reset_email(email: str, reset_url: str):
             }
         }
     )
-    print(f"DEBUG: Password reset email sent successfully to {email}")
+    logger.info(f"Password reset email sent successfully to {email}")

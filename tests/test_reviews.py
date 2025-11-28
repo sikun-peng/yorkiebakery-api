@@ -9,9 +9,8 @@ from app.models.postgres.review import Review
 
 
 def _make_request_with_user(user_id):
-    req = Request({"type": "http", "headers": []})
-    req.session = {"user": {"id": str(user_id)}}
-    return req
+    scope = {"type": "http", "headers": [], "session": {"user": {"id": str(user_id)}}}
+    return Request(scope)
 
 
 def test_add_review_inserts_then_updates_existing_review(fake_session):
@@ -51,8 +50,7 @@ def test_add_review_inserts_then_updates_existing_review(fake_session):
 
 
 def test_add_review_requires_login(fake_session):
-    request = Request({"type": "http", "headers": []})
-    request.session = {}
+    request = Request({"type": "http", "headers": [], "session": {}})
     with pytest.raises(HTTPException) as exc:
         add_review(
             request=request,

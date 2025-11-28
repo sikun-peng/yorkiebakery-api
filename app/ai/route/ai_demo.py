@@ -4,6 +4,9 @@ from pydantic import BaseModel
 from app.ai.interpret import parse_query_filters
 from app.ai.rag import retrieve_with_filters
 from app.ai.filters import apply_all_filters
+from app.core.logger import get_logger
+
+logger = get_logger(__name__)
 
 router = APIRouter(prefix="/ai/demo")
 
@@ -36,7 +39,7 @@ def ai_demo(request: DemoRequest):
         )
     except ValueError as e:
         # If "ids" or other invalid include keys cause error, log and retry clean
-        print(f"[WARN] Chroma query failed: {e}. Retrying with safe include set.")
+        logger.warning(f"Chroma query failed: {e}. Retrying with safe include set.")
         from app.ai.vecstore import get_collection
         from app.ai.emb_model import embed_text
 

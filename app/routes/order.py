@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Body
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from uuid import UUID
@@ -13,7 +13,7 @@ from app.models.postgres.order_item import OrderItem
 from app.models.postgres.menu import MenuItem
 from app.models.postgres.user import User
 
-router = APIRouter(prefix="/orders", tags=["Orders"])
+router = APIRouter(prefix="/order", tags=["Orders"])
 templates = Jinja2Templates(directory="app/templates")
 
 
@@ -227,6 +227,36 @@ def list_orders_by_user(user_id: UUID, session: Session = Depends(get_session)):
 @router.get("/", response_model=List[Order])
 def list_orders(session: Session = Depends(get_session)):
     return session.exec(select(Order)).all()
+
+
+# -----------------------------------------------
+# Update order status (admin)
+# -----------------------------------------------
+@router.put("/{order_id}/status")
+def update_order_status(order_id: UUID, payload: Dict[str, Any] = Body(...), session: Session = Depends(get_session)):
+    order = session.get(Order, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    new_status = payload.get("status")
+    if new_status:
+        order.status = new_status
+        session.add(order)
+        session.commit()
+    return {"status": order.status}
+
+
+# -----------------------------------------------
+# Cancel order
+# -----------------------------------------------
+@router.post("/{order_id}/cancel")
+def cancel_order(order_id: UUID, session: Session = Depends(get_session)):
+    order = session.get(Order, order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    order.status = "canceled"
+    session.add(order)
+    session.commit()
+    return {"status": "canceled"}
 
 
 # -----------------------------------------------

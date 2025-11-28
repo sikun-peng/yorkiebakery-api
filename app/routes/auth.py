@@ -8,6 +8,9 @@ from datetime import datetime, timedelta
 import secrets
 
 from app.core.db import get_session
+from app.core.logger import get_logger
+
+logger = get_logger(__name__)
 from app.core.security import (
     hash_password, verify_password, create_access_token,
     create_verification_token, verify_email_token
@@ -175,8 +178,8 @@ def register_form(
     token = create_verification_token(user.email)
     verify_url = absolute_url(request, f"/auth/verify?token={token}")
 
-    print(f"DEBUG: Sending verification email to {user.email}")
-    print(f"DEBUG: Verification URL: {verify_url}")
+    logger.debug(f"Sending verification email to {user.email}")
+    logger.debug(f"Verification URL: {verify_url}")
 
     send_verification_email(user.email, verify_url)
 
@@ -199,8 +202,8 @@ def resend_verification(
         token = create_verification_token(user.email)
         verify_url = absolute_url(request, f"/auth/verify?token={token}")
 
-        print(f"DEBUG: Resending verification email to {user.email}")
-        print(f"DEBUG: Verification URL: {verify_url}")
+        logger.debug(f"Resending verification email to {user.email}")
+        logger.debug(f"Verification URL: {verify_url}")
 
         send_verification_email(user.email, verify_url)
 
@@ -407,7 +410,7 @@ async def facebook_callback(request: Request, session: Session = Depends(get_ses
                 first_name = name_parts[0]
                 last_name = name_parts[1] if len(name_parts) > 1 else 'User'
 
-        print(f"DEBUG: Facebook user - ID: {facebook_id}, Name: {first_name} {last_name}")
+        logger.debug(f"Facebook user - ID: {facebook_id}, Name: {first_name} {last_name}")
 
         # Check if user already exists
         user = session.exec(select(User).where(User.email == email)).first()
@@ -424,13 +427,13 @@ async def facebook_callback(request: Request, session: Session = Depends(get_ses
             session.add(user)
             session.commit()
             session.refresh(user)
-            print(f"DEBUG: Created new Facebook user: {user.email}")
+            logger.debug(f"Created new Facebook user: {user.email}")
         else:
             if not user.is_verified:
                 user.is_verified = True
                 session.add(user)
                 session.commit()
-            print(f"DEBUG: Existing Facebook user: {user.email}")
+            logger.debug(f"Existing Facebook user: {user.email}")
 
         # Update last login timestamp
         user.last_login = datetime.utcnow()
@@ -447,14 +450,11 @@ async def facebook_callback(request: Request, session: Session = Depends(get_ses
         }
         request.session["access_token"] = create_access_token({"sub": str(user.id), "email": user.email})
 
-        print(f"DEBUG: Facebook login successful for {user.email}")
+        logger.info(f"Facebook login successful for {user.email}")
         return RedirectResponse("/menu/view", status_code=303)
 
     except Exception as e:
-        print(f"Facebook OAuth error: {e}")
-        # More detailed error logging
-        import traceback
-        print(f"Full traceback: {traceback.format_exc()}")
+        logger.error(f"Facebook OAuth error: {e}", exc_info=True)
         raise HTTPException(status_code=400, detail="Facebook login failed")
 
 
@@ -476,12 +476,12 @@ async def forgot_password(
                 status_code=400
             )
 
-        print(f"DEBUG: Password reset requested for: {email}")
+        logger.debug(f"Password reset requested for: {email}")
 
         user = session.exec(select(User).where(User.email == email)).first()
 
         if user:
-            print(f"DEBUG: User found: {user.email}")
+            logger.debug(f"User found: {user.email}")
 
             # Create secure reset token
             reset_token = create_password_reset_token()
@@ -496,22 +496,22 @@ async def forgot_password(
 
             session.add(reset_token_record)
             session.commit()  # ✅ CRITICAL: COMMIT THE TRANSACTION
-            print(f"DEBUG: Reset token created and committed to database")
+            logger.debug("Reset token created and committed to database")
 
             # Create reset URL
             reset_url = absolute_url(request, f"/auth/reset_password?token={reset_token}")
-            print(f"DEBUG: Reset URL: {reset_url}")
+            logger.debug(f"Reset URL: {reset_url}")
 
             # Send email
             try:
                 send_password_reset_email(user.email, reset_url)
-                print(f"DEBUG: Password reset email sent to {user.email}")
+                logger.info(f"Password reset email sent to {user.email}")
             except Exception as email_error:
-                print(f"DEBUG: Failed to send email: {email_error}")
+                logger.warning(f"Failed to send email: {email_error}")
                 # Don't fail the request if email fails
 
         else:
-            print(f"DEBUG: User not found for email: {email}")
+            logger.debug(f"User not found for email: {email}")
 
         # Always return success to prevent email enumeration
         return JSONResponse({
@@ -520,10 +520,7 @@ async def forgot_password(
         })
 
     except Exception as e:
-        print(f"DEBUG: Error in forgot_password: {e}")
-        # Log the full error for debugging
-        import traceback
-        print(f"DEBUG: Full traceback: {traceback.format_exc()}")
+        logger.error(f"Error in forgot_password: {e}", exc_info=True)
 
         session.rollback()
         return JSONResponse({
@@ -574,7 +571,7 @@ def reset_password_page(
             "error": None
         })
     except Exception as e:
-        print(f"DEBUG: Error in reset_password_page: {e}")
+        logger.error(f"Error in reset_password_page: {e}", exc_info=True)
         return templates.TemplateResponse("reset_password.html", {
             "request": request,
             "token": token,
@@ -597,7 +594,7 @@ async def reset_password(
         session: Session = Depends(get_session)
 ):
     try:
-        print(f"DEBUG: Password reset attempt with token: {token}")
+        logger.debug(f"Password reset attempt with token: {token}")
 
         if not token or len(token) < 10:
             return JSONResponse({
@@ -614,7 +611,7 @@ async def reset_password(
         ).first()
 
         if not reset_token_record:
-            print("DEBUG: Invalid or expired reset token")
+            logger.warning("Invalid or expired reset token")
             return JSONResponse({
                 "success": False,
                 "error": "Invalid or expired reset link. Please request a new password reset."
@@ -623,13 +620,13 @@ async def reset_password(
         # Get user
         user = session.get(User, reset_token_record.user_id)
         if not user:
-            print("DEBUG: User not found for reset token")
+            logger.warning("User not found for reset token")
             return JSONResponse({
                 "success": False,
                 "error": "User not found."
             }, status_code=404)
 
-        print(f"DEBUG: Resetting password for user: {user.email}")
+        logger.info(f"Resetting password for user: {user.email}")
 
         # Update password
         user.password_hash = hash_password(new_password)
@@ -641,7 +638,7 @@ async def reset_password(
         session.add(reset_token_record)
         session.commit()
 
-        print("DEBUG: Password reset successful")
+        logger.info("Password reset successful")
 
         # Return HTML response that shows success and redirects
         return templates.TemplateResponse("reset_password.html", {
@@ -652,7 +649,7 @@ async def reset_password(
         })
 
     except Exception as e:
-        print(f"DEBUG: Error in reset_password: {e}")
+        logger.error(f"Error in reset_password: {e}", exc_info=True)
         session.rollback()
         return templates.TemplateResponse("reset_password.html", {
             "request": request,
@@ -681,12 +678,12 @@ async def test_email(request: Request):
     test_email = "sikun.peng1990@yahoo.com"
     test_url = absolute_url(request, "/auth/reset_password?token=test123")
 
-    print(f"TEST: Attempting to send email to {test_email}")
-    print(f"TEST: Reset URL would be: {test_url}")
+    logger.info(f"Attempting to send test email to {test_email}")
+    logger.debug(f"Reset URL would be: {test_url}")
 
     try:
         send_password_reset_email(test_email, test_url)
         return {"status": "Email sent successfully", "to": test_email}
     except Exception as e:
-        print(f"TEST EMAIL ERROR: {e}")
+        logger.error(f"Test email error: {e}", exc_info=True)
         return {"status": "Email failed", "error": str(e)}

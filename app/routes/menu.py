@@ -15,6 +15,10 @@ from typing import List, Optional
 from uuid import UUID
 from sqlalchemy import any_
 
+from app.core.logger import get_logger
+
+logger = get_logger(__name__)
+
 from app.models.postgres.menu import MenuItem
 from app.models.postgres.review import Review
 from app.models.postgres.user import User
@@ -89,7 +93,7 @@ def view_menu_page(
             },
         )
     except Exception as e:
-        print(f"Error in view_menu_page: {e}")
+        logger.error(f"Error in view_menu_page: {e}", exc_info=True)
         # Return empty response on error
         return templates.TemplateResponse(
             "menu.html",

@@ -1,11 +1,11 @@
 # app/ai/filters.py
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 
 # ============================================================
 # Build ChromaDB "where" filter (vector DB pre-filtering)
 # ============================================================
-def build_where(filters: Dict[str, Any]) -> Dict[str, Any] | None:
+def build_where(filters: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """
     Convert interpreted filters → ChromaDB where clause.
     Handles:

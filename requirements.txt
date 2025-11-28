@@ -5,6 +5,9 @@ sqlalchemy
 psycopg2-binary
 python-dotenv
 pytest
+pytest-cov
+pytest-asyncio
+coverage[toml]
 httpx
 sqlmodel
 python-jose[cryptography]

@@ -10,6 +10,9 @@ from sqlmodel import Session, select
 from uuid import UUID
 import uuid
 from datetime import datetime
+from app.core.logger import get_logger
+
+logger = get_logger(__name__)
 
 from app.core.db import engine
 from app.core.send_email import send_email
@@ -87,7 +90,7 @@ def submit_rsvp(
         )
         send_email("yorkiebakery@gmail.com", f"New RSVP — {event_title}", admin_body)
     except Exception as e:
-        print("⚠️ Failed to send admin RSVP email:", e)
+        logger.warning(f"Failed to send admin RSVP email: {e}")
 
     # =============== B. Confirmation TO USER ===============
     try:
@@ -102,7 +105,7 @@ def submit_rsvp(
         )
         send_email(email, f"Your RSVP is Confirmed — {event_title}", user_body)
     except Exception as e:
-        print("⚠️ Failed to send guest confirmation email:", e)
+        logger.warning(f"Failed to send guest confirmation email: {e}")
 
     return RedirectResponse("/events?success=1", status_code=303)
 
@@ -201,8 +204,7 @@ def notify_event_attendees(
             send_event_notice(r.email, event.title, message)
             sent += 1
         except Exception as e:
-            print("Failed to send to", r.email, e)
-
+            logger.warning(f"Failed to send to {r.email}: {e}")
     return RedirectResponse(
         f"/events?notified={sent}",
         status_code=303

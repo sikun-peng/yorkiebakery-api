@@ -6,6 +6,9 @@ from uuid import uuid4
 from datetime import datetime
 
 from app.core.db import engine
+from app.core.logger import get_logger
+
+logger = get_logger(__name__)
 from app.models.postgres.menu import MenuItem
 from app.models.postgres.order import Order
 from app.models.postgres.order_item import OrderItem
@@ -272,7 +275,7 @@ def process_checkout(
             customer_email=user_email
         )
     except Exception as e:
-        print("⚠️ Email send error:", e)
+        logger.warning(f"Email send error: {e}")
 
     # Clear cart
     request.session["cart"] = {}
