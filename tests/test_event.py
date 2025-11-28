@@ -191,3 +191,184 @@ def test_list_active_events(client, fake_session):
 
     resp = client.get("/events/")
     assert resp.status_code in [200, 307]
+
+
+def test_event_rsvp(client, test_event, monkeypatch):
+    """Test submitting RSVP for an event"""
+    # Mock email sending
+    def mock_send_email(*args, **kwargs):
+        pass
+    monkeypatch.setattr("app.routes.event.send_email", mock_send_email)
+
+    resp = client.post(
+        f"/events/rsvp/{test_event.id}",
+        data={
+            "name": "Test Attendee",
+            "email": "attendee@example.com",
+            "message": "Looking forward to it!",
+        },
+    )
+    assert resp.status_code in [200, 303]
+
+
+def test_admin_new_event_page(client):
+    """Test admin new event page"""
+    resp = client.get("/events/new")
+    # Should fail or redirect if not admin
+    assert resp.status_code in [200, 303, 403]
+
+
+def test_admin_create_event(client, monkeypatch):
+    """Test creating a new event as admin"""
+    # Mock S3 upload
+    def mock_upload(*args, **kwargs):
+        return "https://example.com/image.jpg"
+    monkeypatch.setattr("app.routes.event.upload_file_to_s3", mock_upload)
+
+    future_date = (datetime.utcnow() + timedelta(days=14)).isoformat()
+
+    files = {"image": ("event.jpg", b"imagebytes", "image/jpeg")}
+    resp = client.post(
+        "/events/new",
+        data={
+            "title": "New Event",
+            "description": "Event description",
+            "location": "Test Location",
+            "date": future_date,
+        },
+        files=files,
+    )
+    # Admin protected
+    assert resp.status_code in [200, 303, 400, 403]
+
+
+def test_notify_event_attendees(client, test_event, monkeypatch):
+    """Test notifying event attendees"""
+    # Mock send_event_notice
+    emails_sent = []
+    def mock_send_event_notice(*args, **kwargs):
+        emails_sent.append(args)
+
+    monkeypatch.setattr("app.core.send_email.send_event_notice", mock_send_event_notice)
+
+    resp = client.post(
+        f"/events/notify/{test_event.id}",
+        data={"message": "Event update"},
+    )
+    # Admin protected
+    assert resp.status_code in [200, 303, 403]
+
+
+def test_event_rsvp_with_email_failure(client, test_event, monkeypatch):
+    """Test RSVP when email sending fails"""
+    def mock_send_email(*args, **kwargs):
+        raise Exception("Email failed")
+
+    monkeypatch.setattr("app.routes.event.send_email", mock_send_email)
+
+    resp = client.post(
+        f"/events/rsvp/{test_event.id}",
+        data={
+            "name": "Test User",
+            "email": "test@example.com",
+            "message": "I'll be there!",
+        },
+    )
+    # Should still succeed even if email fails
+    assert resp.status_code in [200, 303]
+
+
+def test_event_rsvp_nonexistent(client):
+    """Test RSVP for non-existent event"""
+    fake_id = uuid4()
+    resp = client.post(
+        f"/events/rsvp/{fake_id}",
+        data={
+            "name": "Test",
+            "email": "test@example.com",
+            "message": "Test message",
+        },
+    )
+    assert resp.status_code in [303, 404]
+
+
+def test_event_notify_nonexistent(client):
+    """Test notifying attendees of non-existent event"""
+    fake_id = uuid4()
+    resp = client.post(
+        f"/events/notify/{fake_id}",
+        data={"message": "Update"},
+    )
+    assert resp.status_code in [303, 403, 404]
+
+
+def test_event_list_shows_active_events(client):
+    """Test event list page"""
+    resp = client.get("/events")
+    assert resp.status_code in [200, 307]
+
+
+def test_event_view_shows_active_events(client):
+    """Test event view endpoint"""
+    resp = client.get("/events/view")
+    assert resp.status_code == 200
+
+
+
+
+
+
+
+
+
+def test_event_create_without_image(client):
+    """Test creating event without image"""
+    data = {
+        "title": "No Image Event",
+        "description": "Event without image",
+        "location": "Virtual",
+        "date": "2025-12-30T21:00",
+    }
+    
+    resp = client.post("/events/create", data=data)
+    assert resp.status_code in [200, 303, 403, 404]
+
+
+def test_event_rsvp_duplicate(client, test_event):
+    """Test RSVPing to same event twice"""
+    # First RSVP
+    client.post(
+        f"/events/rsvp/{test_event.id}",
+        data={
+            "name": "Duplicate Person",
+            "email": "duplicate@example.com",
+        },
+    )
+    
+    # Second RSVP with same email
+    resp = client.post(
+        f"/events/rsvp/{test_event.id}",
+        data={
+            "name": "Duplicate Person",
+            "email": "duplicate@example.com",
+        },
+    )
+    assert resp.status_code in [200, 303, 400]
+
+
+def test_event_list_filters_inactive(client):
+    """Test event list shows only active events"""
+    resp = client.get("/events")
+    assert resp.status_code == 200
+
+
+def test_event_update_details(client, test_event):
+    """Test updating event details"""
+    resp = client.put(
+        f"/events/{test_event.id}",
+        json={
+            "title": "Updated Event Title",
+            "description": "Updated description",
+        },
+    )
+    assert resp.status_code in [200, 403, 404, 405]

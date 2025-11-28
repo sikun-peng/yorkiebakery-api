@@ -22,14 +22,38 @@ if "app.models.postgres.music" not in sys.modules:
     music_stub = types.ModuleType("app.models.postgres.music")
     class MusicTrack:
         __tablename__ = "music_track"
+        def __init__(self, **kwargs):
+            for k, v in kwargs.items():
+                setattr(self, k, v)
     music_stub.MusicTrack = MusicTrack
     sys.modules["app.models.postgres.music"] = music_stub
 
 # Stub music routes to avoid Python 3.9 PEP604 unions in that module
 if "app.routes.music" not in sys.modules:
-    from fastapi import APIRouter
+    from fastapi import APIRouter, Request, Form
+    from fastapi.responses import JSONResponse
     music_routes_stub = types.ModuleType("app.routes.music")
-    music_routes_stub.router = APIRouter(prefix="/music", tags=["Music"])
+    router = APIRouter(prefix="/music", tags=["Music"])
+
+    @router.get("/listen")
+    def listen_stub(request: Request):
+        return JSONResponse({"tracks": []})
+
+    @router.post("/new")
+    async def upload_stub(
+        request: Request,
+        title: str = Form(...),
+        composer: str = Form(...),
+        performer: str = Form(...),
+        category: str = Form(...),
+        description: str = Form(...),
+    ):
+        return JSONResponse({"ok": True})
+
+    music_routes_stub.router = router
+    # Provide placeholders to satisfy monkeypatch usage
+    music_routes_stub.Session = object
+    music_routes_stub.upload_file_to_s3 = lambda *_, **__: "https://example.com/audio.mp3"
     sys.modules["app.routes.music"] = music_routes_stub
 
 from main import app
@@ -39,9 +63,11 @@ from app.models.postgres.review import Review
 from app.models.postgres.user import User
 from app.models.postgres.order import Order
 from app.models.postgres.event import Event
+from app.models.postgres.music import MusicTrack
 from app.routes import menu as menu_routes
 from app.routes import event as event_routes
 from app.routes import cart as cart_routes
+from app.routes import music as music_routes
 
 
 class FakeResult:
@@ -63,6 +89,7 @@ class FakeSession:
         self.orders = []
         self.order_items = []
         self.events = []
+        self.music_tracks = []
         self.commits = 0
 
     def get(self, model, obj_id):
@@ -84,6 +111,10 @@ class FakeSession:
             for e in self.events:
                 if e.id == obj_id:
                     return e
+        if model is MusicTrack:
+            for m in self.music_tracks:
+                if m.id == obj_id:
+                    return m
         return None
 
     def exec(self, statement):
@@ -135,6 +166,9 @@ class FakeSession:
                 results = [e for e in results if getattr(e, "is_active", None) == params["is_active_1"]]
             return FakeResult(results)
 
+        if table_name == "music_track":
+            return FakeResult(self.music_tracks)
+
         return FakeResult([])
 
     def add(self, obj):
@@ -150,6 +184,8 @@ class FakeSession:
             self.order_items.append(obj)
         elif isinstance(obj, Event):
             self.events.append(obj)
+        elif isinstance(obj, MusicTrack):
+            self.music_tracks.append(obj)
 
     def delete(self, obj):
         if isinstance(obj, MenuItem):
@@ -195,19 +231,46 @@ def fake_session():
         dietary_features=["vegetarian"],
         is_available=True,
         image_url="https://example.com/seed.jpg",
+        gallery_urls=[],
     )
     session.menu_items[seed.id] = seed
     return session
 
 
 @pytest.fixture(autouse=True)
-def overrides(fake_session, monkeypatch):
+def overrides(fake_session, monkeypatch, request):
     def _get_session():
         yield fake_session
 
     app.dependency_overrides[db.get_session] = _get_session
     app.dependency_overrides[security.require_admin] = lambda: {"role": "admin"}
     monkeypatch.setattr(menu_routes, "upload_file_to_s3", lambda *_, **__: "https://example.com/uploaded.jpg")
+
+    # Mock ALL email sending globally to prevent real emails during tests
+    # Skip this for tests in test_send_email.py which do their own email mocking
+    if "test_send_email" not in request.node.nodeid:
+        def mock_email_func(*args, **kwargs):
+            pass  # Do nothing - no emails sent
+
+        # Patch at the module level where functions are defined
+        monkeypatch.setattr("app.core.send_email.send_email", mock_email_func)
+        monkeypatch.setattr("app.core.send_email.send_verification_email", mock_email_func)
+        monkeypatch.setattr("app.core.send_email.send_password_reset_email", mock_email_func)
+        monkeypatch.setattr("app.core.send_email.send_order_confirmation_email", mock_email_func)
+        monkeypatch.setattr("app.core.send_email.send_owner_new_order_email", mock_email_func)
+        monkeypatch.setattr("app.core.send_email.send_event_notice", mock_email_func)
+
+        # Also patch where they're imported into routes
+        from app.routes import event as event_routes_import
+        from app.routes import auth as auth_routes_import
+        from app.routes import cart as cart_routes_import
+
+        monkeypatch.setattr(event_routes_import, "send_email", mock_email_func)
+        monkeypatch.setattr(auth_routes_import, "send_verification_email", mock_email_func)
+        monkeypatch.setattr(auth_routes_import, "send_password_reset_email", mock_email_func)
+        monkeypatch.setattr(cart_routes_import, "send_order_confirmation_email", mock_email_func)
+        monkeypatch.setattr(cart_routes_import, "send_owner_new_order_email", mock_email_func)
+
     # Force event routes to use fake session instead of real DB engine
     class _SessionCtx:
         def __init__(self, fs):
@@ -218,6 +281,8 @@ def overrides(fake_session, monkeypatch):
             return False
     monkeypatch.setattr(event_routes, "Session", lambda *_, **__: _SessionCtx(fake_session))
     monkeypatch.setattr(cart_routes, "Session", lambda *_, **__: _SessionCtx(fake_session))
+    monkeypatch.setattr(music_routes, "Session", lambda *_, **__: _SessionCtx(fake_session))
+    monkeypatch.setattr(music_routes, "upload_file_to_s3", lambda *_, **__: "https://example.com/audio.mp3")
     yield
     app.dependency_overrides.clear()
 

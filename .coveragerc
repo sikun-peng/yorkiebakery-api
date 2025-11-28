@@ -7,7 +7,6 @@ omit =
     */migrations/*
     */ai_demo_frontend/*
     app/ai/*
-    etl_build_index.py
 
 [report]
 precision = 2

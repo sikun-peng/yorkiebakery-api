@@ -60,3 +60,5 @@ def test_add_review_requires_login(fake_session):
             session=fake_session,
         )
     assert exc.value.status_code == 401
+
+

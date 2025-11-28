@@ -154,3 +154,182 @@ def test_token_different_for_different_users():
     token2 = create_access_token(data2)
 
     assert token1 != token2
+
+
+@pytest.mark.security
+def test_create_access_token_with_int_minutes():
+    """Test creating access token with integer minutes"""
+    data = {"sub": "user123"}
+    token = create_access_token(data, expires_delta=45)
+    assert token is not None
+    assert len(token) > 0
+
+
+@pytest.mark.security
+def test_get_session_user():
+    """Test getting session user from request"""
+    from app.core.security import get_session_user
+    from unittest.mock import Mock
+
+    request = Mock()
+    request.session = {
+        "user": {
+            "id": "123",
+            "email": "test@example.com",
+            "is_admin": False
+        }
+    }
+
+    user = get_session_user(request)
+    assert user is not None
+    assert user["id"] == "123"
+    assert user["email"] == "test@example.com"
+
+
+@pytest.mark.security
+def test_get_session_user_no_user():
+    """Test getting session user when not logged in"""
+    from app.core.security import get_session_user
+    from unittest.mock import Mock
+
+    request = Mock()
+    request.session = {}
+
+    user = get_session_user(request)
+    assert user is None
+
+
+@pytest.mark.security
+def test_require_logged_in_success():
+    """Test require_logged_in with logged in user"""
+    from app.core.security import require_logged_in
+    from unittest.mock import Mock
+
+    request = Mock()
+    request.session = {
+        "user": {
+            "id": "123",
+            "email": "test@example.com",
+            "is_admin": False
+        }
+    }
+
+    user = require_logged_in(request)
+    assert user is not None
+    assert user["id"] == "123"
+
+
+@pytest.mark.security
+def test_require_logged_in_failure():
+    """Test require_logged_in without logged in user"""
+    from app.core.security import require_logged_in
+    from unittest.mock import Mock
+    from fastapi import HTTPException
+
+    request = Mock()
+    request.session = {}
+
+    with pytest.raises(HTTPException) as exc_info:
+        require_logged_in(request)
+    assert exc_info.value.status_code == 401
+
+
+@pytest.mark.security
+def test_require_admin_success():
+    """Test require_admin with admin user"""
+    from app.core.security import require_admin
+    from unittest.mock import Mock
+
+    request = Mock()
+    request.session = {
+        "user": {
+            "id": "123",
+            "email": "admin@example.com",
+            "is_admin": True
+        }
+    }
+
+    user = require_admin(request)
+    assert user is not None
+    assert user["is_admin"] is True
+
+
+@pytest.mark.security
+def test_require_admin_not_admin():
+    """Test require_admin with non-admin user"""
+    from app.core.security import require_admin
+    from unittest.mock import Mock
+    from fastapi import HTTPException
+
+    request = Mock()
+    request.session = {
+        "user": {
+            "id": "123",
+            "email": "user@example.com",
+            "is_admin": False
+        }
+    }
+
+    with pytest.raises(HTTPException) as exc_info:
+        require_admin(request)
+    assert exc_info.value.status_code == 403
+
+
+@pytest.mark.security
+def test_require_admin_not_logged_in():
+    """Test require_admin without logged in user"""
+    from app.core.security import require_admin
+    from unittest.mock import Mock
+    from fastapi import HTTPException
+
+    request = Mock()
+    request.session = {}
+
+    with pytest.raises(HTTPException) as exc_info:
+        require_admin(request)
+    assert exc_info.value.status_code == 401
+
+
+@pytest.mark.security
+def test_create_verification_token_with_expiry():
+    """Test creating verification token with custom expiry"""
+    from datetime import timedelta
+    token = create_verification_token("test@example.com", expires_delta=timedelta(hours=2))
+    assert token is not None
+    assert len(token) > 0
+
+
+@pytest.mark.security
+def test_verify_email_token_with_timedelta():
+    """Test verifying email token with timedelta max_age"""
+    from datetime import timedelta
+    email = "test@example.com"
+    token = create_verification_token(email)
+    verified_email = verify_email_token(token, max_age=timedelta(hours=1))
+    assert verified_email == email
+
+
+@pytest.mark.security
+def test_create_password_reset_token():
+    """Test creating password reset token"""
+    from app.core.security import create_password_reset_token
+    token = create_password_reset_token()
+    assert token is not None
+    assert len(token) >= 32
+
+
+@pytest.mark.security
+def test_verify_password_reset_token_valid():
+    """Test verifying valid password reset token"""
+    from app.core.security import verify_password_reset_token, create_password_reset_token
+    token = create_password_reset_token()
+    result = verify_password_reset_token(token)
+    assert result == token
+
+
+@pytest.mark.security
+def test_verify_password_reset_token_invalid():
+    """Test verifying invalid password reset token"""
+    from app.core.security import verify_password_reset_token
+    result = verify_password_reset_token("short")
+    assert result is None
