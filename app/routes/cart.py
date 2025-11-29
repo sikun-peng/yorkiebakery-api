@@ -169,6 +169,9 @@ def checkout_page(request: Request):
             {"title": i.title, "price": i.price, "qty": cart.get(str(i.id), 0)}
             for i in items
         ]
+        user = session.get(User, user_id)
+        contact_name = f"{(user.first_name or '').strip()} {(user.last_name or '').strip()}".strip() if user else ""
+        contact_email = user.email if user else ""
 
     original_total = sum(i["price"] * i["qty"] for i in detailed_cart)
     total = 0  # 100% off promotion
@@ -179,6 +182,8 @@ def checkout_page(request: Request):
         "original_total": original_total,
         "total": total,
         "discount_percent": 100,
+        "contact_name": contact_name,
+        "contact_email": contact_email,
     })
 
 
@@ -188,7 +193,16 @@ def checkout_page(request: Request):
 @router.post("/checkout")
 def process_checkout(
         request: Request,
-        address: str = Form(...)
+        name: str = Form(None),
+        email: str = Form(None),
+        phone: str = Form(None),
+        address_line1: str = Form(...),
+        address_line2: str = Form(None),
+        city: str = Form(...),
+        state: str = Form(...),
+        postal_code: str = Form(...),
+        country: str = Form(...),
+        delivery_notes: str = Form(None)
 ):
     # Must be logged in
     user_id = require_login(request)
@@ -202,6 +216,10 @@ def process_checkout(
     # Store user info before session closes
     user_email = None
     user_name = None
+    user_phone = phone
+    address_parts = [address_line1, address_line2, f"{city}, {state} {postal_code}".strip(), country]
+    user_address = ", ".join([part.strip() for part in address_parts if part and part.strip()])
+    notes = delivery_notes
 
     with Session(engine) as session:
 
@@ -210,8 +228,9 @@ def process_checkout(
             return RedirectResponse("/auth/login?redirect_url=/cart/checkout", status_code=303)
 
         # Store user info while session is active
-        user_email = user.email
-        user_name = f"{user.first_name or ''} {user.last_name or ''}".strip()
+        user_email = email or user.email
+        user_name = name or f"{user.first_name or ''} {user.last_name or ''}".strip()
+        user_phone = phone or ""
 
         items = session.exec(
             select(MenuItem).where(MenuItem.id.in_(cart.keys()))
@@ -246,6 +265,7 @@ def process_checkout(
         session.add(order)
         session.commit()  # Commit to get order ID
         session.refresh(order)
+        order_id = str(order.id)
 
         # Create order items individually (FIXED - no relationship assignment)
         for ci in cart_items:
@@ -262,17 +282,37 @@ def process_checkout(
         # Commit all order items
         session.commit()
 
+    # Build order link for emails
+    base_url = str(request.base_url).rstrip("/")
+    order_url = f"{base_url}/orders/{order_id}/detail"
+
     # Send emails (using stored user info)
     try:
         send_order_confirmation_email(
             email=user_email,
             order_items=cart_items,
-            total=total
+            total=total,
+            customer_name=user_name,
+            delivery_address=user_address,
+            phone=user_phone,
+            delivery_notes=notes,
+            order_id=order_id,
+            order_url=order_url,
+            discount_percent=100,
+            original_total=original_total
         )
         send_owner_new_order_email(
             order_items=cart_items,
             total=total,
-            customer_email=user_email
+            customer_email=user_email,
+            customer_name=user_name,
+            delivery_address=user_address,
+            phone=user_phone,
+            delivery_notes=notes,
+            order_id=order_id,
+            order_url=order_url,
+            discount_percent=100,
+            original_total=original_total
         )
     except Exception as e:
         logger.warning(f"Email send error: {e}")
@@ -287,5 +327,8 @@ def process_checkout(
         "total": total,
         "discount_percent": 100,
         "email": user_email,
-        "name": user_name
+        "name": user_name,
+        "address": user_address,
+        "phone": user_phone,
+        "notes": notes
     })

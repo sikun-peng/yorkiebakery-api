@@ -69,7 +69,19 @@ def test_send_order_confirmation_email(monkeypatch):
     ]
     total = 11.00
 
-    send_order_confirmation_email("customer@example.com", order_items, total)
+    send_order_confirmation_email(
+        "customer@example.com",
+        order_items,
+        total,
+        customer_name="Test User",
+        delivery_address="123 Baker St, City",
+        phone="555-555-5555",
+        delivery_notes="Leave at door",
+        order_id="abc12345-def6-7890-abcd-1234567890ab",
+        order_url="https://example.com/orders/abc123",
+        discount_percent=100,
+        original_total=total,
+    )
 
     mock_ses.send_email.assert_called_once()
     call_args = mock_ses.send_email.call_args
@@ -95,7 +107,19 @@ def test_send_owner_new_order_email(monkeypatch):
     ]
     total = 11.00
 
-    send_owner_new_order_email(order_items, total, "customer@example.com")
+    send_owner_new_order_email(
+        order_items,
+        total,
+        "customer@example.com",
+        customer_name="Test User",
+        delivery_address="123 Baker St, City",
+        phone="555-555-5555",
+        delivery_notes="Leave at door",
+        order_id="abc12345-def6-7890-abcd-1234567890ab",
+        order_url="https://example.com/orders/abc123",
+        discount_percent=100,
+        original_total=total,
+    )
 
     mock_ses.send_email.assert_called_once()
     call_args = mock_ses.send_email.call_args

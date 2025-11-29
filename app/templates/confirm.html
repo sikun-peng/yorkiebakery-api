@@ -7,6 +7,14 @@
   <p>Thank you, {{ name }}!</p>
   <p>Your Yorkie Bakery order has been received.</p>
   <p>We’ve sent a confirmation email to <strong>{{ email }}</strong>.</p>
+  {% if address or phone or notes %}
+    <div style="margin-top:18px;">
+      <h4>Delivery Details</h4>
+      {% if address %}<p style="margin:4px 0;">Address: {{ address }}</p>{% endif %}
+      {% if phone %}<p style="margin:4px 0;">Phone: {{ phone }}</p>{% endif %}
+      {% if notes %}<p style="margin:4px 0;">Notes: {{ notes }}</p>{% endif %}
+    </div>
+  {% endif %}
 
   <h3 style="margin-top:24px;">Order Summary</h3>
   <ul style="list-style:none; padding:0;">

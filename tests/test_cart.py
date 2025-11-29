@@ -308,7 +308,18 @@ def test_process_checkout_with_logged_in_user(client, cart_items, logged_in_user
     # Process checkout
     resp = client.post(
         "/cart/checkout",
-        data={"address": "123 Test St"},
+        data={
+            "name": "Test User",
+            "email": "cart@example.com",
+            "phone": "555-123-4567",
+            "address_line1": "123 Test St",
+            "address_line2": "Apt 4B",
+            "city": "Testville",
+            "state": "CA",
+            "postal_code": "12345",
+            "country": "USA",
+            "delivery_notes": "Leave at door",
+        },
     )
     assert resp.status_code in [200, 303]
 
