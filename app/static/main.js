@@ -239,9 +239,13 @@ form?.addEventListener("submit", async (e) => {
             return;
         }
 
-        // ✅ Close modal and refresh UI
+        // ✅ Close modal and refresh UI/redirect
         modal.style.display = "none";
-        location.reload();
+        if (data.redirect) {
+            window.location.href = data.redirect;
+        } else {
+            location.reload();
+        }
 
     } catch (error) {
         alert("Network error. Please try again.");

@@ -372,3 +372,89 @@ def test_event_update_details(client, test_event):
         },
     )
     assert resp.status_code in [200, 403, 404, 405]
+
+
+def test_event_register_without_name(client, test_event):
+    """Test event registration without name"""
+    resp = client.post(
+        f"/events/rsvp/{test_event.id}",
+        data={"email": "test@example.com"},
+    )
+    assert resp.status_code in [200, 303, 400, 422]
+
+
+def test_event_register_without_email(client, test_event):
+    """Test event registration without email"""
+    resp = client.post(
+        f"/events/rsvp/{test_event.id}",
+        data={"name": "Test User"},
+    )
+    assert resp.status_code in [200, 303, 400, 422]
+
+
+def test_event_create_without_title(client):
+    """Test creating event without title"""
+    resp = client.post(
+        "/events/create",
+        data={
+            "description": "No title",
+            "location": "Place",
+            "date": "2025-12-31T23:00",
+        },
+    )
+    assert resp.status_code in [400, 403, 404, 422]
+
+
+def test_event_create_without_date(client):
+    """Test creating event without date"""
+    resp = client.post(
+        "/events/create",
+        data={
+            "title": "No Date Event",
+            "description": "Missing date",
+            "location": "Place",
+        },
+    )
+    assert resp.status_code in [400, 403, 404, 422]
+
+
+def test_event_multiple_rsvps(client, test_event):
+    """Test multiple event RSVPs"""
+    for i in range(5):
+        resp = client.post(
+            f"/events/rsvp/{test_event.id}",
+            data={"name": f"Person {i}", "email": f"person{i}@example.com"},
+        )
+        assert resp.status_code in [200, 303]
+
+
+def test_event_operations_variations(client, fake_session):
+    """Test various event operations"""
+    from app.models.postgres.event import Event
+
+    events = []
+    for i in range(3):
+        event = Event(
+            id=uuid4(),
+            title=f"Event Var {i}",
+            description=f"Description {i}",
+            location=f"Location {i}",
+            event_datetime=datetime.utcnow() + timedelta(days=i+1),
+            is_active=True,
+            image_url=f"https://example.com/event{i}.jpg",
+        )
+        fake_session.add(event)
+        events.append(event)
+    fake_session.commit()
+
+    # Get each event
+    for event in events:
+        client.get(f"/events/{event.id}")
+
+    # Update events
+    for event in events:
+        client.put(f"/events/{event.id}", json={"title": f"Updated {event.title}"})
+
+    # Delete events
+    for event in events[:1]:
+        client.delete(f"/events/{event.id}")

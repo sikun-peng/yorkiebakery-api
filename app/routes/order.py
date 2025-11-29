@@ -13,7 +13,7 @@ from app.models.postgres.order_item import OrderItem
 from app.models.postgres.menu import MenuItem
 from app.models.postgres.user import User
 
-router = APIRouter(prefix="/order", tags=["Orders"])
+router = APIRouter(prefix="/orders", tags=["Orders"])
 templates = Jinja2Templates(directory="app/templates")
 
 

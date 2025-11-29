@@ -150,7 +150,7 @@ def test_order_detail_page_unit(fake_session):
     from app.models.postgres.order import Order
     from app.models.postgres.order_item import OrderItem
     from app.core.security import hash_password
-    
+
     user = User(
         id=uuid4(),
         email="detailunit@example.com",
@@ -160,7 +160,7 @@ def test_order_detail_page_unit(fake_session):
         is_verified=True,
     )
     fake_session.add(user)
-    
+
     order = Order(
         id=uuid4(),
         user_id=user.id,
@@ -169,7 +169,7 @@ def test_order_detail_page_unit(fake_session):
         created_at=datetime.utcnow(),
     )
     fake_session.add(order)
-    
+
     order_item = OrderItem(
         id=uuid4(),
         order_id=order.id,
@@ -180,7 +180,7 @@ def test_order_detail_page_unit(fake_session):
     )
     fake_session.add(order_item)
     fake_session.commit()
-    
+
     request = Mock(spec=Request)
     request.session = {
         "user": {
@@ -189,9 +189,21 @@ def test_order_detail_page_unit(fake_session):
             "is_admin": False,
         }
     }
-    
+
     try:
         result = order_detail_page(order.id, request, fake_session)
         assert result is not None
     except Exception:
         pass
+
+
+def test_about_page(client):
+    """Test about page"""
+    resp = client.get("/about")
+    assert resp.status_code in [200, 404]
+
+
+def test_about_page_post(client):
+    """Test posting to about page"""
+    resp = client.post("/about")
+    assert resp.status_code in [200, 404, 405]

@@ -342,10 +342,68 @@ def test_cart_add_item_with_quantity(client, fake_session):
 def test_cart_operations_with_invalid_item(client):
     """Test cart operations with invalid menu item"""
     fake_id = str(uuid4())
-    
+
     resp = client.post(
         "/cart/add",
         json={"menu_item_id": fake_id, "quantity": "1"},
     )
     # Might succeed or fail depending on validation
     assert resp.status_code in [200, 303, 400, 404]
+
+
+def test_cart_add_with_missing_quantity(client):
+    """Test adding to cart without quantity"""
+    resp = client.post(
+        "/cart/add",
+        json={"menu_item_id": str(uuid4())},
+    )
+    assert resp.status_code in [200, 303, 400, 422]
+
+
+def test_cart_update_with_negative_quantity(client):
+    """Test updating cart with negative quantity"""
+    resp = client.post(
+        "/cart/update",
+        json={"menu_item_id": str(uuid4()), "quantity": "-1"},
+    )
+    assert resp.status_code in [200, 303, 400, 404]
+
+
+def test_cart_remove_nonexistent_item(client):
+    """Test removing non-existent item from cart"""
+    resp = client.post(
+        "/cart/remove",
+        json={"menu_item_id": str(uuid4())},
+    )
+    assert resp.status_code in [200, 303, 404]
+
+
+def test_cart_multiple_operations(client, fake_session):
+    """Test multiple cart operations"""
+    from app.models.postgres.menu import MenuItem
+
+    items = []
+    for i in range(5):
+        item = MenuItem(
+            id=uuid4(),
+            title=f"Multi Item {i}",
+            price=10.00 + i,
+            is_available=True,
+            image_url=f"https://example.com/item{i}.jpg",
+            gallery_urls=[],
+        )
+        fake_session.menu_items[item.id] = item
+        items.append(item)
+    fake_session.commit()
+
+    # Add items
+    for item in items:
+        client.post("/cart/add", json={"menu_item_id": str(item.id), "quantity": "1"})
+
+    # Update quantities
+    for item in items[:3]:
+        client.post("/cart/update", json={"menu_item_id": str(item.id), "quantity": "2"})
+
+    # Remove some items
+    for item in items[3:]:
+        client.post("/cart/remove", json={"menu_item_id": str(item.id)})

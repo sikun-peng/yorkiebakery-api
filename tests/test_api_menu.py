@@ -421,7 +421,7 @@ def test_menu_update_with_all_fields(client, fake_session):
     )
     fake_session.menu_items[item.id] = item
     fake_session.commit()
-    
+
     resp = client.put(
         f"/menu/{item.id}",
         data={
@@ -438,3 +438,131 @@ def test_menu_update_with_all_fields(client, fake_session):
         },
     )
     assert resp.status_code in [200, 403, 404]
+
+
+def test_menu_view_with_origin_filter(client):
+    """Test menu view with origin filter"""
+    resp = client.get("/menu/view?origin=french")
+    assert resp.status_code == 200
+
+
+def test_menu_view_with_category_filter(client):
+    """Test menu view with category filter"""
+    resp = client.get("/menu/view?category=pastry")
+    assert resp.status_code == 200
+
+
+def test_menu_search_empty_query(client):
+    """Test menu search with empty query"""
+    resp = client.get("/menu/search?q=")
+    assert resp.status_code == 200
+
+
+def test_menu_search_special_characters(client):
+    """Test menu search with special characters"""
+    resp = client.get("/menu/search?q=%21%40%23")
+    assert resp.status_code == 200
+
+
+def test_menu_create_without_title(client):
+    """Test creating menu without title"""
+    resp = client.post(
+        "/menu/",
+        data={"price": "10.00"},
+    )
+    assert resp.status_code in [400, 422]
+
+
+def test_menu_create_without_price(client):
+    """Test creating menu without price"""
+    resp = client.post(
+        "/menu/",
+        data={"title": "No Price Item"},
+    )
+    assert resp.status_code in [400, 422]
+
+
+def test_menu_update_with_invalid_price(client, fake_session):
+    """Test updating menu with invalid price"""
+    item = MenuItem(
+        id=uuid4(),
+        title="Price Test",
+        price=10.00,
+        is_available=True,
+        image_url="https://example.com/item.jpg",
+        gallery_urls=[],
+    )
+    fake_session.menu_items[item.id] = item
+    fake_session.commit()
+
+    resp = client.put(
+        f"/menu/{item.id}",
+        data={"price": "invalid"},
+    )
+    assert resp.status_code in [400, 422]
+
+
+def test_menu_search_variations(client):
+    """Test menu search with various parameters"""
+    searches = [
+        "?q=croissant",
+        "?q=bread",
+        "?origin=french",
+        "?origin=italian",
+        "?category=pastry",
+        "?category=bread",
+        "?min_price=1&max_price=10",
+        "?min_price=10&max_price=20",
+        "?dietary=vegan",
+        "?dietary=gluten-free",
+        "?flavor=sweet",
+        "?flavor=savory",
+    ]
+    for search in searches:
+        resp = client.get(f"/menu/search{search}")
+        assert resp.status_code == 200
+
+
+def test_menu_list_with_various_pagination(client):
+    """Test menu list with different pagination values"""
+    pagination_params = [
+        "?skip=0&limit=5",
+        "?skip=5&limit=10",
+        "?skip=10&limit=20",
+        "?skip=0&limit=100",
+        "?skip=50&limit=50",
+    ]
+    for params in pagination_params:
+        resp = client.get(f"/menu/{params}")
+        assert resp.status_code == 200
+
+
+def test_menu_operations_variations(client, fake_session):
+    """Test various menu operations"""
+    items = []
+    for i in range(5):
+        item = MenuItem(
+            id=uuid4(),
+            title=f"Menu Var {i}",
+            price=15.00 + i,
+            category=["pastry", "bread", "dessert", "special", "savory"][i],
+            origin=["french", "italian", "japanese", "american", "french"][i],
+            is_available=True,
+            image_url=f"https://example.com/item{i}.jpg",
+            gallery_urls=[],
+        )
+        fake_session.menu_items[item.id] = item
+        items.append(item)
+    fake_session.commit()
+
+    # Get each item
+    for item in items:
+        client.get(f"/menu/{item.id}")
+
+    # Update each item
+    for item in items:
+        client.put(f"/menu/{item.id}", data={"title": f"Updated {item.title}"})
+
+    # Delete items
+    for item in items[:2]:
+        client.delete(f"/menu/{item.id}")

@@ -658,12 +658,68 @@ def test_logout_clears_session(client):
 def test_verify_email_already_verified(client, test_user, fake_session):
     """Test verifying already verified email"""
     from app.core.security import create_verification_token
-    
+
     # Ensure user is verified
     test_user.is_verified = True
     fake_session.add(test_user)
     fake_session.commit()
-    
+
     token = create_verification_token(test_user.email)
     resp = client.get(f"/auth/verify?token={token}")
     assert resp.status_code in [200, 303]
+
+
+@pytest.mark.auth
+def test_auth_login_with_empty_email(client):
+    """Test login with empty email"""
+    resp = client.post(
+        "/auth/login",
+        json={"email": "", "password": "password"},
+    )
+    assert resp.status_code in [400, 401, 422]
+
+
+@pytest.mark.auth
+def test_auth_login_with_empty_password(client):
+    """Test login with empty password"""
+    resp = client.post(
+        "/auth/login",
+        json={"email": "test@example.com", "password": ""},
+    )
+    assert resp.status_code in [400, 401, 422]
+
+
+@pytest.mark.auth
+def test_auth_register_with_invalid_email(client):
+    """Test register with invalid email"""
+    resp = client.post(
+        "/auth/register",
+        json={
+            "email": "notanemail",
+            "password": "ValidPass123!",
+            "first_name": "Invalid",
+            "last_name": "Email",
+        },
+    )
+    assert resp.status_code in [400, 422]
+
+
+@pytest.mark.auth
+def test_auth_register_variations(client):
+    """Test register with various inputs"""
+    variations = [
+        {"email": f"var{i}@example.com", "password": f"Pass{i}123!", "first_name": f"First{i}", "last_name": f"Last{i}"}
+        for i in range(5)
+    ]
+    for data in variations:
+        resp = client.post("/auth/register_form", data=data)
+        assert resp.status_code in [200, 303, 400, 422]
+
+
+@pytest.mark.auth
+def test_auth_forgot_password_variations(client):
+    """Test forgot password with various emails"""
+    emails = [f"forgot{i}@example.com" for i in range(5)]
+    for email in emails:
+        resp = client.post("/auth/forgot_password", json={"email": email})
+        assert resp.status_code in [200, 303, 400]

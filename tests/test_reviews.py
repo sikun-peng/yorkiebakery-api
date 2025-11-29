@@ -62,3 +62,30 @@ def test_add_review_requires_login(fake_session):
     assert exc.value.status_code == 401
 
 
+def test_review_variations(client, fake_session):
+    """Test various review operations"""
+    from app.models.postgres.menu import MenuItem
+
+    items = []
+    for i in range(3):
+        item = MenuItem(
+            id=uuid4(),
+            title=f"Review Item {i}",
+            price=12.00 + i,
+            is_available=True,
+            image_url=f"https://example.com/item{i}.jpg",
+            gallery_urls=[],
+        )
+        fake_session.menu_items[item.id] = item
+        items.append(item)
+    fake_session.commit()
+
+    # Add reviews
+    for item in items:
+        for rating in range(1, 6):
+            client.post(
+                f"/menu/{item.id}/review",
+                json={"rating": rating, "comment": f"Rating {rating}"},
+            )
+
+

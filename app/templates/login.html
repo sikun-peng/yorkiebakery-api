@@ -10,7 +10,7 @@
             Please login to complete your checkout
         </p>
 
-        <form method="POST" action="/auth/login_form">
+        <form id="page-login-form" method="POST" action="/auth/login_form">
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required placeholder="Your email">
@@ -20,6 +20,8 @@
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required placeholder="Your password">
             </div>
+
+            <input type="hidden" name="redirect_url" value="{{ redirect_url }}">
 
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
@@ -115,5 +117,30 @@ document.getElementById('forgot-password-modal').addEventListener('click', funct
         hideForgotPassword();
     }
 });
+
+// AJAX login to follow JSON redirect
+const pageLoginForm = document.getElementById('page-login-form');
+if (pageLoginForm) {
+    pageLoginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(pageLoginForm);
+        try {
+            const res = await fetch('/auth/login_form', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.redirect) {
+                window.location.href = data.redirect;
+                return;
+            }
+            if (!data.success) {
+                alert(data.error || 'Login failed');
+                return;
+            }
+            window.location.reload();
+        } catch (err) {
+            console.error('Login failed', err);
+            pageLoginForm.submit(); // fallback
+        }
+    });
+}
 </script>
 {% endblock %}

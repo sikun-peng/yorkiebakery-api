@@ -16,8 +16,8 @@ docker rmi $(docker images -q yorkiebakery-api_web)
 docker builder prune -af
 
 # docker build cmd
-docker-compose down &&  docker image prune -f && docker-compose build --no-cache && docker-compose up -d
-docker-compose down && docker-compose build && docker-compose up -d
+docker-compose build --no-cache && docker-compose up -d
+docker-compose build && docker-compose up -d
 
 # Run migrations
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/001_create_tables.sql
@@ -50,7 +50,7 @@ npm install
 npm run build
 
 # prod docker-compose (pull from GHCR)
-# docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml up -d
 
 
 # purge css
