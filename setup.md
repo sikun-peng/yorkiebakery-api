@@ -51,6 +51,9 @@ curl -X POST http://localhost:8000/ai/chat \
 # prod docker-compose (pull from GHCR)
 docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d
 
+# clean up vector store
+docker run --rm -v yorkiebakery-api_vector_store:/data alpine sh -c "mkdir -p /data && chmod 777 /data"
+
 # purge css
 curl -X POST "https://api.cloudflare.com/client/v4/zones/8547f59bcabb275c176448c50fa99867/purge_cache" \
   -H "Authorization: Bearer {}" \
