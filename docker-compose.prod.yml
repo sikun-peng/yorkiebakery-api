@@ -34,7 +34,10 @@ services:
       DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/yorkiebakery
     env_file:
       - .env
+    volumes:
+      - vector_store:/app/app/ai/vector_store
     restart: unless-stopped
 
 volumes:
   postgres_data:
+  vector_store:

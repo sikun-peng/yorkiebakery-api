@@ -426,17 +426,17 @@ h1, h2, h3, h4 {
 .payment-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   align-items: center;
   justify-content: center;
 }
 
 .payment-badges img {
-  height: 36px;
+  height: 34px;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--white);
-  padding: 6px 10px;
+  padding: 5px 9px;
 }
 
 .payment-strip {
@@ -458,11 +458,12 @@ h1, h2, h3, h4 {
 }
 
 .payment-label {
-  margin: 0 0 12px 0;
+  margin: 0;
   color: var(--text-lighter);
   font-weight: 700;
   letter-spacing: 0.3px;
   text-align: center;
+  font-size: 0.95rem;
 }
 
 .sponsor-strip {
@@ -511,7 +512,7 @@ h1, h2, h3, h4 {
 
 .payment-row {
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
   gap: 28px;
   flex-wrap: wrap;
@@ -521,6 +522,7 @@ h1, h2, h3, h4 {
   flex: 1 1 220px;
   display: flex;
   align-items: center;
+  min-height: 86px;
 }
 
 .payment-col + .payment-col {
@@ -542,6 +544,8 @@ h1, h2, h3, h4 {
 .payment-col.center {
   justify-content: center;
   text-align: center;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .payment-col.right {
@@ -554,16 +558,18 @@ h1, h2, h3, h4 {
   color: var(--text-lighter);
   margin: 0;
   font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.3;
 }
 
 .badge-inline {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .badge-inline img {
-  height: 56px;
+  height: 48px;
 }
 
 .right-badges {
@@ -575,15 +581,22 @@ h1, h2, h3, h4 {
 }
 
 .right-badges img {
-  height: 40px;
+  height: 36px;
   border: 1px solid var(--border);
   border-radius: 10px;
   background: var(--white);
-  padding: 6px 10px;
+  padding: 5px 9px;
 }
 
 .payment-tail {
   display: none;
+}
+
+@media (min-width: 1024px) {
+  .payment-badges,
+  .right-badges {
+    flex-wrap: nowrap;
+  }
 }
 
 @media (max-width: 768px) {
