@@ -1,7 +1,11 @@
 # app/ai/preference_extractor.py
 
 import re
-from typing import Dict, List, Any
+import json
+from typing import Dict, List, Any, Optional
+from openai import OpenAI
+
+client = OpenAI()
 
 
 # Keyword mappings for preference extraction
@@ -47,6 +51,50 @@ CATEGORY_KEYWORDS = {
 }
 
 
+def extract_personal_context(message: str) -> Dict[str, Any]:
+    """
+    Extract personal context from message using LLM (names, etc.)
+
+    Args:
+        message: User message text
+
+    Returns:
+        Dictionary with personal context like {"name": "Spencer"}
+    """
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": """Extract personal information from the user's message.
+Only extract clear, explicit information. Return JSON with these optional fields:
+- "name": user's name if mentioned (e.g., "my name is Spencer" -> "Spencer")
+
+Return empty {} if no personal information is found.
+Examples:
+"hi my name is spencer" -> {"name": "Spencer"}
+"I love chocolate" -> {}
+"call me John" -> {"name": "John"}"""
+                },
+                {
+                    "role": "user",
+                    "content": message
+                }
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.3,
+            max_tokens=50,
+        )
+
+        result = json.loads(response.choices[0].message.content)
+        # Only return if there's actual data
+        return result if result else {}
+    except Exception as e:
+        # Silently fail - personal context extraction is nice-to-have
+        return {}
+
+
 def extract_preferences(message: str) -> Dict[str, List[str]]:
     """
     Extract user preferences from a message using keyword matching.
@@ -60,7 +108,8 @@ def extract_preferences(message: str) -> Dict[str, List[str]]:
             "flavors": [...],
             "dietary": [...],
             "avoid": [...],
-            "categories": [...]
+            "categories": [...],
+            "name": "..." (optional)
         }
     """
     message_lower = message.lower()
@@ -91,7 +140,12 @@ def extract_preferences(message: str) -> Dict[str, List[str]]:
         if any(keyword in message_lower for keyword in keywords):
             preferences["categories"].append(category)
 
-    # Remove empty lists
+    # Extract personal context (name, etc.) using LLM
+    personal_context = extract_personal_context(message)
+    if personal_context:
+        preferences.update(personal_context)
+
+    # Remove empty lists (but keep string values like name)
     preferences = {k: v for k, v in preferences.items() if v}
 
     return preferences
@@ -111,6 +165,10 @@ def format_preferences_for_context(preferences: Dict[str, Any]) -> str:
         return ""
 
     lines = []
+
+    # Personal context (name)
+    if preferences.get("name"):
+        lines.append(f"Customer name: {preferences['name']}")
 
     if preferences.get("flavors"):
         lines.append(f"Prefers flavors: {', '.join(preferences['flavors'])}")
@@ -133,7 +191,7 @@ def format_preferences_for_context(preferences: Dict[str, Any]) -> str:
 
 def merge_preferences(
     existing: Dict[str, Any],
-    new: Dict[str, List[str]]
+    new: Dict[str, Any]
 ) -> Dict[str, Any]:
     """
     Merge new preferences with existing ones, avoiding duplicates.
@@ -148,6 +206,11 @@ def merge_preferences(
     merged = existing.copy() if existing else {}
 
     for key, values in new.items():
+        # Handle string values (like name)
+        if isinstance(values, str):
+            merged[key] = values
+            continue
+
         if key not in merged:
             merged[key] = []
 

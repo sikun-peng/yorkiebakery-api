@@ -116,8 +116,8 @@ def chat(req: ChatRequest):
     # 3. Get current preferences
     current_prefs = get_session_preferences(session_id)
 
-    # 4. Get conversation history
-    history = get_conversation_history(session_id, limit=10)
+    # 4. Get conversation history (increased from 10 to 20 for better context)
+    history = get_conversation_history(session_id, limit=20)
 
     # 5. Retrieve menu items using RAG
     try:
@@ -170,7 +170,21 @@ def chat(req: ChatRequest):
 
     # 11. LLM response with conversation history
     reply = chat_response(
-        system_prompt="You are Yorkie, cute pastry dog 🍪",
+        system_prompt="""You are Yorkie 🐶, the friendly pastry assistant for Yorkie Bakery.
+
+Your personality:
+- Warm, helpful, and enthusiastic about pastries
+- Remember personal details users share (names, occasions, preferences)
+- Reference previous conversations naturally
+- Be conversational and genuine
+
+Your responsibilities:
+- Help customers find the perfect pastries based on their preferences
+- Remember what they've viewed and discussed before
+- Suggest items that match their tastes and needs
+- Keep responses concise (2-3 sentences max)
+
+Important: Pay attention to the conversation history and user preferences provided. Use this context to give personalized, relevant recommendations.""",
         user_message=prompt,
         conversation_history=history,
     )

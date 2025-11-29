@@ -27,8 +27,8 @@ def chat_response(
 
     # Add conversation history if provided
     if conversation_history:
-        # Take only the last 10 messages (5 turns) to stay within token limits
-        recent_history = conversation_history[-10:]
+        # Take only the last 20 messages (10 turns) for better context
+        recent_history = conversation_history[-20:]
         for msg in recent_history:
             messages.append({
                 "role": msg["role"],

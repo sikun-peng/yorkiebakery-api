@@ -50,7 +50,7 @@ npm install
 npm run build
 
 # prod docker-compose (pull from GHCR)
-docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.prod.yml pull && docker-compose -f docker-compose.prod.yml down && docker-compose -f docker-compose.prod.yml up -d
 
 
 # purge css
