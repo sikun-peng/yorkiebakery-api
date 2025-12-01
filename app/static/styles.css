@@ -1740,10 +1740,10 @@ h1, h2, h3, h4 {
     padding: 16px;
   }
 
-  .chat-box {
-    width: calc(100vw - 32px);
-    right: 16px;
-  }
+.chat-box {
+  width: calc(100vw - 32px);
+  right: 16px;
+}
 
   .free-pill {
     font-size: 11px;
@@ -1759,6 +1759,15 @@ h1, h2, h3, h4 {
   .fp-controls {
     width: 100%;
     justify-content: flex-start;
+  }
+
+  /* Lift chat bubble above the music player */
+  .chat-toggle, .chat-box {
+    bottom: 120px;
+  }
+
+  body {
+    padding-bottom: 140px;
   }
 }
 
