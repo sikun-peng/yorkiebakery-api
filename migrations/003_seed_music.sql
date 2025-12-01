@@ -8,7 +8,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- PIANO
 INSERT INTO music_track (id, title, composer, performer, category, description, file_url, cover_url, uploaded_at)
 VALUES
-(uuid_generate_v4(), 'Prelude in C Major, No.1, BWV 846', 'Bach, Johann', 'Oscar Peng', 'piano', '赋格', '', 'https://d2pdj881wm30p5.cloudfront.net/music-covers/cover_langlang.jpg', NOW()),
+(uuid_generate_v4(), 'Prelude in C Major, No.1, BWV 846', 'Bach, Johann', 'Oscar Peng', 'piano', '赋格', 'https://d2pdj881wm30p5.cloudfront.net/music/Bach_prelude_846.mp3', 'https://d2pdj881wm30p5.cloudfront.net/music-covers/cover_langlang.jpg', NOW()),
 (uuid_generate_v4(), 'Intermezzo in A major, Op.118 No.2', 'Brahms, Johannes', 'Oscar Peng', 'piano', '反正我的曲子，都是写给你的', 'https://d2pdj881wm30p5.cloudfront.net/music/Brahms_op_118.mp3', 'https://d2pdj881wm30p5.cloudfront.net/music-covers/cover_brahms.jpg', NOW()),
 (uuid_generate_v4(), 'Barcarolle in F-sharp major, Op.60', 'Chopin, Frédéric', 'Oscar Peng', 'piano', '船歌', 'https://d2pdj881wm30p5.cloudfront.net/music/Chopin_barcarolle.mp3', 'https://d2pdj881wm30p5.cloudfront.net/music-covers/cover_martha_argerich.jpg', NOW()),
 (uuid_generate_v4(), 'Ballade No.1 in G minor, Op.23', 'Chopin, Frédéric', 'Oscar Peng', 'piano', '叙一', 'https://d2pdj881wm30p5.cloudfront.net/music/Chopin_ballade_no_1.mp3', 'https://d2pdj881wm30p5.cloudfront.net/music-covers/cover_martha_argerich.jpg', NOW()),
