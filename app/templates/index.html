@@ -24,20 +24,26 @@
   <div style="text-align:center; margin-bottom:24px;">
     <a href="/menu/view" class="btn-outline">🍽️Browse Our Menu 🌸</a>
   </div>
-  <div class="menu-grid" style="margin-bottom:16px;">
-    {% for item in menu_items %}
-    <div class="menu-card">
-      <img src="{{ item.image_url or '/static/default_menu_image.jpg' }}" alt="{{ item.title }}">
-      <h3>{{ item.title }}</h3>
-      <p>{{ item.description or '' }}</p>
-      {% if item.price is not none %}
-        <p class="price">
-          <span class="old-price">${{ "%.2f"|format(item.price) }}</span>
-          <span class="free-pill">Free</span>
-        </p>
-      {% endif %}
+  <div class="menu-carousel">
+    <button class="carousel-btn" id="menu-prev" aria-label="Previous pastries">‹</button>
+    <div class="menu-window" id="menu-window">
+      <div class="menu-track" id="menu-track">
+        {% for item in menu_items %}
+        <div class="menu-card menu-card-compact">
+          <img src="{{ item.image_url or '/static/default_menu_image.jpg' }}" alt="{{ item.title }}">
+          <h3>{{ item.title }}</h3>
+          <p>{{ item.description or '' }}</p>
+          {% if item.price is not none %}
+            <p class="price">
+              <span class="old-price">${{ "%.2f"|format(item.price) }}</span>
+              <span class="free-pill">Free</span>
+            </p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
     </div>
-    {% endfor %}
+    <button class="carousel-btn" id="menu-next" aria-label="Next pastries">›</button>
   </div>
 </section>
 
@@ -48,48 +54,78 @@
     <a href="/music/listen" class="btn-outline">🎵 Oscar's Music 🎹🎻</a>
   </div>
 
-  <div class="music-grid">
-    {% for track in tracks %}
-    <div style="
-      background: #fff;
-      padding: 16px;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      text-align: center;
-      border: 1px solid var(--border);
-    ">
+  <div class="music-carousel">
+    <button class="carousel-btn" id="music-prev" aria-label="Previous tracks">‹</button>
+    <div class="music-window" id="music-window">
+      <div class="music-track" id="music-track">
+        {% for track in tracks %}
+        <div class="home-music-card music-track-card" data-track-id="{{ track.id }}">
 
-      <!-- Cover Image (small + clean) -->
-    {% if track.cover_url %}
-      <img src="{{ track.cover_url }}"
-           alt="{{ track.title }}"
-           style="width:120px; height:120px; object-fit:cover; border-radius:12px; margin-bottom:10px;">
-    {% else %}
-      <img src="/static/images/default_music_cover.jpg"
-           alt="No cover"
-           style="width:120px; height:120px; object-fit:cover; border-radius:12px; margin-bottom:10px;">
-    {% endif %}
-
-      <h3 style="font-size:18px; margin-bottom:5px;">{{ track.title }}</h3>
-
-      {% if track.composer or track.performer %}
-        <p style="font-size:14px; color:#555; margin-top:0;">
-          {{ track.composer }}
-          {% if track.composer and track.performer %} — {% endif %}
-          {{ track.performer }}
-        </p>
-      {% endif %}
-
-      {% if track.file_url %}
-        <audio controls style="width:140px; margin-top:8px;">
-          <source src="{{ track.file_url }}" type="audio/mpeg">
-        </audio>
-      {% else %}
-        <p class="text-gray-500 italic">Track unavailable</p>
-      {% endif %}
-
+          <div class="music-cover-wrap">
+            {% if track.cover_url %}
+              <img src="{{ track.cover_url }}"
+                   alt="{{ track.title }}"
+                   class="home-music-cover">
+            {% else %}
+              <img src="/static/images/default_music_cover.jpg"
+                   alt="No cover"
+                   class="home-music-cover">
+            {% endif %}
+            {% if track.file_url %}
+              <button
+                class="cover-play-btn play-track-btn"
+                type="button"
+                aria-label="Play {{ track.title }}"
+                data-track-id="{{ track.id }}"
+                data-title="{{ track.title }}"
+                data-composer="{{ track.composer }}"
+                data-performer="{{ track.performer }}"
+                data-file="{{ track.file_url }}"
+                data-cover="{{ track.cover_url if track.cover_url else '/static/images/default_music_cover.jpg' }}">
+                ▶
+              </button>
+            {% endif %}
+          </div>
+          <h3 class="home-music-title">{{ track.title }}</h3>
+        </div>
+        {% endfor %}
+      </div>
     </div>
-    {% endfor %}
+    <button class="carousel-btn" id="music-next" aria-label="Next tracks">›</button>
+  </div>
+
+  <!-- Inline music player (reuses main player logic, but anchored here) -->
+  <div class="floating-player inline-player" id="floating-player">
+    <div class="fp-left">
+      <div class="fp-cover">
+        <img id="fp-cover-img" src="/static/images/default_music_cover.jpg" alt="Cover">
+      </div>
+      <div class="fp-meta">
+        <div id="fp-title"></div>
+        <div id="fp-subtitle" class="fp-subtitle"></div>
+      </div>
+    </div>
+
+    <div class="fp-center">
+      <div class="fp-controls">
+        <button class="fp-icon-btn icon-shuffle" id="fp-shuffle" type="button" aria-pressed="false" aria-label="Shuffle" title="Shuffle"></button>
+        <button class="fp-icon-btn icon-prev" id="fp-prev" type="button" aria-label="Previous" title="Previous"></button>
+        <button class="fp-icon-btn fp-play" id="fp-play" type="button" aria-label="Play/Pause" title="Play/Pause"></button>
+        <button class="fp-icon-btn icon-next" id="fp-next" type="button" aria-label="Next" title="Next"></button>
+        <button class="fp-icon-btn icon-repeat" id="fp-repeat" type="button" aria-pressed="false" aria-label="Repeat" title="Repeat"></button>
+        <div class="fp-volume">
+          <button class="fp-icon-btn icon-volume-toggle" id="fp-mute" type="button" aria-pressed="false" aria-label="Mute/Unmute" title="Mute/Unmute"></button>
+          <input type="range" id="fp-volume" min="0" max="100" value="100" step="1" aria-label="Volume">
+        </div>
+      </div>
+      <div class="fp-progress">
+        <span id="fp-current-time">0:00</span>
+        <input type="range" id="fp-seek" min="0" max="100" value="0" step="1" aria-label="Seek">
+        <span id="fp-duration">0:00</span>
+      </div>
+    </div>
+
+    <audio id="global-audio"></audio>
   </div>
 </section>
 

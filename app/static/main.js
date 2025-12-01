@@ -666,6 +666,68 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ===========================
+   Home page menu carousel
+   =========================== */
+document.addEventListener("DOMContentLoaded", () => {
+    const track = document.getElementById("menu-track");
+    const windowEl = document.getElementById("menu-window");
+    const prev = document.getElementById("menu-prev");
+    const next = document.getElementById("menu-next");
+    if (!track || !windowEl || !prev || !next) return;
+    initCarousel({
+        windowEl,
+        track,
+        prev,
+        next,
+        cardSelector: ".menu-card-compact",
+    });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const track = document.getElementById("music-track");
+    const windowEl = document.getElementById("music-window");
+    const prev = document.getElementById("music-prev");
+    const next = document.getElementById("music-next");
+    if (!track || !windowEl || !prev || !next) return;
+    initCarousel({
+        windowEl,
+        track,
+        prev,
+        next,
+        cardSelector: ".home-music-card",
+    });
+});
+
+function initCarousel({ windowEl, track, prev, next, cardSelector }) {
+    const cardWidth = () => {
+        const first = track.querySelector(cardSelector);
+        if (!first) return 300;
+        const gap = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || "12") || 12;
+        return first.getBoundingClientRect().width + gap;
+    };
+
+    const maxScroll = () => Math.max(0, track.scrollWidth - windowEl.clientWidth);
+
+    const updateButtons = () => {
+        prev.disabled = windowEl.scrollLeft <= 0;
+        next.disabled = windowEl.scrollLeft >= maxScroll() - 4;
+    };
+
+    prev.addEventListener("click", () => {
+        windowEl.scrollBy({ left: -cardWidth(), behavior: "smooth" });
+        setTimeout(updateButtons, 250);
+    });
+
+    next.addEventListener("click", () => {
+        windowEl.scrollBy({ left: cardWidth(), behavior: "smooth" });
+        setTimeout(updateButtons, 250);
+    });
+
+    windowEl.addEventListener("scroll", updateButtons);
+    updateButtons();
+}
+
+/* ===========================
    Missing track notice
    =========================== */
 document.addEventListener("DOMContentLoaded", () => {

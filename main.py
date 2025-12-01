@@ -123,7 +123,6 @@ def home(request: Request):
         .where(MenuItem.category == "pastry")
         .where(MenuItem.is_available == True)
         .order_by(func.random())
-        .limit(3)
     ).all()
 
     # 🎵 Featured music — only tracks with audio file (non-null s3_url)
@@ -131,7 +130,6 @@ def home(request: Request):
         select(MusicTrack)
         .where(MusicTrack.file_url != "")
         .order_by(func.random())
-        .limit(3)
     ).all()
 
     return templates.TemplateResponse(
