@@ -663,6 +663,11 @@ document.addEventListener("DOMContentLoaded", () => {
     updateShuffleLabel();
     updateRepeatLabel();
     playControl.setAttribute("aria-label", "Play");
+
+    // Preload the first track into the player (paused) for a populated UI
+    if (playlist.length > 0) {
+        loadTrack(0, false);
+    }
 });
 
 /* ===========================
