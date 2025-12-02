@@ -59,12 +59,25 @@ def submit_rsvp(
     event_id: UUID,
     name: str = Form(...),
     email: str = Form(...),
-    message: str = Form("")
+    message: str = Form(""),
+    honeypot: str = Form("", alias="rsvp_contact"),
+    form_started_at: str = Form("", alias="rsvp_started_at"),
 ):
     with Session(engine) as session:
         event = session.get(Event, event_id)
         if not event:
             raise HTTPException(404, "Event not found")
+
+        # Basic anti-bot: honeypot + minimum fill time (2s)
+        if honeypot.strip():
+            raise HTTPException(400, "Invalid submission")
+        try:
+            started = float(form_started_at)
+        except Exception:
+            started = 0.0
+        now_ts = datetime.utcnow().timestamp()
+        if started and (now_ts - started) < 2:
+            raise HTTPException(400, "Slow down")
 
         # 🔥 Extract values BEFORE session closes
         event_title = event.title
@@ -97,12 +110,12 @@ def submit_rsvp(
     try:
         user_body = (
             f"Hi {name},\n\n"
-            f"Thank you for RSVP’ing for:\n\n"
-            f"📌 {event_title}\n"
+            f"Thank you for RSVP’ing for the following event:\n\n"
+            f"🎉 {event_title}\n"
             f"📅 {event_datetime}\n"
             f"📍 {event_location}\n\n"
-            f"We’ll keep you updated about any announcements.\n\n"
-            f"— Yorkie Bakery"
+            f"We're excited to see you there! You'll receive a reminder email, along with any important updates.\n\n"
+            f"— Yorkie Bakery Customer Service 🐶"
         )
         send_email(email, f"Your RSVP is Confirmed — {event_title}", user_body)
     except Exception as e:

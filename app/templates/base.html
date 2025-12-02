@@ -81,6 +81,11 @@
 
         <input type="text" name="first_name" id="first-name-field" placeholder="First Name" style="display:none;">
         <input type="text" name="last_name" id="last-name-field" placeholder="Last Name" style="display:none;">
+        <div style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;">
+          <label>Leave this blank</label>
+          <input type="text" name="register_contact" tabindex="-1" autocomplete="off">
+        </div>
+        <input type="hidden" name="register_started_at" id="auth-register-started-at" value="">
 
         <button type="submit" class="btn" id="auth-submit-btn">Login</button>
       </form>

@@ -12,6 +12,7 @@ const toggleText = document.getElementById("toggle-text");
 const authError = document.getElementById("auth-error");
 const passwordInput = form?.querySelector('input[name="password"]');
 const emailInput = form?.querySelector('input[name="email"]');
+const registerStartedAt = document.getElementById("auth-register-started-at");
 
 const showAuthError = (msg) => {
     if (!authError) {
@@ -40,12 +41,18 @@ let currentEmail = '';
 document.getElementById("open-login")?.addEventListener("click", () => {
     modal.style.display = "flex";
     setLoginMode();
+    if (registerStartedAt) {
+        registerStartedAt.value = Date.now() / 1000;
+    }
 });
 
 // Open Register
 document.getElementById("open-register")?.addEventListener("click", () => {
     modal.style.display = "flex";
     setRegisterMode();
+    if (registerStartedAt) {
+        registerStartedAt.value = Date.now() / 1000;
+    }
 });
 
 // Close modal
@@ -217,6 +224,9 @@ function resetModalState() {
         resetEmail.value = "";
     }
     showAuthError("");
+    if (registerStartedAt) {
+        registerStartedAt.value = Date.now() / 1000;
+    }
 }
 
 /* ===========================

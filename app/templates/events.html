@@ -51,6 +51,11 @@
 
     <!-- RSVP FORM -->
     <form method="post" action="/events/rsvp/{{ event.id }}" class="rsvp-form">
+      <div style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;">
+        <label>Leave this blank</label>
+        <input type="text" name="rsvp_contact" tabindex="-1" autocomplete="off">
+      </div>
+      <input type="hidden" name="rsvp_started_at" value="">
       <input type="text" name="name" placeholder="Your name" required>
       <input type="email" name="email" placeholder="Your email" required>
       <textarea name="message" placeholder="Optional message"></textarea>
@@ -137,6 +142,14 @@ function zoomOut(event) {
   zoomLevel = Math.max(0.4, zoomLevel - 0.2);
   document.getElementById("modalImg").style.transform = `scale(${zoomLevel})`;
 }
+
+// Honeypot timestamp setter for RSVPs
+document.addEventListener("DOMContentLoaded", () => {
+  const nowTs = Date.now() / 1000;
+  document.querySelectorAll('input[name="rsvp_started_at"]').forEach((el) => {
+    el.value = nowTs;
+  });
+});
 
 // Sponsor strip (matches homepage)
 </script>

@@ -16,6 +16,11 @@
 
         <form id="page-login-form" method="POST" action="/auth/login_form" data-mode="{{ page_mode or 'login' }}">
             <div id="page-login-error" style="display:none; margin-bottom:12px; color:#c0392b; font-weight:600;"></div>
+            <div style="position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden;">
+                <label>Leave this blank</label>
+                <input type="text" name="register_contact" tabindex="-1" autocomplete="off">
+            </div>
+            <input type="hidden" name="register_started_at" id="page-register-started-at" value="">
             <div class="form-group" id="page-first-name-group" style="display:none;">
                 <label for="page-first-name">First name:</label>
                 <input type="text" id="page-first-name" name="first_name" placeholder="First name">
@@ -141,6 +146,7 @@ const pageLoginError = document.getElementById('page-login-error');
 const pageFirst = document.getElementById('page-first-name-group');
 const pageLast = document.getElementById('page-last-name-group');
 const pageSubmitBtn = document.getElementById('page-submit-btn');
+const pageRegisterStartedAt = document.getElementById('page-register-started-at');
 if (pageLoginForm) {
     const mode = pageLoginForm.dataset.mode || "login";
     const isRegister = mode === "register";
@@ -149,6 +155,9 @@ if (pageLoginForm) {
         if (pageFirst) pageFirst.style.display = "block";
         if (pageLast) pageLast.style.display = "block";
         if (pageSubmitBtn) pageSubmitBtn.textContent = "Register";
+    }
+    if (pageRegisterStartedAt) {
+        pageRegisterStartedAt.value = Date.now() / 1000;
     }
 
     pageLoginForm.addEventListener('submit', async (e) => {
