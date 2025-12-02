@@ -38,10 +38,23 @@
               <span class="menu-rating" style="white-space:nowrap; font-weight:600;">⭐ {{ "%.1f"|format(stats.avg) }}</span>
             {% endif %}
           </div>
-          {% if stats and stats.avg and stats.count and stats.avg >= 4.8 and stats.count >= 5 %}
-            <span style="display:inline-flex; align-items:center; gap:6px; margin-top:6px; font-size:13px; font-weight:700; color:#d35400;">
-              🔥 Popular Pick
-            </span>
+          {% if stats and stats.avg and stats.count %}
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
+              {% if stats.avg >= 4.8 and stats.count >= 5 %}
+                <span style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:#d35400; background:#ffe9d6; padding:4px 8px; border-radius:999px;">
+                  🔥 Top Rated
+                </span>
+              {% elif stats.count >= 3 %}
+                <span style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:#8a5a00; background:#fff3d9; padding:4px 8px; border-radius:999px;">
+                  ✨ Trending Now
+                </span>
+              {% endif %}
+              {% if item.tags and ('chef special' in item.tags) %}
+                <span style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:#9c27b0; background:#f5e9ff; padding:4px 8px; border-radius:999px;">
+                  👨‍🍳 Chef Special
+                </span>
+              {% endif %}
+            </div>
           {% endif %}
           <p>{{ item.description or '' }}</p>
           {% if item.price is not none %}

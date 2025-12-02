@@ -253,7 +253,9 @@ def process_checkout(
         if not user:
             return RedirectResponse("/auth/login?redirect_url=/cart/checkout", status_code=303)
 
-        def clean(value: str):
+        def clean(value):
+            if value is None:
+                return None
             return value.strip() or None
 
         cleaned_address = {
