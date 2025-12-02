@@ -63,7 +63,7 @@ def send_verification_email(email: str, verify_url: str):  # Changed parameter n
         Source=SES_SENDER,
         Destination={"ToAddresses": [email]},
         Message={
-            "Subject": {"Data": "Verify your Yorkie Bakery account 🐶🥐"},
+            "Subject": {"Data": "👤 Yorkie Bakery - Verify your account"},
             "Body": {
                 "Text": {
                     "Data": f"Welcome! Click here to verify your account:\n{verify_url}\n\n- Yorkie Bakery"
@@ -72,7 +72,7 @@ def send_verification_email(email: str, verify_url: str):  # Changed parameter n
                     "Data": f"""
                     <html>
                     <body>
-                        <h2>Verify your Yorkie Bakery account 🐶🥐</h2>
+                        <h2>Verify your Yorkie Bakery account 🐶</h2>
                         <p>Welcome! Click the link below to verify your account:</p>
                         <p><a href="{verify_url}" style="background: #ffb36b; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Verify Account</a></p>
                         <p>Or copy and paste this URL in your browser:</p>
@@ -84,6 +84,27 @@ def send_verification_email(email: str, verify_url: str):  # Changed parameter n
                     """
                 }
             }
+        },
+        ConfigurationSetName=SES_CONFIG_SET
+    )
+
+def send_password_changed_email(email: str, first_name: Optional[str] = None):
+    subject = "🔐 Yorkie Bakery - Your password has been updated"
+    greeting = f"Hi {first_name}," if first_name else "Hi there,"
+    body = (
+        f"{greeting}\n\n"
+        "This is a confirmation that the password for your Yorkie Bakery account has been successfully updated.\n"
+        "If you did not request this change, please reset your password immediately or reach out to our support team at any time.\n\n"
+        "Best regards,\n"
+        "Yorkie Bakery Security Team 🐶"
+    )
+
+    ses.send_email(
+        Source=SES_SENDER,
+        Destination={"ToAddresses": [email]},
+        Message={
+            "Subject": {"Data": subject},
+            "Body": {"Text": {"Data": body}}
         },
         ConfigurationSetName=SES_CONFIG_SET
     )
@@ -164,7 +185,7 @@ def send_order_confirmation_email(
         Source=SES_SENDER,
         Destination={"ToAddresses": [email]},
         Message={
-            "Subject": {"Data": f"Yorkie Bakery — Order Confirmation{f' #{order_ref}' if order_ref else ''}"},
+            "Subject": {"Data": f"📦 Yorkie Bakery — Order Confirmation{f' #{order_ref}' if order_ref else ''}"},
             "Body": {"Text": {"Data": body}}
         },
         ConfigurationSetName=SES_CONFIG_SET
@@ -229,7 +250,7 @@ def send_owner_new_order_email(
         Source=SES_SENDER,
         Destination={"ToAddresses": ["yorkiebakery@gmail.com"]},
         Message={
-            "Subject": {"Data": f"📦 New Order Received — Yorkie Bakery{f' #{order_ref}' if order_ref else ''}"},
+            "Subject": {"Data": f"📦 Yorkie Bakery - New Order Received{f' #{order_ref}' if order_ref else ''}"},
             "Body": {
                 "Text": {
                     "Data": (
@@ -251,7 +272,7 @@ def send_password_reset_email(email: str, reset_url: str):
     logger.info(f"Sending password reset email to {email}")
     logger.info(f"Reset URL: {reset_url}")
 
-    subject = "Reset Your Yorkie Bakery Password 🐶🥐"
+    subject = "🔐 Yorkie Bakery - Reset Your Password"
 
     ses.send_email(
         Source=SES_SENDER,

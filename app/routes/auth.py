@@ -15,7 +15,11 @@ from app.core.security import (
     hash_password, verify_password, create_access_token,
     create_verification_token, verify_email_token
 )
-from app.core.send_email import send_verification_email, send_password_reset_email
+from app.core.send_email import (
+    send_verification_email,
+    send_password_reset_email,
+    send_password_changed_email,
+)
 from app.models.postgres.user import User
 from app.models.postgres.password_reset_token import PasswordResetToken
 
@@ -159,6 +163,10 @@ def login_form(
 # --------------------------------------
 # Register (modal) - FIXED VERSION
 # --------------------------------------
+MIN_PASSWORD_LEN = 6
+MAX_PASSWORD_LEN = 32
+
+
 @router.post("/register_form")
 def register_form(
         request: Request,
@@ -170,6 +178,12 @@ def register_form(
 ):
     if session.exec(select(User).where(User.email == email)).first():
         return JSONResponse({"success": False, "error": "Email already exists."}, status_code=400)
+
+    if len(password) < MIN_PASSWORD_LEN or len(password) > MAX_PASSWORD_LEN:
+        return JSONResponse(
+            {"success": False, "error": f"Password must be {MIN_PASSWORD_LEN}-{MAX_PASSWORD_LEN} characters."},
+            status_code=400,
+        )
 
     user = User(
         email=email,
@@ -272,6 +286,9 @@ def logout(request: Request):
 def api_register(payload: UserRegisterRequest, session: Session = Depends(get_session), request: Request = None):
     if session.exec(select(User).where(User.email == payload.email)).first():
         raise HTTPException(status_code=400, detail="Email already exists")
+
+    if len(payload.password) < MIN_PASSWORD_LEN or len(payload.password) > MAX_PASSWORD_LEN:
+        raise HTTPException(status_code=400, detail=f"Password must be {MIN_PASSWORD_LEN}-{MAX_PASSWORD_LEN} characters.")
 
     user = User(
         email=payload.email,
@@ -664,6 +681,12 @@ async def reset_password(
 
         logger.info(f"Resetting password for user: {user.email}")
 
+        if len(new_password) < MIN_PASSWORD_LEN or len(new_password) > MAX_PASSWORD_LEN:
+            return JSONResponse(
+                {"success": False, "error": f"Password must be {MIN_PASSWORD_LEN}-{MAX_PASSWORD_LEN} characters."},
+                status_code=400,
+            )
+
         # Update password
         user.password_hash = hash_password(new_password)
 
@@ -675,6 +698,13 @@ async def reset_password(
         session.commit()
 
         logger.info("Password reset successful")
+
+        # Send confirmation email (best-effort)
+        try:
+            logger.info(f"Sending password-changed email to {user.email}")
+            send_password_changed_email(user.email, user.first_name)
+        except Exception as email_error:
+            logger.warning(f"Failed to send password change email: {email_error}")
 
         # Return HTML response that shows success and redirects
         return templates.TemplateResponse("reset_password.html", {

@@ -8,6 +8,7 @@ from app.models.postgres.user import User
 from fastapi.templating import Jinja2Templates
 from botocore.exceptions import BotoCoreError, ClientError
 from app.core.logger import get_logger
+from app.core.send_email import send_password_changed_email
 import boto3
 import uuid
 
@@ -27,7 +28,13 @@ def require_user(request: Request, session: Session) -> User:
     user_session = request.session.get("user")
     if not user_session:
         raise HTTPException(status_code=401, detail="Login required")
-    user = session.get(User, user_session["id"])
+    user_id = user_session.get("id")
+    try:
+        from uuid import UUID
+        user_id = UUID(str(user_id))
+    except Exception:
+        pass
+    user = session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
@@ -98,13 +105,13 @@ def update_password(
             },
             status_code=400,
         )
-    if len(new_password) < 6:
+    if len(new_password) < 6 or len(new_password) > 32:
         return templates.TemplateResponse(
             "profile.html",
             {
                 "request": request,
                 "user": user,
-                "errors": {"password": "Password must be at least 6 characters"},
+                "errors": {"password": "Password must be 6-32 characters"},
             },
             status_code=400,
         )
@@ -121,6 +128,14 @@ def update_password(
     user.password_hash = hash_password(new_password)
     session.add(user)
     session.commit()
+
+    # Best-effort confirmation email
+    try:
+        logger.info(f"Sending password-changed email to {user.email}")
+        send_password_changed_email(user.email, user.first_name)
+    except Exception as e:
+        logger.warning(f"Failed to send password change email: {e}")
+
     redirect_url = request.headers.get("referer") or "/profile"
     return RedirectResponse(url=redirect_url, status_code=303)
 

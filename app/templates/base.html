@@ -75,12 +75,16 @@
       <form id="auth-form" method="POST">
         <input type="email" name="email" placeholder="Email" required>
         <input type="password" name="password" placeholder="Password" required>
+        <small style="display:block; color:#777; margin:4px 0 8px 2px; font-size:12px;">
+          Password must be 6-32 characters.
+        </small>
 
         <input type="text" name="first_name" id="first-name-field" placeholder="First Name" style="display:none;">
         <input type="text" name="last_name" id="last-name-field" placeholder="Last Name" style="display:none;">
 
         <button type="submit" class="btn" id="auth-submit-btn">Login</button>
       </form>
+      <p id="auth-error" style="display:none; color:red; font-size:13px; margin:8px 0 0 0;"></p>
 
       <!-- RESEND VERIFICATION SECTION -->
       <div id="resend-verification" style="display: none; margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 6px; border: 1px solid #ffeaa7;">

@@ -9,6 +9,18 @@ const firstNameField = document.getElementById("first-name-field");
 const lastNameField = document.getElementById("last-name-field");
 const toggleAuthMode = document.getElementById("toggle-auth-mode");
 const toggleText = document.getElementById("toggle-text");
+const authError = document.getElementById("auth-error");
+const passwordInput = form?.querySelector('input[name="password"]');
+const emailInput = form?.querySelector('input[name="email"]');
+
+const showAuthError = (msg) => {
+    if (!authError) {
+        alert(msg);
+        return;
+    }
+    authError.textContent = msg || "";
+    authError.style.display = msg ? "block" : "none";
+};
 
 // New authentication elements
 const resendVerificationDiv = document.getElementById("resend-verification");
@@ -174,6 +186,7 @@ function setLoginMode() {
     forgotPasswordLink.style.display = "block";
     resetPasswordDiv.style.display = "none";
     resendVerificationDiv.style.display = "none";
+    showAuthError("");
 }
 
 function setRegisterMode() {
@@ -188,6 +201,7 @@ function setRegisterMode() {
     forgotPasswordLink.style.display = "none";
     resetPasswordDiv.style.display = "none";
     resendVerificationDiv.style.display = "none";
+    showAuthError("");
 }
 
 function resetModalState() {
@@ -202,6 +216,7 @@ function resetModalState() {
     if (resetEmail) {
         resetEmail.value = "";
     }
+    showAuthError("");
 }
 
 /* ===========================
@@ -213,6 +228,15 @@ form?.addEventListener("submit", async (e) => {
     const formData = new FormData(form);
     const mode = form.dataset.mode; // "login" or "register"
     const url = mode === "login" ? "/auth/login_form" : "/auth/register_form";
+
+    // Client-side validation for password length in register mode
+    if (mode === "register") {
+        const pwd = (passwordInput?.value || "").trim();
+        if (pwd.length < 6 || pwd.length > 32) {
+            showAuthError("Password must be 6-32 characters.");
+            return;
+        }
+    }
 
     // Store email for potential resend verification
     currentEmail = formData.get('email');
@@ -235,7 +259,7 @@ form?.addEventListener("submit", async (e) => {
             if (data.error && data.error.includes('verify your email')) {
                 resendVerificationDiv.style.display = "block";
             }
-            alert(data.error || "Something went wrong");
+            showAuthError(data.error || "Something went wrong");
             return;
         }
 
@@ -248,7 +272,7 @@ form?.addEventListener("submit", async (e) => {
         }
 
     } catch (error) {
-        alert("Network error. Please try again.");
+        showAuthError("Network error. Please try again.");
     } finally {
         submitBtn.innerText = originalText;
         submitBtn.disabled = false;

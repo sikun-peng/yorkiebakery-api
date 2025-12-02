@@ -268,6 +268,7 @@ def overrides(fake_session, monkeypatch, request):
         monkeypatch.setattr(event_routes_import, "send_email", mock_email_func)
         monkeypatch.setattr(auth_routes_import, "send_verification_email", mock_email_func)
         monkeypatch.setattr(auth_routes_import, "send_password_reset_email", mock_email_func)
+        monkeypatch.setattr(auth_routes_import, "send_password_changed_email", mock_email_func)
         monkeypatch.setattr(cart_routes_import, "send_order_confirmation_email", mock_email_func)
         monkeypatch.setattr(cart_routes_import, "send_owner_new_order_email", mock_email_func)
 

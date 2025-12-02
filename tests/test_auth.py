@@ -118,6 +118,41 @@ def test_register_page_renders(client):
     """Test that register page renders correctly"""
     resp = client.get("/auth/register")
     assert resp.status_code in [200, 405]
+
+
+@pytest.mark.auth
+def test_register_rejects_short_password(client):
+    resp = client.post(
+        "/auth/register_form",
+        data={
+            "email": "shortpw@example.com",
+            "password": "short",
+            "first_name": "Short",
+            "last_name": "Pw",
+        },
+    )
+    assert resp.status_code == 400
+    data = resp.json()
+    assert data["success"] is False
+    assert "6-32" in data["error"]
+
+
+@pytest.mark.auth
+def test_register_rejects_too_long_password(client):
+    long_pw = "x" * 40
+    resp = client.post(
+        "/auth/register_form",
+        data={
+            "email": "longpw@example.com",
+            "password": long_pw,
+            "first_name": "Long",
+            "last_name": "Pw",
+        },
+    )
+    assert resp.status_code == 400
+    data = resp.json()
+    assert data["success"] is False
+    assert "6-32" in data["error"]
     if resp.status_code == 200:
         assert b"register" in resp.content.lower()
 
