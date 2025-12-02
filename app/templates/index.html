@@ -38,8 +38,10 @@
               <span class="menu-rating" style="white-space:nowrap; font-weight:600;">⭐ {{ "%.1f"|format(stats.avg) }}</span>
             {% endif %}
           </div>
-          {% if stats and stats.avg %}
-            <p class="menu-rating" style="margin:4px 0 0 0; color:#666;">({{ stats.count }} reviews)</p>
+          {% if stats and stats.avg and stats.count and stats.avg >= 4.8 and stats.count >= 5 %}
+            <span style="display:inline-flex; align-items:center; gap:6px; margin-top:6px; font-size:13px; font-weight:700; color:#d35400;">
+              🔥 Popular Pick
+            </span>
           {% endif %}
           <p>{{ item.description or '' }}</p>
           {% if item.price is not none %}

@@ -9,6 +9,8 @@ from fastapi.testclient import TestClient
 
 # Ensure a DATABASE_URL exists so main import doesn't fail; session is overridden in tests.
 os.environ.setdefault("DATABASE_URL", "sqlite://")
+# Provide a dummy OpenAI key so AI modules initialize without raising during import
+os.environ.setdefault("OPENAI_API_KEY", "test-key")
 
 # Ensure frontend dist exists so StaticFiles mount in main.py doesn't fail
 frontend_dist = Path("ai_demo_frontend/dist")
