@@ -135,12 +135,25 @@ def create_menu_item(
     if image:
         uploaded_files.append(image)
 
+    # Filter out empty file inputs (common when multiple fields exist)
+    uploaded_files = [f for f in uploaded_files if f and f.filename]
+
     if not uploaded_files:
         raise HTTPException(status_code=400, detail="At least one image is required")
 
+    def is_image_file(upload: UploadFile) -> bool:
+        if upload.content_type and upload.content_type.startswith("image/"):
+            return True
+        filename = (upload.filename or "").lower()
+        return filename.endswith((".png", ".jpg", ".jpeg", ".webp", ".gif", ".heic"))
+
     uploaded_urls: List[str] = []
     for f in uploaded_files:
-        if not f.content_type.startswith("image/"):
+        if not is_image_file(f):
+            logger.warning(
+                "Rejected non-image upload for menu item",
+                extra={"upload_filename": f.filename, "upload_content_type": f.content_type},
+            )
             raise HTTPException(status_code=400, detail="Only image files are allowed")
         uploaded_urls.append(upload_file_to_s3(f, folder="menu", bucket=S3_BUCKET_IMAGE))
 
