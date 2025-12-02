@@ -35,7 +35,9 @@
   </form>
   {% if errors and errors.get("password") %}
     <p style="color:red; margin-top:-6px; margin-bottom:12px;">{{ errors.get("password") }}</p>
-    <p style="color:#666; font-size:12px; margin-top:-8px;">Password must be at least 6 characters.</p>
+    <p style="color:#666; font-size:12px; margin-top:-8px;">Password must be 6-32 characters.</p>
+  {% elif success == "password" %}
+    <p style="color:green; margin-top:-6px; margin-bottom:12px;">Password updated successfully.</p>
   {% endif %}
 
   <h3 class="cute-title" style="margin-bottom:8px;">Avatar</h3>
@@ -46,6 +48,8 @@
   </form>
   {% if errors and errors.get("avatar") %}
     <p style="color:red; margin-top:6px;">{{ errors.get("avatar") }}</p>
+  {% elif success == "avatar" %}
+    <p style="color:green; margin-top:6px;">Avatar updated successfully.</p>
   {% endif %}
 </section>
 {% endblock %}

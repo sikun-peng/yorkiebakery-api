@@ -49,7 +49,16 @@ def profile_page(request: Request, session: Session = Depends(get_session)):
     # refresh session avatar if missing
     if "user" in request.session:
         request.session["user"]["avatar_url"] = user.avatar_url
-    return templates.TemplateResponse("profile.html", {"request": request, "user": user, "errors": {}})
+    success = request.query_params.get("success")
+    return templates.TemplateResponse(
+        "profile.html",
+        {
+            "request": request,
+            "user": user,
+            "errors": {},
+            "success": success,
+        },
+    )
 
 
 # Graceful redirects for GET on POST endpoints
@@ -136,7 +145,7 @@ def update_password(
     except Exception as e:
         logger.warning(f"Failed to send password change email: {e}")
 
-    redirect_url = request.headers.get("referer") or "/profile"
+    redirect_url = "/profile?success=password"
     return RedirectResponse(url=redirect_url, status_code=303)
 
 
@@ -152,7 +161,8 @@ async def upload_avatar(
         raise HTTPException(status_code=400, detail="Unsupported file type")
 
     ext = ".jpg" if file.content_type == "image/jpeg" else ".png" if file.content_type == "image/png" else ".webp"
-    key = f"avatar/{user.id}{ext}"
+    # Use a unique key per upload to bust CDN/browser cache when changing avatars.
+    key = f"avatar/{user.id}/{uuid.uuid4()}{ext}"
 
     data = await file.read()
     if len(data) > 5 * 1024 * 1024:
@@ -190,5 +200,5 @@ async def upload_avatar(
         request.session["user"]["avatar_url"] = user.avatar_url
 
     # keep session name intact
-    redirect_url = request.headers.get("referer") or "/profile"
+    redirect_url = "/profile?success=avatar"
     return RedirectResponse(url=redirect_url, status_code=303)
