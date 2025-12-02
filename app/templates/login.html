@@ -5,12 +5,25 @@
 {% block content %}
 <div class="auth-container">
     <div class="auth-card">
-        <h1>Login to Continue</h1>
+        <h1>{{ "Register" if page_mode == "register" else "Login to Continue" }}</h1>
         <p style="text-align: center; color: #666; margin-bottom: 30px;">
+            {% if page_mode == "register" %}
+            Create an account to complete your checkout
+            {% else %}
             Please login to complete your checkout
+            {% endif %}
         </p>
 
-        <form id="page-login-form" method="POST" action="/auth/login_form">
+        <form id="page-login-form" method="POST" action="/auth/login_form" data-mode="{{ page_mode or 'login' }}">
+            <div id="page-login-error" style="display:none; margin-bottom:12px; color:#c0392b; font-weight:600;"></div>
+            <div class="form-group" id="page-first-name-group" style="display:none;">
+                <label for="page-first-name">First name:</label>
+                <input type="text" id="page-first-name" name="first_name" placeholder="First name">
+            </div>
+            <div class="form-group" id="page-last-name-group" style="display:none;">
+                <label for="page-last-name">Last name:</label>
+                <input type="text" id="page-last-name" name="last_name" placeholder="Last name">
+            </div>
             <div class="form-group">
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required placeholder="Your email">
@@ -23,7 +36,7 @@
 
             <input type="hidden" name="redirect_url" value="{{ redirect_url }}">
 
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="submit" class="btn btn-primary" id="page-submit-btn">Login</button>
         </form>
 
         <div style="text-align: center; margin: 20px 0;">
@@ -41,7 +54,11 @@
         </button>
 
         <div class="back-link" style="margin-top: 20px;">
-            <a href="/auth/register">Don't have an account? Register</a>
+            {% if page_mode == "register" %}
+              <a href="/auth/login">Already have an account? Login</a>
+            {% else %}
+              <a href="/auth/register">Don't have an account? Register</a>
+            {% endif %}
         </div>
 
         <div style="text-align: center; margin-top: 15px;">
@@ -120,24 +137,63 @@ document.getElementById('forgot-password-modal').addEventListener('click', funct
 
 // AJAX login to follow JSON redirect
 const pageLoginForm = document.getElementById('page-login-form');
+const pageLoginError = document.getElementById('page-login-error');
+const pageFirst = document.getElementById('page-first-name-group');
+const pageLast = document.getElementById('page-last-name-group');
+const pageSubmitBtn = document.getElementById('page-submit-btn');
 if (pageLoginForm) {
+    const mode = pageLoginForm.dataset.mode || "login";
+    const isRegister = mode === "register";
+    if (isRegister) {
+        pageLoginForm.action = "/auth/register_form";
+        if (pageFirst) pageFirst.style.display = "block";
+        if (pageLast) pageLast.style.display = "block";
+        if (pageSubmitBtn) pageSubmitBtn.textContent = "Register";
+    }
+
     pageLoginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (pageLoginError) {
+            pageLoginError.style.display = 'none';
+            pageLoginError.textContent = '';
+        }
         const formData = new FormData(pageLoginForm);
         try {
-            const res = await fetch('/auth/login_form', { method: 'POST', body: formData });
-            const data = await res.json();
+            const res = await fetch(pageLoginForm.action, { method: 'POST', body: formData });
+            let data = null;
+            try {
+                data = await res.json();
+            } catch (_err) {
+                // Non-JSON response (e.g., unexpected redirect) -> graceful fallback
+                pageLoginForm.submit();
+                return;
+            }
             if (data.redirect) {
                 window.location.href = data.redirect;
                 return;
             }
             if (!data.success) {
-                alert(data.error || 'Login failed');
+                if (pageLoginError) {
+                    pageLoginError.textContent = data.error || (isRegister ? 'Registration failed' : 'Login failed');
+                    pageLoginError.style.display = 'block';
+                } else {
+                    alert(data.error || (isRegister ? 'Registration failed' : 'Login failed'));
+                }
+                return;
+            }
+            // For register, prompt verification success and redirect
+            if (isRegister) {
+                pageLoginError.style.display = 'block';
+                pageLoginError.style.color = 'green';
+                pageLoginError.textContent = data.message || 'Registration successful. Check your email to verify your account.';
+                setTimeout(() => {
+                    window.location.href = "/auth/login";
+                }, 800);
                 return;
             }
             window.location.reload();
         } catch (err) {
-            console.error('Login failed', err);
+            console.error('Auth failed', err);
             pageLoginForm.submit(); // fallback
         }
     });

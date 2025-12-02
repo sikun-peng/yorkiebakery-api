@@ -107,7 +107,19 @@ def login_page(request: Request, redirect_url: str = None):
 
     return templates.TemplateResponse("login.html", {
         "request": request,
-        "redirect_url": default_redirect
+        "redirect_url": default_redirect,
+        "page_mode": "login",
+    })
+
+
+@router.get("/register")
+def register_page(request: Request, redirect_url: str = None):
+    """Render a register page that posts to the register_form endpoint."""
+    default_redirect = redirect_url or request.query_params.get("redirect_url") or request.headers.get("referer") or "/"
+    return templates.TemplateResponse("login.html", {
+        "request": request,
+        "redirect_url": default_redirect,
+        "page_mode": "register",
     })
 
 # --------------------------------------
@@ -149,9 +161,9 @@ def login_form(
     token = create_access_token({"sub": str(user.id), "email": user.email})
     request.session["access_token"] = token
 
-    # Redirect to intended URL or default
+    # Redirect to intended URL or default (always JSON for consistency with AJAX handlers)
     if redirect_url:
-        return RedirectResponse(redirect_url, status_code=303)
+        return JSONResponse({"success": True, "redirect": redirect_url})
 
     referer = request.headers.get("referer")
     if referer and "/auth" not in referer:
