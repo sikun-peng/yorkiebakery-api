@@ -48,6 +48,30 @@ def logged_in_user(fake_session):
     return user
 
 
+@pytest.fixture
+def address_user(fake_session):
+    user = User(
+        id=uuid4(),
+        email="address@example.com",
+        password_hash=hash_password("password123"),
+        first_name="Address",
+        last_name="User",
+        is_verified=True,
+        is_admin=False,
+        address_line1="456 Cookie Rd",
+        address_line2="Unit 2",
+        city="Seattle",
+        state="WA",
+        postal_code="98101",
+        country="USA",
+        default_phone="555-1111",
+        created_at=datetime.utcnow(),
+    )
+    fake_session.add(user)
+    fake_session.commit()
+    return user
+
+
 @pytest.mark.cart
 def test_view_cart_page_renders(client):
     """Test cart view page renders"""
@@ -196,6 +220,67 @@ def test_checkout_page_with_items(client, cart_items):
     assert resp.status_code in [200, 303]
     if resp.status_code == 200:
         assert b"checkout" in resp.content.lower()
+
+
+def test_checkout_prefills_saved_address(client, fake_session, address_user):
+    # Log in
+    login_resp = client.post(
+        "/auth/login_form",
+        data={"email": address_user.email, "password": "password123"},
+    )
+    assert login_resp.status_code in (200, 303)
+
+    # Add seeded item to cart
+    menu_id = str(next(iter(fake_session.menu_items.keys())))
+    client.post("/cart/add", json={"menu_item_id": menu_id, "quantity": "1"})
+
+    resp = client.get("/cart/checkout")
+    assert resp.status_code == 200
+    body = resp.content.decode()
+    assert "456 Cookie Rd" in body
+    assert "Unit 2" in body
+    assert "Seattle" in body
+    assert 'value="WA" selected' in body
+    assert "98101" in body
+    assert "USA" in body
+    assert 'value="555-1111"' in body
+
+
+def test_checkout_saves_last_used_address(client, fake_session, address_user):
+    # Log in
+    login_resp = client.post(
+        "/auth/login_form",
+        data={"email": address_user.email, "password": "password123"},
+    )
+    assert login_resp.status_code in (200, 303)
+
+    # Add seeded item to cart
+    menu_id = str(next(iter(fake_session.menu_items.keys())))
+    client.post("/cart/add", json={"menu_item_id": menu_id, "quantity": "1"})
+
+    resp = client.post(
+        "/cart/checkout",
+        data={
+            "name": "New Name",
+            "email": "new@example.com",
+            "phone": "555-9999",
+            "address_line1": "789 Brownie Blvd",
+            "address_line2": "",
+            "city": "Boise",
+            "state": "ID",
+            "postal_code": "83702",
+            "country": "USA",
+            "delivery_notes": "Ring bell",
+        },
+    )
+    assert resp.status_code == 200
+    assert address_user.address_line1 == "789 Brownie Blvd"
+    assert address_user.address_line2 is None
+    assert address_user.city == "Boise"
+    assert address_user.state == "ID"
+    assert address_user.postal_code == "83702"
+    assert address_user.country == "USA"
+    assert address_user.default_phone == "555-9999"
 
 
 @pytest.mark.cart

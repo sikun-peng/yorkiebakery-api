@@ -101,19 +101,19 @@ class FakeSession:
                     return r
         if model is User:
             for u in self.users:
-                if u.id == obj_id:
+                if str(u.id) == str(obj_id):
                     return u
         if model is Order:
             for o in self.orders:
-                if o.id == obj_id:
+                if str(o.id) == str(obj_id):
                     return o
         if model is Event:
             for e in self.events:
-                if e.id == obj_id:
+                if str(e.id) == str(obj_id):
                     return e
         if model is MusicTrack:
             for m in self.music_tracks:
-                if m.id == obj_id:
+                if str(m.id) == str(obj_id):
                     return m
         return None
 

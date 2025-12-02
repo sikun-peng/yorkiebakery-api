@@ -6,11 +6,7 @@
 <section class="home-section" style="max-width:800px; margin:auto;">
   <h1 class="cute-title" style="margin-bottom:16px;">My Profile</h1>
 
-  <div style="display:flex; align-items:center; gap:14px; margin-bottom:18px;">
-    <img src="{{ user.avatar_url or '/static/images/default_user_profile.jpg' }}"
-         alt="Avatar"
-         style="width:64px; height:64px; border-radius:50%; object-fit:cover; border:1px solid var(--border);"
-         onerror="this.src='/static/images/default_user_profile.jpg'">
+  <div style="display:flex; gap:14px; align-items:flex-start; flex-wrap:wrap; margin-bottom:18px;">
     <div>
       <div style="font-weight:700;">{{ user.first_name }} {{ user.last_name }}</div>
       <div style="color:#666; font-size:14px;">{{ user.email }}</div>
@@ -18,6 +14,22 @@
   </div>
 
   <hr style="margin:12px 0;">
+
+  <h3 class="cute-title" style="margin-bottom:8px;">Avatar</h3>
+  <form action="/profile/avatar" method="post" enctype="multipart/form-data" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+    <img src="{{ user.avatar_url or '/static/images/default_user_profile.jpg' }}"
+         alt="Avatar"
+         style="width:64px; height:64px; border-radius:50%; object-fit:cover; border:1px solid var(--border);"
+         onerror="this.src='/static/images/default_user_profile.jpg'">
+    <input type="file" name="file" accept="image/png,image/jpeg,image/webp" required>
+    <button type="submit" class="btn-small">Upload</button>
+    <span style="font-size:12px; color:#777;">PNG/JPEG/WEBP, max 5MB.</span>
+  </form>
+  {% if errors and errors.get("avatar") %}
+    <p style="color:red; margin-top:-6px; margin-bottom:12px;">{{ errors.get("avatar") }}</p>
+  {% elif success == "avatar" %}
+    <p style="color:green; margin-top:-6px; margin-bottom:12px;">Avatar updated successfully.</p>
+  {% endif %}
 
   <h3 class="cute-title" style="margin-bottom:8px;">Name</h3>
   <form action="/profile/name" method="post" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
@@ -30,19 +42,19 @@
   {% endif %}
 
   <h3 class="cute-title" style="margin-bottom:8px;">Default delivery info</h3>
-  <form action="/profile/address" method="post" style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
-    <input name="address_line1" value="{{ address_values.address_line1 }}" placeholder="Street address" style="padding:8px; border:1px solid var(--border); border-radius:8px;">
-    <input name="address_line2" value="{{ address_values.address_line2 }}" placeholder="Apartment, suite, etc. (optional)" style="padding:8px; border:1px solid var(--border); border-radius:8px;">
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <input name="city" value="{{ address_values.city }}" placeholder="City" style="flex:1; min-width:160px; padding:8px; border:1px solid var(--border); border-radius:8px;">
-      <input name="state" value="{{ address_values.state }}" placeholder="State / Province" style="width:160px; padding:8px; border:1px solid var(--border); border-radius:8px;">
+  <form action="/profile/address" method="post" style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px; max-width:420px;">
+    <input name="address_line1" value="{{ address_values.address_line1 }}" placeholder="Street address" style="padding:10px 12px; border:1px solid var(--border); border-radius:8px;">
+    <input name="address_line2" value="{{ address_values.address_line2 }}" placeholder="Apartment, suite, etc. (optional)" style="padding:10px 12px; border:1px solid var(--border); border-radius:8px;">
+    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+      <input name="city" value="{{ address_values.city }}" placeholder="City" style="flex:1 1 220px; min-width:140px; padding:10px 12px; border:1px solid var(--border); border-radius:8px;">
+      <input name="state" value="{{ address_values.state }}" placeholder="State / Province" style="width:120px; padding:10px 12px; border:1px solid var(--border); border-radius:8px;">
     </div>
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <input name="postal_code" value="{{ address_values.postal_code }}" placeholder="ZIP / Postal code" style="width:160px; padding:8px; border:1px solid var(--border); border-radius:8px;">
-      <input name="country" value="{{ address_values.country }}" placeholder="Country" style="flex:1; min-width:160px; padding:8px; border:1px solid var(--border); border-radius:8px;">
+    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+      <input name="postal_code" value="{{ address_values.postal_code }}" placeholder="ZIP / Postal code" style="width:120px; padding:10px 12px; border:1px solid var(--border); border-radius:8px;">
+      <input name="country" value="{{ address_values.country }}" placeholder="Country" style="flex:1 1 220px; min-width:180px; padding:10px 12px; border:1px solid var(--border); border-radius:8px;">
     </div>
-    <input name="default_phone" value="{{ address_values.default_phone }}" placeholder="Default phone (optional)" style="padding:8px; border:1px solid var(--border); border-radius:8px;">
-    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+    <input name="default_phone" value="{{ address_values.default_phone }}" placeholder="Default phone (optional)" style="padding:10px 12px; border:1px solid var(--border); border-radius:8px;">
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:2px;">
       <button type="submit" class="btn-small">Save delivery info</button>
       <span style="font-size:12px; color:#777;">Leave everything blank to clear your saved address.</span>
     </div>
@@ -65,18 +77,6 @@
     <p style="color:#666; font-size:12px; margin-top:-8px;">Password must be 6-32 characters.</p>
   {% elif success == "password" %}
     <p style="color:green; margin-top:-6px; margin-bottom:12px;">Password updated successfully.</p>
-  {% endif %}
-
-  <h3 class="cute-title" style="margin-bottom:8px;">Avatar</h3>
-  <form action="/profile/avatar" method="post" enctype="multipart/form-data" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-    <input type="file" name="file" accept="image/png,image/jpeg,image/webp" required>
-    <button type="submit" class="btn-small">Upload</button>
-    <span style="font-size:12px; color:#777;">PNG/JPEG/WEBP, max 5MB.</span>
-  </form>
-  {% if errors and errors.get("avatar") %}
-    <p style="color:red; margin-top:6px;">{{ errors.get("avatar") }}</p>
-  {% elif success == "avatar" %}
-    <p style="color:green; margin-top:6px;">Avatar updated successfully.</p>
   {% endif %}
 </section>
 {% endblock %}
