@@ -40,6 +40,19 @@ def require_user(request: Request, session: Session) -> User:
     return user
 
 
+def address_form_values(user: User) -> dict:
+    """Provide default values for the address form inputs."""
+    return {
+        "address_line1": user.address_line1 or "",
+        "address_line2": user.address_line2 or "",
+        "city": user.city or "",
+        "state": user.state or "",
+        "postal_code": user.postal_code or "",
+        "country": user.country or "",
+        "default_phone": user.default_phone or "",
+    }
+
+
 @router.get("")
 def profile_page(request: Request, session: Session = Depends(get_session)):
     try:
@@ -56,6 +69,7 @@ def profile_page(request: Request, session: Session = Depends(get_session)):
             "request": request,
             "user": user,
             "errors": {},
+            "address_values": address_form_values(user),
             "success": success,
         },
     )
@@ -95,6 +109,83 @@ def update_name(
     return RedirectResponse(url=redirect_url, status_code=303)
 
 
+@router.post("/address")
+def update_address(
+    request: Request,
+    address_line1: str = Form(""),
+    address_line2: str = Form(""),
+    city: str = Form(""),
+    state: str = Form(""),
+    postal_code: str = Form(""),
+    country: str = Form(""),
+    default_phone: str = Form(""),
+    session: Session = Depends(get_session),
+):
+    user = require_user(request, session)
+
+    def clean(value: str):
+        return value.strip() or None
+
+    cleaned_address = {
+        "address_line1": clean(address_line1),
+        "address_line2": clean(address_line2),
+        "city": clean(city),
+        "state": clean(state),
+        "postal_code": clean(postal_code),
+        "country": clean(country),
+        "default_phone": clean(default_phone),
+    }
+
+    required_fields = [
+        cleaned_address["address_line1"],
+        cleaned_address["city"],
+        cleaned_address["state"],
+        cleaned_address["postal_code"],
+        cleaned_address["country"],
+    ]
+
+    # Allow clearing the saved address entirely
+    if not any(required_fields) and not cleaned_address["address_line2"] and not cleaned_address["default_phone"]:
+        user.address_line1 = None
+        user.address_line2 = None
+        user.city = None
+        user.state = None
+        user.postal_code = None
+        user.country = None
+        user.default_phone = None
+        session.add(user)
+        session.commit()
+        return RedirectResponse(url="/profile?success=address", status_code=303)
+
+    if any(required_fields) and not all(required_fields):
+        errors = {"address": "Please fill street, city, state, postal code, and country to save your default address."}
+        return templates.TemplateResponse(
+            "profile.html",
+            {
+                "request": request,
+                "user": user,
+                "errors": errors,
+                "address_values": {
+                    **address_form_values(user),
+                    **{k: v or "" for k, v in cleaned_address.items()},
+                },
+            },
+            status_code=400,
+        )
+
+    user.address_line1 = cleaned_address["address_line1"]
+    user.address_line2 = cleaned_address["address_line2"]
+    user.city = cleaned_address["city"]
+    user.state = cleaned_address["state"]
+    user.postal_code = cleaned_address["postal_code"]
+    user.country = cleaned_address["country"]
+    user.default_phone = cleaned_address["default_phone"]
+    session.add(user)
+    session.commit()
+
+    return RedirectResponse(url="/profile?success=address", status_code=303)
+
+
 @router.post("/password")
 def update_password(
     request: Request,
@@ -111,6 +202,7 @@ def update_password(
                 "request": request,
                 "user": user,
                 "errors": {"password": "Passwords do not match"},
+                "address_values": address_form_values(user),
             },
             status_code=400,
         )
@@ -121,6 +213,7 @@ def update_password(
                 "request": request,
                 "user": user,
                 "errors": {"password": "Password must be 6-32 characters"},
+                "address_values": address_form_values(user),
             },
             status_code=400,
         )
@@ -131,6 +224,7 @@ def update_password(
                 "request": request,
                 "user": user,
                 "errors": {"password": "Current password is incorrect"},
+                "address_values": address_form_values(user),
             },
             status_code=400,
         )
@@ -187,6 +281,7 @@ async def upload_avatar(
                 "request": request,
                 "user": user,
                 "errors": {"avatar": err_msg},
+                "address_values": address_form_values(user),
             },
             status_code=500,
         )

@@ -30,6 +30,21 @@ def _get_cart(request: Request):
 
 
 # ---------------------------------------------
+# Helper: user address defaults
+# ---------------------------------------------
+def _address_defaults(user: User) -> dict:
+    return {
+        "address_line1": user.address_line1 or "",
+        "address_line2": user.address_line2 or "",
+        "city": user.city or "",
+        "state": user.state or "",
+        "postal_code": user.postal_code or "",
+        "country": user.country or "",
+        "default_phone": user.default_phone or "",
+    }
+
+
+# ---------------------------------------------
 # Helper: verify login & return logged-in user id
 # ---------------------------------------------
 def require_login(request: Request):
@@ -172,6 +187,16 @@ def checkout_page(request: Request):
         user = session.get(User, user_id)
         contact_name = f"{(user.first_name or '').strip()} {(user.last_name or '').strip()}".strip() if user else ""
         contact_email = user.email if user else ""
+        contact_phone = user.default_phone if user else ""
+        address_defaults = _address_defaults(user) if user else {
+            "address_line1": "",
+            "address_line2": "",
+            "city": "",
+            "state": "",
+            "postal_code": "",
+            "country": "",
+            "default_phone": "",
+        }
 
     original_total = sum(i["price"] * i["qty"] for i in detailed_cart)
     total = 0  # 100% off promotion
@@ -184,6 +209,8 @@ def checkout_page(request: Request):
         "discount_percent": 100,
         "contact_name": contact_name,
         "contact_email": contact_email,
+        "contact_phone": contact_phone,
+        "address_defaults": address_defaults,
     })
 
 
@@ -216,9 +243,8 @@ def process_checkout(
     # Store user info before session closes
     user_email = None
     user_name = None
-    user_phone = phone
-    address_parts = [address_line1, address_line2, f"{city}, {state} {postal_code}".strip(), country]
-    user_address = ", ".join([part.strip() for part in address_parts if part and part.strip()])
+    user_phone = phone or ""
+    user_address = ""
     notes = delivery_notes
 
     with Session(engine) as session:
@@ -227,10 +253,44 @@ def process_checkout(
         if not user:
             return RedirectResponse("/auth/login?redirect_url=/cart/checkout", status_code=303)
 
+        def clean(value: str):
+            return value.strip() or None
+
+        cleaned_address = {
+            "address_line1": clean(address_line1),
+            "address_line2": clean(address_line2),
+            "city": clean(city),
+            "state": clean(state),
+            "postal_code": clean(postal_code),
+            "country": clean(country),
+        }
+        phone_clean = clean(phone)
+
+        city_state = ", ".join(filter(None, [cleaned_address["city"], cleaned_address["state"]]))
+        city_state_postal = " ".join(filter(None, [city_state, cleaned_address["postal_code"]]))
+        address_parts = [
+            cleaned_address["address_line1"],
+            cleaned_address["address_line2"],
+            city_state_postal,
+            cleaned_address["country"],
+        ]
+        user_address = ", ".join([part for part in address_parts if part])
+
         # Store user info while session is active
         user_email = email or user.email
         user_name = name or f"{user.first_name or ''} {user.last_name or ''}".strip()
-        user_phone = phone or ""
+        user_phone = phone_clean or user.default_phone or ""
+
+        # Update stored defaults to match the last used delivery info
+        user.address_line1 = cleaned_address["address_line1"]
+        user.address_line2 = cleaned_address["address_line2"]
+        user.city = cleaned_address["city"]
+        user.state = cleaned_address["state"]
+        user.postal_code = cleaned_address["postal_code"]
+        user.country = cleaned_address["country"]
+        if phone_clean is not None:
+            user.default_phone = phone_clean
+        session.add(user)
 
         items = session.exec(
             select(MenuItem).where(MenuItem.id.in_(cart.keys()))

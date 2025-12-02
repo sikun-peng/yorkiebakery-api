@@ -29,6 +29,30 @@
     <p style="color:green; margin-top:-6px; margin-bottom:12px;">Name updated successfully.</p>
   {% endif %}
 
+  <h3 class="cute-title" style="margin-bottom:8px;">Default delivery info</h3>
+  <form action="/profile/address" method="post" style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px;">
+    <input name="address_line1" value="{{ address_values.address_line1 }}" placeholder="Street address" style="padding:8px; border:1px solid var(--border); border-radius:8px;">
+    <input name="address_line2" value="{{ address_values.address_line2 }}" placeholder="Apartment, suite, etc. (optional)" style="padding:8px; border:1px solid var(--border); border-radius:8px;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input name="city" value="{{ address_values.city }}" placeholder="City" style="flex:1; min-width:160px; padding:8px; border:1px solid var(--border); border-radius:8px;">
+      <input name="state" value="{{ address_values.state }}" placeholder="State / Province" style="width:160px; padding:8px; border:1px solid var(--border); border-radius:8px;">
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <input name="postal_code" value="{{ address_values.postal_code }}" placeholder="ZIP / Postal code" style="width:160px; padding:8px; border:1px solid var(--border); border-radius:8px;">
+      <input name="country" value="{{ address_values.country }}" placeholder="Country" style="flex:1; min-width:160px; padding:8px; border:1px solid var(--border); border-radius:8px;">
+    </div>
+    <input name="default_phone" value="{{ address_values.default_phone }}" placeholder="Default phone (optional)" style="padding:8px; border:1px solid var(--border); border-radius:8px;">
+    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+      <button type="submit" class="btn-small">Save delivery info</button>
+      <span style="font-size:12px; color:#777;">Leave everything blank to clear your saved address.</span>
+    </div>
+  </form>
+  {% if errors and errors.get("address") %}
+    <p style="color:red; margin-top:-6px; margin-bottom:12px;">{{ errors.get("address") }}</p>
+  {% elif success == "address" %}
+    <p style="color:green; margin-top:-6px; margin-bottom:12px;">Default address updated successfully.</p>
+  {% endif %}
+
   <h3 class="cute-title" style="margin-bottom:8px;">Password</h3>
   <form action="/profile/password" method="post" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
     <input name="current_password" type="password" placeholder="Current password" required style="padding:8px; border:1px solid var(--border); border-radius:8px;">

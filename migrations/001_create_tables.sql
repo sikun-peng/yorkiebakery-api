@@ -13,10 +13,18 @@ CREATE TABLE user_account (
     is_verified BOOLEAN DEFAULT FALSE,
     verification_token TEXT,
     avatar_url TEXT,
+    address_line1 TEXT,
+    address_line2 TEXT,
+    city TEXT,
+    state TEXT,
+    postal_code TEXT,
+    country TEXT,
+    default_phone TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP,
     last_login TIMESTAMP
 );
+
 
 -- ============ PASSWORD RESET TOKENS ============
 CREATE TABLE IF NOT EXISTS password_reset_token (

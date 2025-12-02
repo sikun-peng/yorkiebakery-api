@@ -14,6 +14,13 @@ class User(SQLModel, table=True):
     is_verified: bool = Field(default=False)
     verification_token: Optional[str] = None
     avatar_url: Optional[str] = None
+    address_line1: Optional[str] = None
+    address_line2: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    postal_code: Optional[str] = None
+    country: Optional[str] = None
+    default_phone: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = None
     last_login: Optional[datetime] = None

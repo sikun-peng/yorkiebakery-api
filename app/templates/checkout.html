@@ -23,76 +23,76 @@
           <input type="email" name="email" id="email" placeholder="you@example.com" value="{{ contact_email }}" required>
 
           <label for="phone">Phone (optional)</label>
-          <input type="tel" name="phone" id="phone" placeholder="(555) 123-4567">
+          <input type="tel" name="phone" id="phone" placeholder="(555) 123-4567" value="{{ contact_phone }}">
 
           <p class="section-subtitle" style="margin-top: 4px;">Delivery Address</p>
 
           <label for="address_line1">Street Address *</label>
-          <input type="text" name="address_line1" id="address_line1" placeholder="123 Bakery Lane" required>
+          <input type="text" name="address_line1" id="address_line1" placeholder="123 Bakery Lane" value="{{ address_defaults.address_line1 }}" required>
 
           <label for="address_line2">Apartment, suite, etc. (optional)</label>
-          <input type="text" name="address_line2" id="address_line2" placeholder="Apt 4B">
+          <input type="text" name="address_line2" id="address_line2" placeholder="Apt 4B" value="{{ address_defaults.address_line2 }}">
 
           <div class="address-grid">
             <div>
               <label for="city">City *</label>
-              <input type="text" name="city" id="city" placeholder="Portland" required>
+              <input type="text" name="city" id="city" placeholder="Portland" value="{{ address_defaults.city }}" required>
             </div>
             <div>
               <label for="state">State / Province *</label>
               <select name="state" id="state" required>
-                <option value="" disabled selected>Select state</option>
-                <option value="AL">Alabama</option>
-                <option value="AK">Alaska</option>
-                <option value="AZ">Arizona</option>
-                <option value="AR">Arkansas</option>
-                <option value="CA">California</option>
-                <option value="CO">Colorado</option>
-                <option value="CT">Connecticut</option>
-                <option value="DE">Delaware</option>
-                <option value="FL">Florida</option>
-                <option value="GA">Georgia</option>
-                <option value="HI">Hawaii</option>
-                <option value="ID">Idaho</option>
-                <option value="IL">Illinois</option>
-                <option value="IN">Indiana</option>
-                <option value="IA">Iowa</option>
-                <option value="KS">Kansas</option>
-                <option value="KY">Kentucky</option>
-                <option value="LA">Louisiana</option>
-                <option value="ME">Maine</option>
-                <option value="MD">Maryland</option>
-                <option value="MA">Massachusetts</option>
-                <option value="MI">Michigan</option>
-                <option value="MN">Minnesota</option>
-                <option value="MS">Mississippi</option>
-                <option value="MO">Missouri</option>
-                <option value="MT">Montana</option>
-                <option value="NE">Nebraska</option>
-                <option value="NV">Nevada</option>
-                <option value="NH">New Hampshire</option>
-                <option value="NJ">New Jersey</option>
-                <option value="NM">New Mexico</option>
-                <option value="NY">New York</option>
-                <option value="NC">North Carolina</option>
-                <option value="ND">North Dakota</option>
-                <option value="OH">Ohio</option>
-                <option value="OK">Oklahoma</option>
-                <option value="OR">Oregon</option>
-                <option value="PA">Pennsylvania</option>
-                <option value="RI">Rhode Island</option>
-                <option value="SC">South Carolina</option>
-                <option value="SD">South Dakota</option>
-                <option value="TN">Tennessee</option>
-                <option value="TX">Texas</option>
-                <option value="UT">Utah</option>
-                <option value="VT">Vermont</option>
-                <option value="VA">Virginia</option>
-                <option value="WA">Washington</option>
-                <option value="WV">West Virginia</option>
-                <option value="WI">Wisconsin</option>
-                <option value="WY">Wyoming</option>
-                <option value="Other">Other</option>
+                <option value="" disabled {% if not address_defaults.state %}selected{% endif %}>Select state</option>
+                <option value="AL" {% if address_defaults.state == "AL" %}selected{% endif %}>Alabama</option>
+                <option value="AK" {% if address_defaults.state == "AK" %}selected{% endif %}>Alaska</option>
+                <option value="AZ" {% if address_defaults.state == "AZ" %}selected{% endif %}>Arizona</option>
+                <option value="AR" {% if address_defaults.state == "AR" %}selected{% endif %}>Arkansas</option>
+                <option value="CA" {% if address_defaults.state == "CA" %}selected{% endif %}>California</option>
+                <option value="CO" {% if address_defaults.state == "CO" %}selected{% endif %}>Colorado</option>
+                <option value="CT" {% if address_defaults.state == "CT" %}selected{% endif %}>Connecticut</option>
+                <option value="DE" {% if address_defaults.state == "DE" %}selected{% endif %}>Delaware</option>
+                <option value="FL" {% if address_defaults.state == "FL" %}selected{% endif %}>Florida</option>
+                <option value="GA" {% if address_defaults.state == "GA" %}selected{% endif %}>Georgia</option>
+                <option value="HI" {% if address_defaults.state == "HI" %}selected{% endif %}>Hawaii</option>
+                <option value="ID" {% if address_defaults.state == "ID" %}selected{% endif %}>Idaho</option>
+                <option value="IL" {% if address_defaults.state == "IL" %}selected{% endif %}>Illinois</option>
+                <option value="IN" {% if address_defaults.state == "IN" %}selected{% endif %}>Indiana</option>
+                <option value="IA" {% if address_defaults.state == "IA" %}selected{% endif %}>Iowa</option>
+                <option value="KS" {% if address_defaults.state == "KS" %}selected{% endif %}>Kansas</option>
+                <option value="KY" {% if address_defaults.state == "KY" %}selected{% endif %}>Kentucky</option>
+                <option value="LA" {% if address_defaults.state == "LA" %}selected{% endif %}>Louisiana</option>
+                <option value="ME" {% if address_defaults.state == "ME" %}selected{% endif %}>Maine</option>
+                <option value="MD" {% if address_defaults.state == "MD" %}selected{% endif %}>Maryland</option>
+                <option value="MA" {% if address_defaults.state == "MA" %}selected{% endif %}>Massachusetts</option>
+                <option value="MI" {% if address_defaults.state == "MI" %}selected{% endif %}>Michigan</option>
+                <option value="MN" {% if address_defaults.state == "MN" %}selected{% endif %}>Minnesota</option>
+                <option value="MS" {% if address_defaults.state == "MS" %}selected{% endif %}>Mississippi</option>
+                <option value="MO" {% if address_defaults.state == "MO" %}selected{% endif %}>Missouri</option>
+                <option value="MT" {% if address_defaults.state == "MT" %}selected{% endif %}>Montana</option>
+                <option value="NE" {% if address_defaults.state == "NE" %}selected{% endif %}>Nebraska</option>
+                <option value="NV" {% if address_defaults.state == "NV" %}selected{% endif %}>Nevada</option>
+                <option value="NH" {% if address_defaults.state == "NH" %}selected{% endif %}>New Hampshire</option>
+                <option value="NJ" {% if address_defaults.state == "NJ" %}selected{% endif %}>New Jersey</option>
+                <option value="NM" {% if address_defaults.state == "NM" %}selected{% endif %}>New Mexico</option>
+                <option value="NY" {% if address_defaults.state == "NY" %}selected{% endif %}>New York</option>
+                <option value="NC" {% if address_defaults.state == "NC" %}selected{% endif %}>North Carolina</option>
+                <option value="ND" {% if address_defaults.state == "ND" %}selected{% endif %}>North Dakota</option>
+                <option value="OH" {% if address_defaults.state == "OH" %}selected{% endif %}>Ohio</option>
+                <option value="OK" {% if address_defaults.state == "OK" %}selected{% endif %}>Oklahoma</option>
+                <option value="OR" {% if address_defaults.state == "OR" %}selected{% endif %}>Oregon</option>
+                <option value="PA" {% if address_defaults.state == "PA" %}selected{% endif %}>Pennsylvania</option>
+                <option value="RI" {% if address_defaults.state == "RI" %}selected{% endif %}>Rhode Island</option>
+                <option value="SC" {% if address_defaults.state == "SC" %}selected{% endif %}>South Carolina</option>
+                <option value="SD" {% if address_defaults.state == "SD" %}selected{% endif %}>South Dakota</option>
+                <option value="TN" {% if address_defaults.state == "TN" %}selected{% endif %}>Tennessee</option>
+                <option value="TX" {% if address_defaults.state == "TX" %}selected{% endif %}>Texas</option>
+                <option value="UT" {% if address_defaults.state == "UT" %}selected{% endif %}>Utah</option>
+                <option value="VT" {% if address_defaults.state == "VT" %}selected{% endif %}>Vermont</option>
+                <option value="VA" {% if address_defaults.state == "VA" %}selected{% endif %}>Virginia</option>
+                <option value="WA" {% if address_defaults.state == "WA" %}selected{% endif %}>Washington</option>
+                <option value="WV" {% if address_defaults.state == "WV" %}selected{% endif %}>West Virginia</option>
+                <option value="WI" {% if address_defaults.state == "WI" %}selected{% endif %}>Wisconsin</option>
+                <option value="WY" {% if address_defaults.state == "WY" %}selected{% endif %}>Wyoming</option>
+                <option value="Other" {% if address_defaults.state == "Other" %}selected{% endif %}>Other</option>
               </select>
             </div>
           </div>
@@ -100,11 +100,11 @@
           <div class="address-grid">
             <div>
               <label for="postal_code">ZIP / Postal Code *</label>
-              <input type="text" name="postal_code" id="postal_code" placeholder="97205" required>
+              <input type="text" name="postal_code" id="postal_code" placeholder="97205" value="{{ address_defaults.postal_code }}" required>
             </div>
             <div>
               <label for="country">Country *</label>
-              <input type="text" name="country" id="country" placeholder="United States" required>
+              <input type="text" name="country" id="country" placeholder="United States" value="{{ address_defaults.country }}" required>
             </div>
           </div>
 

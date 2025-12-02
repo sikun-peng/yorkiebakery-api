@@ -42,7 +42,7 @@ def send_event_notice(email: str, event_title: str, message: str):
         f"There is an update regarding the event:\n"
         f"📌 {event_title}\n\n"
         f"{message}\n\n"
-        f"— Yorkie Bakery Customer Service"
+        f"— Yorkie Bakery Customer Service 🐶"
     )
 
     ses.send_email(
@@ -174,7 +174,7 @@ def send_order_confirmation_email(
         f"{cta_line}\n"
         f"{contact_section}\n\n"
         "Best Regards,\n"
-        "Oscar Peng 🎉🎁"
+        "Oscar P. 🎉🎁"
     )
 
     logger.info(f"Sending order confirmation to {email} for order {order_ref or order_id or 'unknown'}")
