@@ -25,6 +25,9 @@
     <input name="last_name" value="{{ user.last_name or '' }}" placeholder="Last name" style="padding:8px; border:1px solid var(--border); border-radius:8px;">
     <button type="submit" class="btn-small">Save</button>
   </form>
+  {% if success == "name" %}
+    <p style="color:green; margin-top:-6px; margin-bottom:12px;">Name updated successfully.</p>
+  {% endif %}
 
   <h3 class="cute-title" style="margin-bottom:8px;">Password</h3>
   <form action="/profile/password" method="post" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">

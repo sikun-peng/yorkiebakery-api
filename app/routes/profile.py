@@ -91,7 +91,7 @@ def update_name(
     session.commit()
     # refresh session display name
     request.session["user"]["first_name"] = user.first_name or ""
-    redirect_url = request.headers.get("referer") or "/profile"
+    redirect_url = "/profile?success=name"
     return RedirectResponse(url=redirect_url, status_code=303)
 
 

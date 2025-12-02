@@ -14,6 +14,7 @@ from app.core.db import get_session
 from app.core.cart_utils import get_cart_count
 from app.models.postgres.menu import MenuItem
 from app.models.postgres.music import MusicTrack
+from app.models.postgres.review import Review
 from app.routes import auth, menu, order, cart, music, about, event, health, review, profile
 from app.ai.route import ai_demo, ai_chat, ai_vision, ai_debug
 from app.models.postgres.user import User
@@ -164,6 +165,22 @@ def home(request: Request):
         .order_by(func.random())
     ).all()
 
+    # Fetch review stats for featured menu items
+    review_stats = {}
+    menu_ids = [m.id for m in menu_items]
+    if menu_ids:
+        rows = session.exec(
+            select(
+                Review.menu_item_id,
+                func.count(Review.id),
+                func.avg(Review.rating),
+            )
+            .where(Review.menu_item_id.in_(menu_ids))
+            .group_by(Review.menu_item_id)
+        ).all()
+        for menu_id, count, avg in rows:
+            review_stats[str(menu_id)] = {"count": count, "avg": float(avg) if avg is not None else None}
+
     # 🎵 Featured music — only tracks with audio file (non-null s3_url)
     tracks = session.exec(
         select(MusicTrack)
@@ -177,6 +194,7 @@ def home(request: Request):
             "request": request,
             "cart_count": cart_count,
             "menu_items": menu_items,
+            "review_stats": review_stats,
             "tracks": tracks,
         }
     )

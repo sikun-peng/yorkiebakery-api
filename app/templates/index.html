@@ -31,7 +31,16 @@
         {% for item in menu_items %}
         <div class="menu-card menu-card-compact">
           <img src="{{ item.image_url or '/static/default_menu_image.jpg' }}" alt="{{ item.title }}">
-          <h3>{{ item.title }}</h3>
+          {% set stats = review_stats.get(item.id|string) if review_stats else None %}
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+            <h3 style="margin:0;">{{ item.title }}</h3>
+            {% if stats and stats.avg %}
+              <span class="menu-rating" style="white-space:nowrap; font-weight:600;">⭐ {{ "%.1f"|format(stats.avg) }}</span>
+            {% endif %}
+          </div>
+          {% if stats and stats.avg %}
+            <p class="menu-rating" style="margin:4px 0 0 0; color:#666;">({{ stats.count }} reviews)</p>
+          {% endif %}
           <p>{{ item.description or '' }}</p>
           {% if item.price is not none %}
             <p class="price">
