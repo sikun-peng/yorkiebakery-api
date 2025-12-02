@@ -12,6 +12,7 @@ CREATE TABLE user_account (
     is_admin BOOLEAN DEFAULT FALSE,
     is_verified BOOLEAN DEFAULT FALSE,
     verification_token TEXT,
+    avatar_url TEXT,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP,
     last_login TIMESTAMP

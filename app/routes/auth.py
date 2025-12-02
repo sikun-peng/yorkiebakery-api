@@ -98,10 +98,12 @@ def login_page(request: Request, redirect_url: str = None):
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         return JSONResponse({"detail": "Use the in-page login modal."})
 
-    # If it's a redirect from checkout, show login page
+    # Choose a sensible default destination (prefer redirect_url param, then referer, else home)
+    default_redirect = redirect_url or request.query_params.get("redirect_url") or request.headers.get("referer") or "/"
+
     return templates.TemplateResponse("login.html", {
         "request": request,
-        "redirect_url": redirect_url or "/menu/view"
+        "redirect_url": default_redirect
     })
 
 # --------------------------------------
@@ -137,6 +139,7 @@ def login_form(
         "first_name": user.first_name,
         "last_name": user.last_name,
         "is_admin": bool(user.is_admin),
+        "avatar_url": user.avatar_url,
     }
 
     token = create_access_token({"sub": str(user.id), "email": user.email})
@@ -146,7 +149,11 @@ def login_form(
     if redirect_url:
         return RedirectResponse(redirect_url, status_code=303)
 
-    return JSONResponse({"success": True, "redirect": "/cart/checkout"})
+    referer = request.headers.get("referer")
+    if referer and "/auth" not in referer:
+        return JSONResponse({"success": True, "redirect": referer})
+
+    return JSONResponse({"success": True, "redirect": "/"})
 
 
 # --------------------------------------
@@ -235,12 +242,16 @@ def verify_email(request: Request, token: str, session: Session = Depends(get_se
         "first_name": user.first_name,
         "last_name": user.last_name,
         "is_admin": bool(user.is_admin),
+        "avatar_url": user.avatar_url,
     }
 
     token_jwt = create_access_token({"sub": str(user.id), "email": user.email})
     request.session["access_token"] = token_jwt
 
-    return RedirectResponse("/menu/view", status_code=303)
+    referer = request.headers.get("referer")
+    if referer and "/auth" not in referer:
+        return RedirectResponse(referer, status_code=303)
+    return RedirectResponse("/", status_code=303)
 
 
 # --------------------------------------
@@ -249,7 +260,9 @@ def verify_email(request: Request, token: str, session: Session = Depends(get_se
 @router.get("/logout")
 def logout(request: Request):
     request.session.clear()
-    return RedirectResponse("/menu/view", status_code=303)
+    referer = request.headers.get("referer")
+    target = referer if referer and "/auth" not in referer else "/"
+    return RedirectResponse(target, status_code=303)
 
 
 # --------------------------------------
@@ -305,6 +318,7 @@ def api_login(payload: UserLoginRequest, request: Request, session: Session = De
         "first_name": user.first_name,
         "last_name": user.last_name,
         "is_admin": bool(user.is_admin),
+        "avatar_url": user.avatar_url,
     }
     request.session["access_token"] = token
 
@@ -318,6 +332,10 @@ def api_login(payload: UserLoginRequest, request: Request, session: Session = De
 async def login_google(request: Request):
     if not oauth or not getattr(oauth, "google", None) or not oauth.google.client_id:
         raise HTTPException(status_code=400, detail="Google OAuth not configured")
+
+    # Remember where to return after OAuth
+    redirect_target = request.query_params.get("redirect_url") or request.headers.get("referer") or "/"
+    request.session["post_login_redirect"] = redirect_target
 
     redirect_uri = request.url_for("google_callback")
     return await oauth.google.authorize_redirect(request, redirect_uri)
@@ -363,10 +381,14 @@ async def google_callback(request: Request, session: Session = Depends(get_sessi
         "first_name": user.first_name,
         "last_name": user.last_name,
         "is_admin": bool(user.is_admin),
+        "avatar_url": user.avatar_url,
     }
     request.session["access_token"] = create_access_token({"sub": str(user.id), "email": user.email})
 
-    return RedirectResponse("/menu/view", status_code=303)
+    target = request.session.pop("post_login_redirect", None)
+    if target and "/auth" not in target:
+        return RedirectResponse(target, status_code=303)
+    return RedirectResponse("/", status_code=303)
 
 
 # --------------------------------------
@@ -377,12 +399,22 @@ async def login_facebook(request: Request):
     if not oauth or not getattr(oauth, "facebook", None) or not oauth.facebook.client_id:
         raise HTTPException(status_code=400, detail="Facebook OAuth not configured")
 
+    redirect_target = request.query_params.get("redirect_url") or request.headers.get("referer") or "/"
+    request.session["post_login_redirect"] = redirect_target
+
     redirect_uri = request.url_for("facebook_callback")
     return await oauth.facebook.authorize_redirect(request, redirect_uri)
 
 
 @router.get("/facebook/callback")
 async def facebook_callback(request: Request, session: Session = Depends(get_session)):
+    # Handle user cancellation or errors from Facebook
+    if request.query_params.get("error"):
+        target = request.session.pop("post_login_redirect", None)
+        if target and "/auth" not in target:
+            return RedirectResponse(target, status_code=303)
+        return RedirectResponse("/auth/login", status_code=303)
+
     try:
         token = await oauth.facebook.authorize_access_token(request)
 
@@ -447,11 +479,15 @@ async def facebook_callback(request: Request, session: Session = Depends(get_ses
             "first_name": user.first_name,
             "last_name": user.last_name,
             "is_admin": bool(user.is_admin),
+            "avatar_url": user.avatar_url,
         }
         request.session["access_token"] = create_access_token({"sub": str(user.id), "email": user.email})
 
         logger.info(f"Facebook login successful for {user.email}")
-        return RedirectResponse("/menu/view", status_code=303)
+        target = request.session.pop("post_login_redirect", None)
+        if target and "/auth" not in target:
+            return RedirectResponse(target, status_code=303)
+        return RedirectResponse("/", status_code=303)
 
     except Exception as e:
         logger.error(f"Facebook OAuth error: {e}", exc_info=True)

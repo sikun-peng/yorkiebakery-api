@@ -56,6 +56,13 @@ docker run --rm -v yorkiebakery-api_vector_store:/data alpine sh -c "mkdir -p /d
 
 # purge css
 curl -X POST "https://api.cloudflare.com/client/v4/zones/8547f59bcabb275c176448c50fa99867/purge_cache" \
-  -H "Authorization: Bearer {}" \
+  -H "Authorization: Bearer {token}" \
   -H "Content-Type: application/json" \
-  --data '{"files":["https://beta.yorkiebakery.com/static/styles.css"]}'
+  --data '{
+    "files": [
+      "https://beta.yorkiebakery.com/static/styles.css",
+      "https://beta.yorkiebakery.com/static/main.js",
+      "https://yorkiebakery.com/static/styles.css",
+      "https://yorkiebakery.com/static/main.js"
+    ]
+  }'

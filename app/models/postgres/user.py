@@ -13,6 +13,7 @@ class User(SQLModel, table=True):
     is_admin: bool = Field(default=False)
     is_verified: bool = Field(default=False)
     verification_token: Optional[str] = None
+    avatar_url: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: Optional[datetime] = None
     last_login: Optional[datetime] = None

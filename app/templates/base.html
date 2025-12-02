@@ -41,7 +41,12 @@
 
         <div class="nav-right">
           {% if request.session.get("user") %}
-            <span class="nav-user">👋 {{ request.session['user']['first_name'] }}</span>
+            <a href="/profile" class="nav-user" style="display:flex; align-items:center; gap:8px;">
+              <img src="{{ request.state.current_user.avatar_url if request.state and request.state.current_user else request.session['user'].get('avatar_url') or '/static/images/default_user_profile.jpg' }}"
+                   alt="Avatar"
+                   style="width:28px; height:28px; border-radius:50%; object-fit:cover; border:1px solid var(--border);"
+                   onerror="this.src='/static/images/default_user_profile.jpg'">
+            </a>
             <a href="/auth/logout" class="btn-small">Logout</a>
           {% else %}
             <button id="open-login" class="btn-small">Login</button>
@@ -128,7 +133,12 @@
        =========================== -->
   <button class="chat-toggle" id="chat-toggle">💬</button>
 
-  <div class="chat-box" id="chat-box">
+  <div
+    class="chat-box"
+    id="chat-box"
+    data-user-avatar="{{ request.state.current_user.avatar_url if request.state and request.state.current_user else request.session.get('user', {}).get('avatar_url') or '/static/images/default_user_profile.jpg' }}"
+    data-bot-avatar="/static/images/logo_black.jpg"
+  >
     <div class="chat-header">
       <div class="chat-title">
         <span class="chat-avatar"><img src="/static/images/logo_black.jpg" alt="Oscar avatar"></span>

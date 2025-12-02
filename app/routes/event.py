@@ -18,6 +18,7 @@ from app.core.db import engine
 from app.core.send_email import send_email
 from app.models.postgres.event import Event, EventRSVP
 from app.utils.s3_util import upload_file_to_s3
+import os
 
 router = APIRouter(prefix="/events", tags=["Events"])
 templates = Jinja2Templates(directory="app/templates")
@@ -154,7 +155,7 @@ async def admin_create_event(
         image_url = upload_file_to_s3(
             image,
             folder="events",
-            bucket="yorkiebakery-image"
+            bucket=os.getenv("S3_BUCKET_IMAGE", "yorkiebakery-image")
         )
 
     # ----------------------------

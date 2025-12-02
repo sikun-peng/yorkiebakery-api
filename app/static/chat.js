@@ -66,9 +66,29 @@ closeChat?.addEventListener("click", () => {
 function addMessage(text, sender = "user") {
   if (!chatMessages) return;
 
+  const userAvatar = chatBox?.dataset.userAvatar || "/static/images/default_user_profile.jpg";
+  const botAvatar = chatBox?.dataset.botAvatar || "/static/images/logo_black.jpg";
+  const avatarUrl = sender === "user" ? userAvatar : botAvatar;
+
   const msg = document.createElement("div");
   msg.classList.add(sender === "user" ? "msg-user" : "msg-bot");
-  msg.innerHTML = `<span>${text}</span>`;
+
+  const avatar = document.createElement("div");
+  avatar.classList.add("msg-avatar");
+  avatar.style.backgroundImage = `url('${avatarUrl}')`;
+
+  const bubble = document.createElement("div");
+  bubble.classList.add("msg-bubble");
+  bubble.innerHTML = text;
+
+  if (sender === "user") {
+    msg.appendChild(bubble);
+    msg.appendChild(avatar);
+  } else {
+    msg.appendChild(avatar);
+    msg.appendChild(bubble);
+  }
+
   chatMessages.appendChild(msg);
   chatMessages.scrollTop = chatMessages.scrollHeight;
 }

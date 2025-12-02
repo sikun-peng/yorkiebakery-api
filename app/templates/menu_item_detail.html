@@ -196,8 +196,11 @@
                     {% for review in reviews %}
                         <div class="review-card">
                             <div class="review-header">
-                                <span class="review-author">{{ review.user_name }}</span>
-                                <span class="review-date">{{ review.created_at.strftime('%B %d, %Y') }}</span>
+                                <img src="{{ review.avatar_url or '/static/images/default_user_profile.jpg' }}" alt="{{ review.user_name }}" class="review-avatar">
+                                <div>
+                                  <span class="review-author">{{ review.user_name }}</span>
+                                  <span class="review-date">{{ review.created_at.strftime('%B %d, %Y') }}</span>
+                                </div>
                             </div>
                             <div class="review-rating">
                                 {{ "⭐" * review.rating }}

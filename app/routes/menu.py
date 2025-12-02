@@ -26,12 +26,13 @@ from app.core.db import get_session
 from app.core.security import require_admin
 from app.core.cart_utils import get_cart_count
 from app.utils.s3_util import upload_file_to_s3
+import os
 
 templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter(prefix="/menu", tags=["Menu"])
 
-S3_BUCKET_IMAGE = "yorkiebakery-image"
+S3_BUCKET_IMAGE = os.getenv("S3_BUCKET_IMAGE", "yorkiebakery-image")
 
 
 # -------------------------------
@@ -268,7 +269,8 @@ def view_menu_item_page(
             "rating": review.rating,
             "comment": review.comment,
             "created_at": review.created_at,
-            "user_name": f"{user.first_name or ''} {user.last_name or ''}".strip() or user.email.split('@')[0]
+            "user_name": f"{user.first_name or ''} {user.last_name or ''}".strip() or user.email.split('@')[0],
+            "avatar_url": user.avatar_url or "/static/images/default_user_profile.jpg",
         })
         total_rating += review.rating
 

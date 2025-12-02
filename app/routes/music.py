@@ -6,10 +6,12 @@ from app.core.db import engine
 from app.models.postgres.music import MusicTrack
 from app.utils.s3_util import upload_file_to_s3
 from app.core.security import require_admin
+import os
 
 templates = Jinja2Templates(directory="app/templates")
 
 router = APIRouter(prefix="/music", tags=["Music"])
+S3_BUCKET_MUSIC = os.getenv("S3_BUCKET_MUSIC", "yorkiebakery-music")
 
 
 # ======================================================
@@ -98,14 +100,14 @@ async def upload_track(
     if not file.content_type.startswith("audio/"):
         raise HTTPException(status_code=400, detail="Only audio files are allowed")
 
-    file_url = upload_file_to_s3(file, folder="music", bucket="yorkiebakery-music")
+    file_url = upload_file_to_s3(file, folder="music", bucket=S3_BUCKET_MUSIC)
 
     # --- Optional cover image ---
     cover_url = None
     if cover and cover.filename:
         if not cover.content_type.startswith("image/"):
             raise HTTPException(status_code=400, detail="Cover must be an image file")
-        cover_url = upload_file_to_s3(cover, folder="music-covers", bucket="yorkiebakery-music")
+        cover_url = upload_file_to_s3(cover, folder="music-covers", bucket=S3_BUCKET_MUSIC)
 
     # --- Save track to DB ---
     with Session(engine) as session:

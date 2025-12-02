@@ -14,8 +14,9 @@ from app.core.db import get_session
 from app.core.cart_utils import get_cart_count
 from app.models.postgres.menu import MenuItem
 from app.models.postgres.music import MusicTrack
-from app.routes import auth, menu, order, cart, music, about, event, health, review
+from app.routes import auth, menu, order, cart, music, about, event, health, review, profile
 from app.ai.route import ai_demo, ai_chat, ai_vision, ai_debug
+from app.models.postgres.user import User
 
 # ===============================================
 # FASTAPI APP INIT
@@ -81,6 +82,43 @@ app.add_middleware(
 )
 
 # ===============================================
+# USER CONTEXT MIDDLEWARE (refresh avatar/session)
+# ===============================================
+@app.middleware("http")
+async def attach_user(request: Request, call_next):
+    session_db = None
+    try:
+        session_db = next(get_session())
+        user_session = request.session.get("user")
+        if user_session:
+            user_id = user_session.get("id")
+            # session stores id as string; cast to UUID for safety
+            if user_id:
+                try:
+                    from uuid import UUID
+                    user_id_obj = UUID(str(user_id))
+                except Exception:
+                    user_id_obj = user_id
+            else:
+                user_id_obj = None
+
+            user = session_db.get(User, user_id_obj) if user_id_obj else None
+            if user:
+                request.state.current_user = user
+                # Keep session data in sync (helps navbar/chat avatar refresh right after login)
+                request.session["user"]["avatar_url"] = user.avatar_url
+                request.session["user"]["first_name"] = user.first_name
+                request.session["user"]["last_name"] = user.last_name
+    except Exception:
+        pass
+    finally:
+        if session_db:
+            session_db.close()
+
+    response = await call_next(request)
+    return response
+
+# ===============================================
 # STARTUP — DB Init
 # ===============================================
 @app.on_event("startup")
@@ -99,6 +137,7 @@ app.include_router(about.router)
 app.include_router(event.router)
 app.include_router(health.router)
 app.include_router(review.router)
+app.include_router(profile.router)
 
 # AI / RAG routers
 app.include_router(ai_demo.router)

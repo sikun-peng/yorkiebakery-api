@@ -77,7 +77,8 @@ def get_reviews_for_item(
             "rating": review.rating,
             "comment": review.comment,
             "created_at": review.created_at.isoformat(),
-            "user_name": f"{user.first_name or ''} {user.last_name or ''}".strip() or user.email.split('@')[0]
+            "user_name": f"{user.first_name or ''} {user.last_name or ''}".strip() or user.email.split('@')[0],
+            "avatar_url": user.avatar_url or "/static/images/default_user_profile.jpg"
         })
 
     return result

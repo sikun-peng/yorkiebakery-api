@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<section class="home-section" style="max-width:800px; margin:auto;">
+  <h1 class="cute-title" style="margin-bottom:16px;">My Profile</h1>
+
+  <div style="display:flex; align-items:center; gap:14px; margin-bottom:18px;">
+    <img src="{{ user.avatar_url or '/static/images/default_user_profile.jpg' }}"
+         alt="Avatar"
+         style="width:64px; height:64px; border-radius:50%; object-fit:cover; border:1px solid var(--border);"
+         onerror="this.src='/static/images/default_user_profile.jpg'">
+    <div>
+      <div style="font-weight:700;">{{ user.first_name }} {{ user.last_name }}</div>
+      <div style="color:#666; font-size:14px;">{{ user.email }}</div>
+    </div>
+  </div>
+
+  <hr style="margin:12px 0;">
+
+  <h3 class="cute-title" style="margin-bottom:8px;">Name</h3>
+  <form action="/profile/name" method="post" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+    <input name="first_name" value="{{ user.first_name or '' }}" placeholder="First name" style="padding:8px; border:1px solid var(--border); border-radius:8px;">
+    <input name="last_name" value="{{ user.last_name or '' }}" placeholder="Last name" style="padding:8px; border:1px solid var(--border); border-radius:8px;">
+    <button type="submit" class="btn-small">Save</button>
+  </form>
+
+  <h3 class="cute-title" style="margin-bottom:8px;">Password</h3>
+  <form action="/profile/password" method="post" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+    <input name="current_password" type="password" placeholder="Current password" required style="padding:8px; border:1px solid var(--border); border-radius:8px;">
+    <input name="new_password" type="password" placeholder="New password" required style="padding:8px; border:1px solid var(--border); border-radius:8px;">
+    <input name="confirm_password" type="password" placeholder="Confirm new password" required style="padding:8px; border:1px solid var(--border); border-radius:8px;">
+    <button type="submit" class="btn-small">Update Password</button>
+  </form>
+  {% if errors and errors.get("password") %}
+    <p style="color:red; margin-top:-6px; margin-bottom:12px;">{{ errors.get("password") }}</p>
+    <p style="color:#666; font-size:12px; margin-top:-8px;">Password must be at least 6 characters.</p>
+  {% endif %}
+
+  <h3 class="cute-title" style="margin-bottom:8px;">Avatar</h3>
+  <form action="/profile/avatar" method="post" enctype="multipart/form-data" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+    <input type="file" name="file" accept="image/png,image/jpeg,image/webp" required>
+    <button type="submit" class="btn-small">Upload</button>
+    <span style="font-size:12px; color:#777;">PNG/JPEG/WEBP, max 5MB.</span>
+  </form>
+  {% if errors and errors.get("avatar") %}
+    <p style="color:red; margin-top:6px;">{{ errors.get("avatar") }}</p>
+  {% endif %}
+</section>
+{% endblock %}
