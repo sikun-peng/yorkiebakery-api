@@ -36,13 +36,13 @@ def send_email(to: str, subject: str, body: str):
     logger.info(f"Email sent successfully to {to}")
 
 def send_event_notice(email: str, event_title: str, message: str):
-    subject = f"Update for {event_title} — Yorkie Bakery"
+    subject = f"⚠️ Yorkie Bakery - Event Update for {event_title}"
     body = (
         f"Hello,\n\n"
         f"There is an update regarding the event:\n"
         f"📌 {event_title}\n\n"
         f"{message}\n\n"
-        f"— Yorkie Bakery"
+        f"— Yorkie Bakery Customer Service"
     )
 
     ses.send_email(
@@ -63,7 +63,7 @@ def send_verification_email(email: str, verify_url: str):  # Changed parameter n
         Source=SES_SENDER,
         Destination={"ToAddresses": [email]},
         Message={
-            "Subject": {"Data": "👤 Yorkie Bakery - Verify your account"},
+            "Subject": {"Data": "👤 Yorkie Bakery - Please Verify Your Account"},
             "Body": {
                 "Text": {
                     "Data": f"Welcome! Click here to verify your account:\n{verify_url}\n\n- Yorkie Bakery"
@@ -89,7 +89,7 @@ def send_verification_email(email: str, verify_url: str):  # Changed parameter n
     )
 
 def send_password_changed_email(email: str, first_name: Optional[str] = None):
-    subject = "🔐 Yorkie Bakery - Your password has been updated"
+    subject = "🔐 Yorkie Bakery - Your Password Has Been Updated"
     greeting = f"Hi {first_name}," if first_name else "Hi there,"
     body = (
         f"{greeting}\n\n"
