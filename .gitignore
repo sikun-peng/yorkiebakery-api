@@ -207,6 +207,13 @@ Pipfile.lock
 *.crt
 *.key
 
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+crash.log
+.terraform.tfstate.backup
 # ChromaDB vector store
 app/ai/vector_store/
 app/ai/vector_store/chroma.sqlite3
