@@ -35,6 +35,7 @@ Yorkie Bakery is a full-stack AI-powered bakery application featuring menu brows
 | AI / LLM | OpenAI GPT + Vision |
 | Vector DB | ChromaDB |
 | Deployment | Docker + EC2 |
+| Infra as Code | Terraform (scheduled cleanup Lambda, EventBridge) |
 
 ---
 
@@ -145,6 +146,15 @@ GET  /ai/debug
   - https://beta.yorkiebakery.com
 - S3 (images/music)
 - SES (emails + password reset)
+
+---
+
+## 🔧 Operations & Cleanup
+- **Scheduled purge**: Lambda + EventBridge removes unverified accounts older than 24h. Terraform lives in `infra/terraform/purge`.
+- **Secrets**: DB URL read from SSM (`/yorkiebakery/prod/DATABASE_URL`).
+- **Networking**: Lambda runs in VPC subnets with SSM/KMS interface endpoints and SGs limited to HTTPS for endpoints and 5432 to Postgres.
+- **Manual run**: Invoke `purge-unverified-users` in the Lambda console; check CloudWatch Logs `/aws/lambda/purge-unverified-users` for “Purged X…” lines.
+- **Apply**: from `infra/terraform/purge`, run `terraform apply -auto-approve` (tfvars provided).
 
 ---
 

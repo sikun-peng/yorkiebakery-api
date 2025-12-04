@@ -59,7 +59,7 @@
           <p>{{ item.description or '' }}</p>
           {% if item.price is not none %}
             <p class="price">
-              <span class="old-price">${{ "%.2f"|format(item.price) }}</span>
+              <span class="old-price">${{ "%.0f"|format(item.price) }}</span>
               <span class="free-pill">Free</span>
             </p>
           {% endif %}

@@ -126,12 +126,34 @@
       {% for item in items if item.category == cat %}
       <div class="menu-card" data-item-link="/menu/item/{{ item.id }}" role="link" tabindex="0">
 
+      {% set stats = review_stats.get(item.id|string, {"count": 0, "avg_rating": 0}) %}
+
       <!-- Image (clickable) -->
-      <div class="item-image-link">
+      <div class="item-image-link" style="position:relative;">
         {% if item.image_url %}
           <img src="{{ item.image_url }}" alt="{{ item.title }}">
         {% else %}
           <img src="/static/images/default_menu_image.jpg" alt="No Image Available">
+        {% endif %}
+        {% if (stats and stats.avg_rating and stats.count) or (item.tags and ('chef special' in item.tags)) %}
+          <div style="position:absolute; top:8px; left:8px; display:flex; gap:6px; flex-wrap:wrap;">
+            {% if stats and stats.avg_rating and stats.count %}
+              {% if stats.avg_rating >= 4.8 and stats.count > 5 %}
+                <span style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:#d35400; background:#ffe9d6; padding:4px 8px; border-radius:999px;">
+                  🔥 Most Popular
+                </span>
+              {% elif stats.count > 3 %}
+                <span style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:#8a5a00; background:#fff3d9; padding:4px 8px; border-radius:999px;">
+                  ✨ Trending Now
+                </span>
+              {% endif %}
+            {% endif %}
+            {% if item.tags and ('chef special' in item.tags) %}
+              <span style="display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:#9c27b0; background:#f5e9ff; padding:4px 8px; border-radius:999px;">
+                👨‍🍳 Chef Special
+              </span>
+            {% endif %}
+          </div>
         {% endif %}
       </div>
 
@@ -139,7 +161,6 @@
       <h2 class="item-title-link cute-subtitle">{{ item.title }}</h2>
 
       <!-- Reviews Summary -->
-      {% set stats = review_stats.get(item.id|string, {"count": 0, "avg_rating": 0}) %}
       {% if stats.count > 0 %}
         <div class="review-summary">
           <span class="stars-small">{{ "⭐" * stats.avg_rating|int }}</span>
@@ -189,7 +210,7 @@
       <!-- Price -->
       {% if item.price is not none %}
         <p class="price">
-          <span class="old-price">${{ "%.2f"|format(item.price) }}</span>
+          <span class="old-price">${{ "%.0f"|format(item.price) }}</span>
           <span class="free-pill">Free</span>
         </p>
       {% else %}
