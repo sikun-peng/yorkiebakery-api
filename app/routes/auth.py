@@ -86,6 +86,9 @@ class UserRegisterRequest(BaseModel):
     first_name: str = ""
     last_name: str = ""
 
+class _EmailValidator(BaseModel):
+    email: EmailStr
+
 
 class UserLoginRequest(BaseModel):
     email: EmailStr
@@ -182,7 +185,7 @@ MAX_PASSWORD_LEN = 32
 @router.post("/register_form")
 def register_form(
         request: Request,
-        email: EmailStr = Form(...),
+        email: str = Form(...),
         password: str = Form(...),
         first_name: str = Form("", description="Optional first name"),
         last_name: str = Form("", description="Optional last name"),
@@ -206,6 +209,14 @@ def register_form(
 
     if session.exec(select(User).where(User.email == email)).first():
         return JSONResponse({"success": False, "error": "Email already exists."}, status_code=400)
+
+    # Validate email format explicitly to avoid 422 at the framework level
+    try:
+        email_clean = (email or "").strip().lower()
+        email = _EmailValidator(email=email_clean).email
+    except Exception:
+        return JSONResponse({"success": False, "error": "Please enter a valid email address."}, status_code=400)
+    email = str(email)
 
     if len(password) < MIN_PASSWORD_LEN or len(password) > MAX_PASSWORD_LEN:
         return JSONResponse(
