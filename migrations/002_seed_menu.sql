@@ -107,6 +107,111 @@ INSERT INTO menu_item (title, description, image_url, origin, category, tags, fl
  ARRAY['pork','shredded','stir_fry'], ARRAY['sour','spicy','sweet'], ARRAY['contains_pork','gluten_free'], 49.00);
 
 -- ============================
+-- APPETIZER
+-- ============================
+INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
+
+-- CHINESE
+('Pork and Chive Dumplings', '韭菜猪肉饺子 - Pan-fried dumplings with pork and Chinese chives', 'https://d2pdj881wm30p5.cloudfront.net/menu/pork_dumplings.jpg', 'chinese', 'appetizer',
+ ARRAY['dumpling','pork','pan_fried'], ARRAY['savory','juicy','aromatic'], ARRAY['contains_pork','contains_gluten'], 9.99),
+
+('Vegetable Spring Rolls', '素春卷 - Crispy fried rolls filled with fresh vegetables', 'https://d2pdj881wm30p5.cloudfront.net/menu/spring_rolls.jpg', 'chinese', 'appetizer',
+ ARRAY['spring_roll','fried','vegetable'], ARRAY['crispy','savory','light'], ARRAY['vegan','contains_gluten'], 7.99),
+
+('Scallion Pancake', '葱油饼 - Flaky layered pancake with scallions', 'https://d2pdj881wm30p5.cloudfront.net/menu/scallion_pancake.jpg', 'chinese', 'appetizer',
+ ARRAY['pancake','scallion','crispy'], ARRAY['savory','flaky','aromatic'], ARRAY['vegan','contains_gluten'], 12.99),
+
+('Fried Wontons', '炸云吞 - Crispy wontons filled with pork and shrimp', 'https://d2pdj881wm30p5.cloudfront.net/menu/fried_wontons.jpg', 'chinese', 'appetizer',
+ ARRAY['wonton','fried','crispy'], ARRAY['savory','crispy','umami'], ARRAY['contains_pork','contains_shellfish','contains_gluten'], 8.99),
+
+('Cold Sesame Noodles', '凉拌芝麻面 - Chilled noodles in nutty sesame sauce', 'https://d2pdj881wm30p5.cloudfront.net/menu/sesame_noodles.jpg', 'chinese', 'appetizer',
+ ARRAY['noodles','sesame','cold'], ARRAY['nutty','savory','tangy'], ARRAY['contains_nuts','contains_gluten','vegan'], 11.99),
+
+('Sichuan Wontons in Chili Oil', '红油抄手 - Wontons in spicy chili oil and Sichuan pepper', 'https://d2pdj881wm30p5.cloudfront.net/menu/sichuan_wontons.jpg', 'chinese', 'appetizer',
+ ARRAY['wonton','spicy','chili_oil'], ARRAY['spicy','numbing','savory'], ARRAY['contains_pork','contains_gluten','spicy'], 13.99),
+
+('Cucumber Salad', '拍黄瓜 - Smashed cucumber with garlic and vinegar', 'https://d2pdj881wm30p5.cloudfront.net/menu/cucumber_salad.jpg', 'chinese', 'appetizer',
+ ARRAY['cucumber','salad','cold'], ARRAY['fresh','tangy','garlicky'], ARRAY['vegan','gluten_free'], 8.99),
+
+('Xiaolongbao', '小笼包 - Soup dumplings with pork filling', 'https://d2pdj881wm30p5.cloudfront.net/menu/xiaolongbao.jpg', 'chinese', 'appetizer',
+ ARRAY['dumpling','pork','steamed'], ARRAY['savory','juicy','umami'], ARRAY['contains_pork','contains_gluten'], 15.99),
+
+-- JAPANESE
+('Edamame', '枝豆 - Steamed young soybeans with sea salt', 'https://d2pdj881wm30p5.cloudfront.net/menu/edamame.jpg', 'japanese', 'appetizer',
+ ARRAY['soybean','steamed','healthy'], ARRAY['savory','fresh','light'], ARRAY['vegan','gluten_free'], 8.99),
+
+('Chicken Karaage', '唐揚げ - Japanese fried chicken marinated in soy and ginger', 'https://d2pdj881wm30p5.cloudfront.net/menu/karaage.jpg', 'japanese', 'appetizer',
+ ARRAY['chicken','fried','crispy'], ARRAY['savory','garlicky','crispy'], ARRAY['contains_gluten'], 12.99),
+
+('Seaweed Salad', '海藻サラダ - Chilled seaweed salad with sesame dressing', 'https://d2pdj881wm30p5.cloudfront.net/menu/seaweed_salad.jpg', 'japanese', 'appetizer',
+ ARRAY['seaweed','salad','cold'], ARRAY['savory','tangy','refreshing'], ARRAY['vegan','gluten_free'], 5.99),
+
+('Takoyaki', 'たこ焼き - Octopus balls with takoyaki sauce and bonito flakes', 'https://d2pdj881wm30p5.cloudfront.net/menu/takoyaki.jpg', 'japanese', 'appetizer',
+ ARRAY['octopus','fried','balls'], ARRAY['savory','umami','rich'], ARRAY['contains_shellfish','contains_gluten'], 7.99),
+
+('Agedashi Tofu', '揚げ出し豆腐 - Deep-fried tofu in dashi broth', 'https://d2pdj881wm30p5.cloudfront.net/menu/agedashi_tofu.jpg', 'japanese', 'appetizer',
+ ARRAY['tofu','fried','broth'], ARRAY['savory','umami','delicate'], ARRAY['vegetarian','contains_gluten'], 6.99),
+
+('Yakitori', '焼き鳥 - Grilled chicken skewers with teriyaki glaze', 'https://d2pdj881wm30p5.cloudfront.net/menu/yakitori.jpg', 'japanese', 'appetizer',
+ ARRAY['chicken','grilled','skewers'], ARRAY['savory','sweet','smoky'], ARRAY['gluten_free'], 18.99),
+
+('Miso Soup', '味噌汁 - Traditional Japanese soup with tofu and seaweed', 'https://d2pdj881wm30p5.cloudfront.net/menu/miso_soup.jpg', 'japanese', 'appetizer',
+ ARRAY['soup','miso','tofu'], ARRAY['savory','umami','warm'], ARRAY['vegan','gluten_free'], 4.99),
+
+-- KOREAN
+('Kimchi', '김치 - Fermented spicy cabbage', 'https://d2pdj881wm30p5.cloudfront.net/menu/kimchi.jpg', 'korean', 'appetizer',
+ ARRAY['fermented','spicy','cabbage'], ARRAY['spicy','tangy','funky'], ARRAY['vegan','gluten_free','spicy'], 25.00),
+
+('Korean Fried Chicken', '양념치킨 - Crispy chicken with sweet and spicy glaze', 'https://d2pdj881wm30p5.cloudfront.net/menu/korean_fried_chicken.jpg', 'korean', 'appetizer',
+ ARRAY['chicken','fried','glazed'], ARRAY['spicy','sweet','crispy'], ARRAY['spicy','contains_gluten'], 69.00),
+
+('Japchae', '잡채 - Stir-fried glass noodles with vegetables', 'https://d2pdj881wm30p5.cloudfront.net/menu/japchae.jpg', 'korean', 'appetizer',
+ ARRAY['noodles','stir_fry','vegetable'], ARRAY['savory','sweet','umami'], ARRAY['vegan','gluten_free'], 45.00),
+
+('Tteokbokki', '떡볶이 - Spicy rice cakes in gochujang sauce', 'https://d2pdj881wm30p5.cloudfront.net/menu/tteokbokki.jpg', 'korean', 'appetizer',
+ ARRAY['rice_cake','spicy','chewy'], ARRAY['spicy','sweet','savory'], ARRAY['spicy','gluten_free','vegetarian'], 15.99),
+
+('Seafood Pancake', '해물파전 - Savory scallion pancake with seafood', 'https://d2pdj881wm30p5.cloudfront.net/menu/seafood_pancake.jpg', 'korean', 'appetizer',
+ ARRAY['pancake','scallion','seafood'], ARRAY['savory','crispy','umami'], ARRAY['contains_shellfish','contains_gluten'], 13.99),
+
+-- THAI
+('Chicken Satay', 'สะเต๊ะไก่ - Grilled chicken skewers with peanut sauce', 'https://d2pdj881wm30p5.cloudfront.net/menu/chicken_satay.jpg', 'thai', 'appetizer',
+ ARRAY['chicken','grilled','skewers'], ARRAY['savory','nutty','smoky'], ARRAY['contains_nuts','gluten_free'], 8.99),
+
+('Thai Fish Cakes', 'ทอดมันปลา - Deep-fried spiced fish patties', 'https://d2pdj881wm30p5.cloudfront.net/menu/fish_cakes.jpg', 'thai', 'appetizer',
+ ARRAY['fish','fried','spicy'], ARRAY['savory','aromatic','bouncy'], ARRAY['contains_shellfish','gluten_free'], 12.99),
+
+('Som Tam', 'ส้มตำ - Spicy green papaya salad', 'https://d2pdj881wm30p5.cloudfront.net/menu/papaya_salad.jpg', 'thai', 'appetizer',
+ ARRAY['papaya','salad','spicy'], ARRAY['spicy','sour','sweet'], ARRAY['spicy','gluten_free','vegan','contains_nuts'], 12.99),
+
+('Larb Gai', 'ลาบไก่ - Spicy Thai chicken salad with herbs', 'https://d2pdj881wm30p5.cloudfront.net/menu/larb_gai.jpg', 'thai', 'appetizer',
+ ARRAY['chicken','salad','spicy'], ARRAY['spicy','tangy','herby'], ARRAY['spicy','gluten_free'], 13.99),
+
+('Tom Yum Soup', 'ต้มยำกุ้ง - Spicy and sour Thai soup with shrimp', 'https://d2pdj881wm30p5.cloudfront.net/menu/tom_yum.jpg', 'thai', 'appetizer',
+ ARRAY['soup','shrimp','spicy'], ARRAY['spicy','sour','aromatic'], ARRAY['spicy','gluten_free','contains_shellfish'], 8.99),
+
+-- VIETNAMESE
+('Vietnamese Spring Rolls', 'Gỏi cuốn - Fresh rolls with shrimp, pork, and herbs', 'https://d2pdj881wm30p5.cloudfront.net/menu/vietnamese_spring_rolls.jpg', 'vietnamese', 'appetizer',
+ ARRAY['spring_roll','fresh','shrimp'], ARRAY['fresh','light','herby'], ARRAY['contains_shellfish','contains_pork','gluten_free'], 8.99),
+
+-- HONG KONG
+('Har Gow', '蝦餃 - Steamed shrimp dumplings with translucent skin', 'https://d2pdj881wm30p5.cloudfront.net/menu/har_gow.jpg', 'hong_kong', 'appetizer',
+ ARRAY['dumpling','shrimp','steamed'], ARRAY['savory','delicate','umami'], ARRAY['contains_shellfish','gluten_free'], 8.99),
+
+('Siu Mai', '燒賣 - Cantonese pork and shrimp dumplings', 'https://d2pdj881wm30p5.cloudfront.net/menu/siu_mai.jpg', 'hong_kong', 'appetizer',
+ ARRAY['dumpling','pork','steamed'], ARRAY['savory','juicy','umami'], ARRAY['contains_pork','contains_shellfish','gluten_free'], 8.99),
+
+('Char Siu Bao', '叉燒包 - Steamed buns with BBQ pork filling', 'https://d2pdj881wm30p5.cloudfront.net/menu/char_siu_bao.jpg', 'hong_kong', 'appetizer',
+ ARRAY['bun','bbq_pork','steamed'], ARRAY['savory','sweet','soft'], ARRAY['contains_pork','contains_gluten'], 9.99),
+
+('Cheung Fun', '腸粉 - Steamed rice noodle rolls with shrimp or beef', 'https://d2pdj881wm30p5.cloudfront.net/menu/cheung_fun.jpg', 'hong_kong', 'appetizer',
+ ARRAY['rice_noodle','steamed','shrimp'], ARRAY['savory','silky','umami'], ARRAY['contains_shellfish','gluten_free'], 4.99),
+
+-- FUSION
+('Crispy Tofu Bites', '脆皮豆腐 - Fried tofu with sweet chili sauce', 'https://d2pdj881wm30p5.cloudfront.net/menu/crispy_tofu.jpg', 'fusion', 'appetizer',
+ ARRAY['tofu','fried','crispy'], ARRAY['savory','crispy','sweet'], ARRAY['vegan','gluten_free'], 12.99);
+
+-- ============================
 -- RICE & NOODLES
 -- ============================
 INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
