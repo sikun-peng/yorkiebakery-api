@@ -158,6 +158,25 @@ GET  /ai/debug
 
 ---
 
+## ⚡ GraphQL Quickstart
+- Endpoint: `POST /graphql` (GraphiQL enabled at `/graphql` in dev).
+- Sample query:
+  ```graphql
+  {
+    menuItems(category: "pastry", limit: 3) {
+      id
+      title
+      price
+      tags
+      reviews(limit: 2) { rating comment user { name } }
+    }
+  }
+  ```
+- Filtering by tags/category supported (e.g., `tags: ["chef special"]`).
+- Frontend demo: AI React demo includes a GraphQL panel (right column) to run preset/custom queries.
+
+---
+
 ## 📘 System Design Page
 Visit:
 ```

@@ -14,13 +14,20 @@ const passwordInput = form?.querySelector('input[name="password"]');
 const emailInput = form?.querySelector('input[name="email"]');
 const registerStartedAt = document.getElementById("auth-register-started-at");
 
-const showAuthError = (msg) => {
+const showAuthMessage = (msg, isError = true) => {
     if (!authError) {
         alert(msg);
         return;
     }
     authError.textContent = msg || "";
     authError.style.display = msg ? "block" : "none";
+    authError.style.color = isError ? "red" : "#1b5e20";
+    authError.style.fontWeight = isError ? "normal" : "600";
+};
+
+// Backward compatibility for existing calls
+const showAuthError = (msg) => {
+    showAuthMessage(msg, true);
 };
 
 // New authentication elements
@@ -193,7 +200,7 @@ function setLoginMode() {
     forgotPasswordLink.style.display = "block";
     resetPasswordDiv.style.display = "none";
     resendVerificationDiv.style.display = "none";
-    showAuthError("");
+    showAuthMessage("");
 }
 
 function setRegisterMode() {
@@ -208,7 +215,7 @@ function setRegisterMode() {
     forgotPasswordLink.style.display = "none";
     resetPasswordDiv.style.display = "none";
     resendVerificationDiv.style.display = "none";
-    showAuthError("");
+    showAuthMessage("");
 }
 
 function resetModalState() {
@@ -223,7 +230,7 @@ function resetModalState() {
     if (resetEmail) {
         resetEmail.value = "";
     }
-    showAuthError("");
+    showAuthMessage("");
     if (registerStartedAt) {
         registerStartedAt.value = Date.now() / 1000;
     }
@@ -243,7 +250,7 @@ form?.addEventListener("submit", async (e) => {
     if (mode === "register") {
         const pwd = (passwordInput?.value || "").trim();
         if (pwd.length < 6 || pwd.length > 32) {
-            showAuthError("Password must be 6-32 characters.");
+            showAuthMessage("Password must be 6-32 characters.", true);
             return;
         }
     }
@@ -269,20 +276,29 @@ form?.addEventListener("submit", async (e) => {
             if (data.error && data.error.includes('verify your email')) {
                 resendVerificationDiv.style.display = "block";
             }
-            showAuthError(data.error || "Something went wrong");
+            showAuthMessage(data.error || "Something went wrong", true);
             return;
         }
 
-        // ✅ Close modal and refresh UI/redirect
-        modal.style.display = "none";
-        if (data.redirect) {
-            window.location.href = data.redirect;
+        // ✅ Success handling
+        if (mode === "register") {
+            const successMsg = data.message || "Success! Check your email to verify your account.";
+            showAuthMessage(successMsg, false);
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+            // Keep modal open so user sees the message
+            return;
         } else {
-            location.reload();
+            modal.style.display = "none";
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                location.reload();
+            }
         }
 
     } catch (error) {
-        showAuthError("Network error. Please try again.");
+        showAuthMessage("Network error. Please try again.", true);
     } finally {
         submitBtn.innerText = originalText;
         submitBtn.disabled = false;

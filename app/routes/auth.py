@@ -83,8 +83,8 @@ except Exception:
 class UserRegisterRequest(BaseModel):
     email: EmailStr
     password: str
-    first_name: str
-    last_name: str
+    first_name: str = ""
+    last_name: str = ""
 
 
 class UserLoginRequest(BaseModel):
@@ -184,8 +184,8 @@ def register_form(
         request: Request,
         email: EmailStr = Form(...),
         password: str = Form(...),
-        first_name: str = Form(...),
-        last_name: str = Form(...),
+        first_name: str = Form("", description="Optional first name"),
+        last_name: str = Form("", description="Optional last name"),
         honeypot: str = Form("", alias="register_contact"),
         form_started_at: str = Form("", alias="register_started_at"),
         session: Session = Depends(get_session),
@@ -193,13 +193,16 @@ def register_form(
     # Basic anti-bot: honeypot + minimum fill time (2s)
     if honeypot.strip():
         return JSONResponse({"success": False, "error": "Invalid submission."}, status_code=400)
+    started = None
     try:
-        started = float(form_started_at)
+        if form_started_at:
+            started = float(form_started_at)
     except Exception:
-        started = 0.0
+        started = None
     now_ts = datetime.utcnow().timestamp()
-    if started and (now_ts - started) < 2:
-        return JSONResponse({"success": False, "error": "Please slow down and try again."}, status_code=400)
+    if started is not None:
+        if (now_ts - started) < 2:
+            return JSONResponse({"success": False, "error": "Please slow down and try again."}, status_code=400)
 
     if session.exec(select(User).where(User.email == email)).first():
         return JSONResponse({"success": False, "error": "Email already exists."}, status_code=400)
