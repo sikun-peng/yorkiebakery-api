@@ -46,7 +46,7 @@ export default function ImageUploadPanel({ onAnalysisComplete }: Props) {
   }
 
   return (
-    <section className="yorkie-card mt-6">
+    <section className="yorkie-card">
       <h2 className="text-xl font-bold text-yorkieBrown flex items-center gap-2">
         📸 Image Match
       </h2>

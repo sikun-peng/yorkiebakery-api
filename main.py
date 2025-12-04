@@ -16,6 +16,7 @@ from app.models.postgres.menu import MenuItem
 from app.models.postgres.music import MusicTrack
 from app.models.postgres.review import Review
 from app.routes import auth, menu, order, cart, music, about, event, health, review, profile
+from app.graphql.schema import graphql_router
 from app.ai.route import ai_demo, ai_chat, ai_vision, ai_debug
 from app.models.postgres.user import User
 
@@ -139,6 +140,7 @@ app.include_router(event.router)
 app.include_router(health.router)
 app.include_router(review.router)
 app.include_router(profile.router)
+app.include_router(graphql_router, prefix="/graphql")
 
 # AI / RAG routers
 app.include_router(ai_demo.router)

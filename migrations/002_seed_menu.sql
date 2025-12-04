@@ -27,7 +27,7 @@ INSERT INTO menu_item (title, description, image_url, origin, category, tags, fl
  ARRAY['blueberry','chocolate','layered'], ARRAY['sweet','rich','fruity'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 60.00),
 
 ('Mango Mousse Cake', '爱心芒果慕斯蛋糕 - Heart-shaped mango mousse cake', 'https://d2pdj881wm30p5.cloudfront.net/menu/mango_mousse.jpg', 'fusion', 'pastry',
- ARRAY['mousse','mango','heart'], ARRAY['sweet','fruity','light'], ARRAY['contains_dairy','gluten_free','vegetarian'], 60.00),
+ ARRAY['chef special','mousse','mango','heart'], ARRAY['sweet','fruity','light'], ARRAY['contains_dairy','gluten_free','vegetarian'], 60.00),
 
 ('Strawberry Mousse Cake', '爱心草莓慕斯蛋糕 - Heart-shaped strawberry mousse cake', 'https://d2pdj881wm30p5.cloudfront.net/menu/strawberry_mousse.jpg', 'fusion', 'pastry',
  ARRAY['mousse','strawberry','heart'], ARRAY['sweet','fruity','light'], ARRAY['contains_dairy','gluten_free','vegetarian'], 60.00),
@@ -64,14 +64,14 @@ INSERT INTO menu_item (title, description, image_url, origin, category, tags, fl
  ARRAY['mooncake','festival','traditional'], ARRAY['sweet','rich','dense'], ARRAY['contains_gluten','vegetarian'], 60.00),
 
 ('Animal Cookies', '动物饼干 - Buttery cookies in fun animal shapes', 'https://d2pdj881wm30p5.cloudfront.net/menu/cookie.jpg', 'american', 'dessert',
- ARRAY['cookies','butter','animal'], ARRAY['sweet','buttery','crunchy'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 50.00);
+ ARRAY['chef special','cookies','butter','animal'], ARRAY['sweet','buttery','crunchy'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 50.00);
 
 -- ============================
 -- ENTREE
 -- ============================
 INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
 ('Korean Fried Chicken Wings', '韩式鸡翅 - Crispy fried chicken wings with Korean seasoning', 'https://d2pdj881wm30p5.cloudfront.net/menu/chicken_wing.jpg', 'korean', 'entree',
- ARRAY['chicken','fried','spicy'], ARRAY['spicy','savory','crispy'], ARRAY['spicy'], 100.00),
+ ARRAY['chef special','chicken','fried','spicy'], ARRAY['spicy','savory','crispy'], ARRAY['spicy'], 60.00),
 
 ('Steamed Sea Bass', '清蒸鲈鱼 - Fresh sea bass steamed with ginger and scallions', 'https://d2pdj881wm30p5.cloudfront.net/menu/steaming_fish.jpg', 'chinese', 'entree',
  ARRAY['fish','steamed','healthy'], ARRAY['savory','umami','light'], ARRAY['gluten_free','contains_shellfish'], 100.00),
@@ -224,8 +224,8 @@ INSERT INTO menu_item (title, description, image_url, origin, category, tags, fl
 ('Chongqing Noodles', '重庆小面 - Spicy Sichuan-style noodles with broth', 'https://d2pdj881wm30p5.cloudfront.net/menu/chongqing_noodles.jpg', 'chinese', 'rice_and_noodles',
  ARRAY['noodles','spicy','sichuan'], ARRAY['spicy','numbing','savory'], ARRAY['contains_gluten', 'spicy'], 59.00),
 
-('Beef Noodles', '李先生加州牛肉面 - Beef broth noodles with tender beef slices', 'https://d2pdj881wm30p5.cloudfront.net/menu/beef_noodles.jpg', 'chinese', 'rice_and_noodles',
- ARRAY['noodles','beef','soup'], ARRAY['savory','rich','umami'], ARRAY['contains_gluten'], 59.00);
+('Beef Noodles', '李先生加州牛肉面 - Beef broth noodles with tender beef slices', 'https://d2pdj881wm30p5.cloudfront.net/menu/beef_noodles.jpg', 'taiwanese', 'rice_and_noodles',
+ ARRAY['chef special','noodles','beef','soup'], ARRAY['savory','rich','umami'], ARRAY['contains_gluten'], 59.00);
 
 
 -- ============================

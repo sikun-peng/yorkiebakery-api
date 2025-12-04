@@ -23,6 +23,7 @@ docker-compose build && docker-compose up -d
 cd ai_demo_frontend/
 npm install
 npm run build
+// npm run dev
 
 # Run migrations
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/001_create_tables.sql
