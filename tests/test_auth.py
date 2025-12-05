@@ -1,6 +1,7 @@
 import pytest
 from uuid import uuid4
 from datetime import datetime, timedelta
+import time
 from app.models.postgres.user import User
 from app.models.postgres.password_reset_token import PasswordResetToken
 from app.core.security import hash_password
@@ -129,6 +130,8 @@ def test_register_rejects_short_password(client):
             "password": "short",
             "first_name": "Short",
             "last_name": "Pw",
+            "register_started_at": time.time() - 3,
+            "register_contact": "",
         },
     )
     assert resp.status_code == 400
@@ -147,6 +150,8 @@ def test_register_rejects_too_long_password(client):
             "password": long_pw,
             "first_name": "Long",
             "last_name": "Pw",
+            "register_started_at": time.time() - 3,
+            "register_contact": "",
         },
     )
     assert resp.status_code == 400
@@ -288,6 +293,8 @@ def test_register_form_new_user(client, fake_session, monkeypatch):
             "password": "password123",
             "first_name": "Form",
             "last_name": "User",
+            "register_started_at": time.time() - 3,
+            "register_contact": "",
         },
     )
     assert resp.status_code == 200
@@ -310,6 +317,8 @@ def test_register_form_duplicate_email(client, test_user, monkeypatch):
             "password": "password123",
             "first_name": "Duplicate",
             "last_name": "User",
+            "register_started_at": time.time() - 3,
+            "register_contact": "",
         },
     )
     assert resp.status_code == 400

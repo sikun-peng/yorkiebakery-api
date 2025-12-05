@@ -189,23 +189,23 @@ def register_form(
         password: str = Form(...),
         first_name: str = Form("", description="Optional first name"),
         last_name: str = Form("", description="Optional last name"),
-        honeypot: str = Form("", alias="register_contact"),
-        form_started_at: str = Form("", alias="register_started_at"),
-        session: Session = Depends(get_session),
+    honeypot: str = Form("", alias="register_contact"),
+    form_started_at: str = Form("", alias="register_started_at"),
+    session: Session = Depends(get_session),
 ):
     # Basic anti-bot: honeypot + minimum fill time (2s)
     if honeypot.strip():
         return JSONResponse({"success": False, "error": "Invalid submission."}, status_code=400)
     started = None
     try:
-        if form_started_at:
-            started = float(form_started_at)
+        started = float(form_started_at)
     except Exception:
         started = None
     now_ts = datetime.utcnow().timestamp()
-    if started is not None:
-        if (now_ts - started) < 2:
-            return JSONResponse({"success": False, "error": "Please slow down and try again."}, status_code=400)
+    if started is None:
+        return JSONResponse({"success": False, "error": "Invalid submission."}, status_code=400)
+    if (now_ts - started) < 2:
+        return JSONResponse({"success": False, "error": "Please slow down and try again."}, status_code=400)
 
     if session.exec(select(User).where(User.email == email)).first():
         return JSONResponse({"success": False, "error": "Email already exists."}, status_code=400)
