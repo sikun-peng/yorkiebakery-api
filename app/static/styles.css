@@ -595,6 +595,54 @@ h1, h2, h3, h4 {
   transform: scale(1.02);
 }
 
+.music-track-card.unavailable {
+  opacity: 0.86;
+}
+
+.music-track-card.unavailable .music-cover-img {
+  filter: grayscale(30%);
+}
+
+.music-track-card.unavailable .cover-missing-btn {
+  opacity: 1;
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.72);
+  color: #b23b3b;
+  font-weight: 700;
+  font-size: 24px;
+}
+
+.badge-unavailable {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #b23b3b;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.music-status {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90vw, 480px);
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #fff7ed;
+  color: #8a4b00;
+  font-weight: 600;
+  font-size: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  border: 1px solid #ffd8a8;
+  z-index: 2000;
+}
+
 /* Floating player icons */
 .fp-icon-btn.icon-shuffle,
 .fp-icon-btn.icon-repeat,

@@ -790,6 +790,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const btn = e.target.closest(".cover-missing-btn");
         if (!btn) return;
         const title = btn.dataset.title || "This track";
-        alert(`${title} is unavailable right now.`);
+        const statusEl = document.getElementById("music-status");
+        if (!statusEl) return;
+        statusEl.textContent = `${title} is unavailable right now. Check back soon.`;
+        statusEl.style.display = "block";
+        clearTimeout(statusEl._hideTimer);
+        statusEl._hideTimer = setTimeout(() => {
+            statusEl.style.display = "none";
+        }, 1500);
     });
 });

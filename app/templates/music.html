@@ -14,6 +14,8 @@
 } %}
 
 {# Loop through categories based on the DB values #}
+<div id="music-status" class="music-status" aria-live="polite" style="display:none;"></div>
+
 {% for raw_cat, display_cat in category_map.items() %}
   {% set cat_tracks = tracks | selectattr("category", "equalto", raw_cat) | list %}
 
