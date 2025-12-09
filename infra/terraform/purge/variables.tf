@@ -10,9 +10,9 @@ variable "lambda_name" {
   default     = "purge-unverified-users"
 }
 
-variable "database_url_ssm_param" {
+variable "database_url" {
   type        = string
-  description = "SSM parameter name that stores the DATABASE_URL for the app (e.g., /yorkiebakery/prod/DATABASE_URL)."
+  description = "Full Postgres URL for the purge Lambda (e.g., postgresql://user:pass@host:5432/dbname)."
 }
 
 variable "grace_period_seconds" {

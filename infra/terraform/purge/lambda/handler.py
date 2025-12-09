@@ -3,7 +3,6 @@ import time
 import logging
 from urllib.parse import urlparse
 
-import boto3
 import pg8000.dbapi
 
 logger = logging.getLogger()
@@ -11,12 +10,10 @@ logger.setLevel(logging.INFO)
 
 
 def _get_db_url() -> str:
-    param_name = os.environ.get("DB_PARAM_NAME")
-    if not param_name:
-        raise RuntimeError("DB_PARAM_NAME is required")
-    ssm = boto3.client("ssm")
-    resp = ssm.get_parameter(Name=param_name, WithDecryption=True)
-    return resp["Parameter"]["Value"]
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        raise RuntimeError("DATABASE_URL is required")
+    return db_url.strip()
 
 
 def _get_grace_seconds() -> int:

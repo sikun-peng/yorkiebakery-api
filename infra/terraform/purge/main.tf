@@ -82,26 +82,14 @@ data "aws_iam_policy_document" "lambda_policy" {
   }
 
   statement {
-    sid     = "ReadDbSecret"
-    effect  = "Allow"
-    actions = ["ssm:GetParameter", "ssm:GetParameters", "ssm:GetParameterHistory"]
-    resources = [
-      "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter${var.database_url_ssm_param}"
+    sid    = "ENI"
+    effect = "Allow"
+    actions = [
+      "ec2:CreateNetworkInterface",
+      "ec2:DescribeNetworkInterfaces",
+      "ec2:DeleteNetworkInterface"
     ]
-  }
-
-  dynamic "statement" {
-    for_each = var.vpc_subnet_ids == null ? [] : [1]
-    content {
-      sid    = "ENI"
-      effect = "Allow"
-      actions = [
-        "ec2:CreateNetworkInterface",
-        "ec2:DescribeNetworkInterfaces",
-        "ec2:DeleteNetworkInterface"
-      ]
-      resources = ["*"]
-    }
+    resources = ["*"]
   }
 }
 
@@ -131,7 +119,7 @@ resource "aws_lambda_function" "purge" {
 
   environment {
     variables = {
-      DB_PARAM_NAME = var.database_url_ssm_param
+      DATABASE_URL = var.database_url
       GRACE_SECONDS = var.grace_period_seconds
     }
   }
