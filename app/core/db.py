@@ -16,7 +16,23 @@ if not DATABASE_URL:
 
 logger.info(f"Using DATABASE_URL: {DATABASE_URL}")
 
-engine = create_engine(DATABASE_URL, echo=False)
+if DATABASE_URL.startswith("sqlite"):
+    # SQLite (tests/dev) doesn't support the pooling args above
+    engine = create_engine(
+        DATABASE_URL,
+        echo=False,
+        connect_args={"check_same_thread": False},
+    )
+else:
+    engine = create_engine(
+        DATABASE_URL,
+        echo=False,
+        pool_size=10,
+        max_overflow=20,
+        pool_timeout=30,
+        pool_recycle=1800,
+        pool_pre_ping=True,
+    )
 
 def get_session():
     with Session(engine) as session:

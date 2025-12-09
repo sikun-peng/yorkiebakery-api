@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -88,34 +88,32 @@ app.add_middleware(
 # ===============================================
 @app.middleware("http")
 async def attach_user(request: Request, call_next):
-    session_db = None
     try:
-        session_db = next(get_session())
-        user_session = request.session.get("user")
-        if user_session:
-            user_id = user_session.get("id")
-            # session stores id as string; cast to UUID for safety
-            if user_id:
-                try:
-                    from uuid import UUID
-                    user_id_obj = UUID(str(user_id))
-                except Exception:
-                    user_id_obj = user_id
-            else:
-                user_id_obj = None
+        # short-lived session for user refresh
+        for session_db in get_session():
+            user_session = request.session.get("user")
+            if user_session:
+                user_id = user_session.get("id")
+                # session stores id as string; cast to UUID for safety
+                if user_id:
+                    try:
+                        from uuid import UUID
+                        user_id_obj = UUID(str(user_id))
+                    except Exception:
+                        user_id_obj = user_id
+                else:
+                    user_id_obj = None
 
-            user = session_db.get(User, user_id_obj) if user_id_obj else None
-            if user:
-                request.state.current_user = user
-                # Keep session data in sync (helps navbar/chat avatar refresh right after login)
-                request.session["user"]["avatar_url"] = user.avatar_url
-                request.session["user"]["first_name"] = user.first_name
-                request.session["user"]["last_name"] = user.last_name
+                user = session_db.get(User, user_id_obj) if user_id_obj else None
+                if user:
+                    request.state.current_user = user
+                    # Keep session data in sync (helps navbar/chat avatar refresh right after login)
+                    request.session["user"]["avatar_url"] = user.avatar_url
+                    request.session["user"]["first_name"] = user.first_name
+                    request.session["user"]["last_name"] = user.last_name
+            break
     except Exception:
         pass
-    finally:
-        if session_db:
-            session_db.close()
 
     response = await call_next(request)
     return response
@@ -153,11 +151,8 @@ app.include_router(ai_debug.router)
 # HOME PAGE
 # ===============================================
 @app.get("/")
-def home(request: Request):
+def home(request: Request, session=Depends(get_session)):
     cart_count = get_cart_count(request)
-
-    # --- FIX: get_session() is a generator ---
-    session = next(get_session())
 
     # 🎂 Featured menu — only pastry category AND available items
     menu_items = session.exec(
