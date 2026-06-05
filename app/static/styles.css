@@ -2998,6 +2998,11 @@ h1, h2, h3, h4 {
 }
 
 @media (max-width: 640px) {
+  .recipe-disclosure {
+    margin-top: 1.1rem;
+    padding-top: 1rem;
+  }
+
   .markdown-table-wrap {
     margin-left: -0.1rem;
     margin-right: -0.1rem;
@@ -3016,6 +3021,7 @@ h1, h2, h3, h4 {
 
   .dish-share-actions {
     gap: 0.5rem;
+    margin: 1rem 0 0.45rem;
   }
 
   .dish-share-status {
@@ -3025,6 +3031,16 @@ h1, h2, h3, h4 {
 
   .recipe-toggle {
     font-size: 0.95rem;
+  }
+
+  .menu-item-detail .cart-form,
+  .menu-item-detail .qty-controls {
+    margin-top: 1rem;
+  }
+
+  .menu-item-detail .cart-form .btn,
+  .menu-item-detail .qty-controls {
+    width: 100%;
   }
 
   .markdown-content h1 {

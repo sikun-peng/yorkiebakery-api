@@ -7,9 +7,6 @@
 
 {% set cart = request.session.get("cart", {}) %}
 
-{# Group items by category #}
-{% set categories = items | map(attribute='category') | unique | list %}
-
 {# --- Mapping dictionaries --- #}
 {% set origin_map = {
     "fusion": "Fusion ✨🍱🥗",
@@ -51,6 +48,28 @@
     "soup": "🍲 Soup 🥣",
     "default": "🍴 Other"
 } %}
+
+{% set category_order = [
+    "pastry",
+    "dessert",
+    "appetizer",
+    "entree",
+    "rice_and_noodles",
+    "drink",
+    "soup"
+] %}
+{% set discovered_categories = items | map(attribute='category') | unique | list %}
+{% set categories = [] %}
+{% for cat in category_order %}
+  {% if cat in discovered_categories %}
+    {% set _ = categories.append(cat) %}
+  {% endif %}
+{% endfor %}
+{% for cat in discovered_categories %}
+  {% if cat not in categories %}
+    {% set _ = categories.append(cat) %}
+  {% endif %}
+{% endfor %}
 
 <!-- Dietary Filter -->
 <div class="filter-shell">

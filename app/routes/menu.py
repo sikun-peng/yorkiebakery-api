@@ -14,6 +14,7 @@ from sqlmodel import Session, select
 from typing import List, Optional
 from uuid import UUID
 from sqlalchemy import any_
+from collections import defaultdict
 
 from app.core.logger import get_logger
 
@@ -35,6 +36,52 @@ templates.env.filters["markdown"] = render_markdown
 router = APIRouter(prefix="/menu", tags=["Menu"])
 
 S3_BUCKET_IMAGE = os.getenv("S3_BUCKET_IMAGE", "yorkiebakery-image")
+CATEGORY_DISPLAY_ORDER = [
+    "pastry",
+    "dessert",
+    "appetizer",
+    "entree",
+    "rice_and_noodles",
+    "drink",
+    "soup",
+]
+
+
+def _item_has_chef_special_tag(item: MenuItem) -> bool:
+    return bool(item.tags and any(tag.lower() == "chef special" for tag in item.tags))
+
+
+def _build_review_stats(reviews: List[Review]) -> dict:
+    review_stats = defaultdict(lambda: {"count": 0, "avg_rating": 0})
+    rating_totals = defaultdict(int)
+
+    for review in reviews:
+        key = str(review.menu_item_id)
+        review_stats[key]["count"] += 1
+        rating_totals[key] += review.rating
+
+    for key, stats in review_stats.items():
+        if stats["count"] > 0:
+            stats["avg_rating"] = round(rating_totals[key] / stats["count"], 1)
+
+    return dict(review_stats)
+
+
+def _menu_sort_key(item: MenuItem, review_stats: dict) -> tuple:
+    stats = review_stats.get(str(item.id), {"count": 0, "avg_rating": 0})
+    category = item.category or "default"
+    category_rank = (
+        CATEGORY_DISPLAY_ORDER.index(category)
+        if category in CATEGORY_DISPLAY_ORDER
+        else len(CATEGORY_DISPLAY_ORDER)
+    )
+    return (
+        category_rank,
+        0 if _item_has_chef_special_tag(item) else 1,
+        -stats["count"],
+        -stats["avg_rating"],
+        (item.title or "").lower(),
+    )
 
 
 # -------------------------------
@@ -47,40 +94,22 @@ def view_menu_page(
         dietary: List[str] = Query(None)
 ):
     try:
-        # Get all items first
         all_items = session.exec(select(MenuItem).where(MenuItem.is_available == True)).all()
+        all_reviews = session.exec(select(Review)).all()
+        review_stats = _build_review_stats(all_reviews)
 
-        # Apply dietary filters in Python if provided
         if dietary:
             filtered_items = []
             for item in all_items:
-                # Check if item has ALL of the requested dietary features (AND logic)
                 if item.dietary_features and all(diet in item.dietary_features for diet in dietary):
                     filtered_items.append(item)
             items = filtered_items
         else:
             items = all_items
 
-        # Get review counts and average ratings for all items
-        review_stats = {}
+        items = sorted(items, key=lambda item: _menu_sort_key(item, review_stats))
         for item in items:
-            reviews = session.exec(
-                select(Review)
-                .where(Review.menu_item_id == item.id)
-            ).all()
-
-            if reviews:
-                total_rating = sum(r.rating for r in reviews)
-                avg_rating = round(total_rating / len(reviews), 1)
-                review_stats[str(item.id)] = {
-                    "count": len(reviews),
-                    "avg_rating": avg_rating
-                }
-            else:
-                review_stats[str(item.id)] = {
-                    "count": 0,
-                    "avg_rating": 0
-                }
+            review_stats.setdefault(str(item.id), {"count": 0, "avg_rating": 0})
 
         cart = request.session.get("cart", {})
         cart_count = sum(cart.values())

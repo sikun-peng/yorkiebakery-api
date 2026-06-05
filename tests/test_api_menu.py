@@ -2,6 +2,7 @@ import pytest
 from uuid import UUID, uuid4
 
 from app.models.postgres.menu import MenuItem
+from app.models.postgres.review import Review
 
 
 def test_menu_view_page_renders(client):
@@ -118,6 +119,68 @@ def test_menu_view_shows_recipe_badge_when_recipe_exists(client, fake_session):
 
     assert resp.status_code == 200
     assert "📜 Recipe Available".encode("utf-8") in resp.content
+
+
+def test_menu_view_sorts_chef_special_then_review_volume_within_category(client, fake_session):
+    pastry_plain = MenuItem(
+        id=uuid4(),
+        title="Almond Tart",
+        description="Plain pastry",
+        price=8.00,
+        category="pastry",
+        tags=[],
+        flavor_profiles=["sweet"],
+        dietary_features=[],
+        is_available=True,
+        image_url="https://example.com/plain.jpg",
+        gallery_urls=[],
+    )
+    pastry_popular = MenuItem(
+        id=uuid4(),
+        title="Berry Mille-feuille",
+        description="Popular pastry",
+        price=9.00,
+        category="pastry",
+        tags=[],
+        flavor_profiles=["sweet"],
+        dietary_features=[],
+        is_available=True,
+        image_url="https://example.com/popular.jpg",
+        gallery_urls=[],
+    )
+    pastry_chef = MenuItem(
+        id=uuid4(),
+        title="Chef Kouign-Amann",
+        description="Chef special pastry",
+        price=10.00,
+        category="pastry",
+        tags=["chef special"],
+        flavor_profiles=["buttery"],
+        dietary_features=[],
+        is_available=True,
+        image_url="https://example.com/chef.jpg",
+        gallery_urls=[],
+    )
+    fake_session.menu_items[pastry_plain.id] = pastry_plain
+    fake_session.menu_items[pastry_popular.id] = pastry_popular
+    fake_session.menu_items[pastry_chef.id] = pastry_chef
+
+    fake_session.reviews.extend(
+        [
+            Review(id=uuid4(), user_id=uuid4(), menu_item_id=pastry_popular.id, rating=5, comment="great"),
+            Review(id=uuid4(), user_id=uuid4(), menu_item_id=pastry_popular.id, rating=4, comment="great 2"),
+            Review(id=uuid4(), user_id=uuid4(), menu_item_id=pastry_chef.id, rating=5, comment="chef"),
+        ]
+    )
+
+    resp = client.get("/menu/view")
+
+    assert resp.status_code == 200
+    content = resp.content.decode("utf-8")
+    chef_idx = content.index("Chef Kouign-Amann")
+    popular_idx = content.index("Berry Mille-feuille")
+    plain_idx = content.index("Almond Tart")
+    assert chef_idx < popular_idx < plain_idx
 
 
 def test_get_nonexistent_menu_item(client):
