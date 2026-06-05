@@ -1,273 +1,189 @@
--- ============================
--- PASTRY
--- ============================
-INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
-('Black Forest Cake', '黑森林蛋糕 - German chocolate cake with cherries and brandy', 'https://d2pdj881wm30p5.cloudfront.net/menu/black_forest.jpg', 'german', 'pastry',
- ARRAY['chocolate','cherry','layered'], ARRAY['sweet','rich'], ARRAY['contains_alcohol','contains_gluten','contains_dairy'], 80.00),
-
-('Macarons', '马卡龙 - French almond meringue cookies with various fillings', 'https://d2pdj881wm30p5.cloudfront.net/menu/macarons.jpg', 'french', 'pastry',
- ARRAY['macaron','almond','delicate'], ARRAY['sweet','delicate'], ARRAY['contains_nuts','gluten_free','vegetarian'], 80.00),
-
-('Cedric Grolet Pastry', '法式甜品慕斯 - French modernist fruit-inspired pastries', 'https://d2pdj881wm30p5.cloudfront.net/menu/cedric_grolet.jpg', 'french', 'pastry',
- ARRAY['mousse','modern','artistic'], ARRAY['sweet','fruity'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 100.00),
-
-('Tiramisu', '提拉米苏 - Italian coffee-flavored dessert with mascarpone', 'https://d2pdj881wm30p5.cloudfront.net/menu/tiramisu.jpg', 'italian', 'pastry',
- ARRAY['coffee','mascarpone','ladyfingers'], ARRAY['sweet','bitter','creamy'], ARRAY['contains_alcohol','contains_gluten','contains_dairy'], 60.00),
-
-('Portuguese Egg Tart', '葡式蛋挞 - Creamy custard tarts with caramelized tops', 'https://d2pdj881wm30p5.cloudfront.net/menu/egg_tart.jpg', 'macau', 'pastry',
- ARRAY['custard','tart','caramelized'], ARRAY['sweet','creamy','eggy'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 40.00),
-
-('Tiger Skin Swiss Roll', '虎皮蛋糕 - Chinese patterned cake roll with cream filling', 'https://d2pdj881wm30p5.cloudfront.net/menu/swiss_roll.jpg', 'chinese', 'pastry',
- ARRAY['swiss_roll','patterned','cream'], ARRAY['sweet','light'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 50.00),
-
-('Baileys Strawberry Cake', '百利甜酒草莓蛋糕 - Cream cake with Baileys and fresh strawberries', 'https://d2pdj881wm30p5.cloudfront.net/menu/baileys.jpg', 'fusion', 'pastry',
- ARRAY['strawberry','cream','liqueur'], ARRAY['sweet','creamy','fruity'], ARRAY['contains_alcohol','contains_gluten','contains_dairy','vegetarian'], 60.00),
-
-('Blueberry Chocolate Cake', '蓝莓巧克力蛋糕 - Chocolate cake with blueberry compote', 'https://d2pdj881wm30p5.cloudfront.net/menu/blueberry.jpg', 'fusion', 'pastry',
- ARRAY['blueberry','chocolate','layered'], ARRAY['sweet','rich','fruity'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 60.00),
-
-('Mango Mousse Cake', '爱心芒果慕斯蛋糕 - Heart-shaped mango mousse cake', 'https://d2pdj881wm30p5.cloudfront.net/menu/mango_mousse.jpg', 'fusion', 'pastry',
- ARRAY['chef special','mousse','mango','heart'], ARRAY['sweet','fruity','light'], ARRAY['contains_dairy','gluten_free','vegetarian'], 60.00),
-
-('Strawberry Mousse Cake', '爱心草莓慕斯蛋糕 - Heart-shaped strawberry mousse cake', 'https://d2pdj881wm30p5.cloudfront.net/menu/strawberry_mousse.jpg', 'fusion', 'pastry',
- ARRAY['mousse','strawberry','heart'], ARRAY['sweet','fruity','light'], ARRAY['contains_dairy','gluten_free','vegetarian'], 60.00),
-
-('Watermelon Cake', '西瓜蛋糕 - Novelty cake shaped and flavored like watermelon', 'https://d2pdj881wm30p5.cloudfront.net/menu/watermelon.jpg', 'fusion', 'pastry',
- ARRAY['chef special','watermelon','novelty','summer'], ARRAY['sweet','fruity','refreshing'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 100.00),
-
-('Cream Puffs', '泡芙 - Choux pastry puffs with vanilla, chocolate, or matcha filling', 'https://d2pdj881wm30p5.cloudfront.net/menu/cream_puff.jpg', 'french', 'pastry',
- ARRAY['choux','cream','puff'], ARRAY['sweet','creamy','light'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 60.00),
-
-('Ice Cream', '冰淇淋 - Homemade ice cream in vanilla, chocolate, or matcha', 'https://d2pdj881wm30p5.cloudfront.net/menu/ice_cream.jpg', 'french', 'pastry',
- ARRAY['ice_cream','frozen','creamy'], ARRAY['sweet','creamy','cold'], ARRAY['contains_dairy','gluten_free','vegetarian'], 30.00),
-
-('Fresh Fruit Cake', '水果蛋糕 - Cake decorated with seasonal fresh fruits', 'https://d2pdj881wm30p5.cloudfront.net/menu/fruit_cake.jpg', 'fusion', 'pastry',
- ARRAY['fruit','fresh','seasonal'], ARRAY['sweet','fruity','light'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 80.00),
-
-('Taro Cake', '芋泥蛋糕 - Soft cake with taro paste filling', 'https://d2pdj881wm30p5.cloudfront.net/menu/taro_cake.jpg', 'chinese', 'pastry',
- ARRAY['taro','purple','asian'], ARRAY['sweet','earthy','creamy'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 70.00);
-
--- ============================
--- DESSERT
--- ============================
-INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
-('Mango Pancake', '芒果班戟 - Thin crepes filled with fresh mango and cream', 'https://d2pdj881wm30p5.cloudfront.net/menu/mango_pancake.jpg', 'hong_kong', 'dessert',
- ARRAY['mango','crepe','cream'], ARRAY['sweet','fruity','creamy'], ARRAY['contains_dairy','gluten_free','vegetarian'], 40.00),
-
-('Tangyuan', '汤圆 - Glutinous rice balls in sweet syrup', 'https://d2pdj881wm30p5.cloudfront.net/menu/tang_yuan.jpg', 'chinese', 'dessert',
- ARRAY['rice_ball','sweet','traditional'], ARRAY['sweet','chewy','warm'], ARRAY['gluten_free','vegan'], 40.00),
-
-('Sticky Rice Tamale', '粽子 - Glutinous rice dumplings wrapped in bamboo leaves', 'https://d2pdj881wm30p5.cloudfront.net/menu/tamale.jpg', 'chinese', 'dessert',
- ARRAY['sticky_rice','dumpling','traditional'], ARRAY['savory','umami','aromatic'], ARRAY['gluten_free','contains_pork'], 60.00),
-
-('Mooncake', '月饼 - Traditional Chinese pastries for Mid-Autumn Festival', 'https://d2pdj881wm30p5.cloudfront.net/menu/mooncake.jpg', 'chinese', 'dessert',
- ARRAY['mooncake','festival','traditional'], ARRAY['sweet','rich','dense'], ARRAY['contains_gluten','vegetarian'], 60.00),
-
-('Animal Cookies', '动物饼干 - Buttery cookies in fun animal shapes', 'https://d2pdj881wm30p5.cloudfront.net/menu/cookie.jpg', 'american', 'dessert',
- ARRAY['chef special','cookies','butter','animal'], ARRAY['sweet','buttery','crunchy'], ARRAY['contains_gluten','contains_dairy','vegetarian'], 50.00);
-
--- ============================
--- ENTREE
--- ============================
-INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
-('Korean Fried Chicken Wings', '韩式鸡翅 - Crispy fried chicken wings with Korean seasoning', 'https://d2pdj881wm30p5.cloudfront.net/menu/chicken_wing.jpg', 'korean', 'entree',
- ARRAY['chef special','chicken','fried','spicy'], ARRAY['spicy','savory','crispy'], ARRAY['spicy'], 60.00),
-
-('Steamed Sea Bass', '清蒸鲈鱼 - Fresh sea bass steamed with ginger and scallions', 'https://d2pdj881wm30p5.cloudfront.net/menu/steaming_fish.jpg', 'chinese', 'entree',
- ARRAY['fish','steamed','healthy'], ARRAY['savory','umami','light'], ARRAY['gluten_free','contains_shellfish'], 100.00),
-
-('Sour Beef Soup', '酸汤肥牛 - Tangy beef soup with vegetables and spices', 'https://d2pdj881wm30p5.cloudfront.net/menu/sour_beef_soup.jpg', 'chinese', 'entree',
- ARRAY['soup','beef','sour'], ARRAY['sour','spicy','savory'], ARRAY['gluten_free'], 50.00),
-
-('Sichuan Spicy Chicken', '辣子鸡 - Crispy chicken with dried chilies and Sichuan peppercorns', 'https://d2pdj881wm30p5.cloudfront.net/menu/spicy_chicken.jpg', 'chinese', 'entree',
- ARRAY['chicken','sichuan','spicy'], ARRAY['spicy','numbing','savory'], ARRAY['spicy'], 60.00),
-
-('Griddle Cooked Mushrooms', '干锅茶树菇 - Tea tree mushrooms cooked in a dry pot', 'https://d2pdj881wm30p5.cloudfront.net/menu/mushrooms.jpg', 'chinese', 'entree',
- ARRAY['mushroom','griddle','vegetarian'], ARRAY['savory','umami','aromatic'], ARRAY['gluten_free','vegan'], 60.00),
-
-('Kung Pao Chicken', '宫保鸡丁 - Stir-fried chicken with peanuts and vegetables', 'https://d2pdj881wm30p5.cloudfront.net/menu/kungpao.jpg', 'chinese', 'entree',
- ARRAY['chicken','kungpao','stir_fry'], ARRAY['spicy','savory','nutty'], ARRAY['contains_nuts','gluten_free'], 40.00),
-
-('Grilled Fish', '烤鱼 - Whole fish grilled with spices and herbs', 'https://d2pdj881wm30p5.cloudfront.net/menu/grill_fish.jpg', 'chinese', 'entree',
- ARRAY['fish','grilled','whole'], ARRAY['savory','smoky','aromatic'], ARRAY['gluten_free','contains_shellfish'], 100.00),
-
-('Crystal Shrimp Dumplings', '水晶虾饺 - Translucent dumplings filled with fresh shrimp', 'https://d2pdj881wm30p5.cloudfront.net/menu/dumpling.jpg', 'chinese', 'entree',
- ARRAY['dumpling','shrimp','steamed'], ARRAY['savory','umami','delicate'], ARRAY['gluten_free','contains_shellfish'], 70.00),
-
-('Vegetable Steamed Buns', '素菜包子 - Soft steamed buns filled with mixed vegetables', 'https://d2pdj881wm30p5.cloudfront.net/menu/bum.jpg', 'chinese', 'entree',
- ARRAY['bun','steamed','vegetable'], ARRAY['savory','soft','umami'], ARRAY['vegan','contains_gluten'], 70.00),
-
-('Griddle Pork Intestines', '干锅肥肠 - Pork intestines cooked in a spicy dry pot', 'https://d2pdj881wm30p5.cloudfront.net/menu/intestines.jpg', 'chinese', 'entree',
- ARRAY['pork','intestine','griddle'], ARRAY['spicy','savory','chewy'], ARRAY['contains_pork','spicy'], 60.00),
-
-('Yangcheng Lake Hairy Crab', '阳澄湖大闸蟹 - Steamed premium hairy crab known for its sweet, delicate meat and rich golden roe', 'https://d2pdj881wm30p5.cloudfront.net/menu/hairy_crab.jpg', 'chinese', 'entree',
- ARRAY['crab','steamed','premium'], ARRAY['sweet','delicate','rich'], ARRAY['gluten_free','contains_shellfish'], 100.00),
-
-('Yuxiang Shredded Pork', '鱼香肉丝 - Shredded pork in fish-fragrant sauce', 'https://d2pdj881wm30p5.cloudfront.net/menu/shredded_pork.jpg', 'chinese', 'entree',
- ARRAY['pork','shredded','stir_fry'], ARRAY['sour','spicy','sweet'], ARRAY['contains_pork','gluten_free'], 50.00);
-
--- ============================
--- APPETIZER
--- ============================
-INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
-
--- CHINESE
-('Pork and Chive Dumplings', '韭菜猪肉饺子 - Pan-fried dumplings with pork and Chinese chives', 'https://d2pdj881wm30p5.cloudfront.net/menu/pork_dumplings.jpg', 'chinese', 'appetizer',
- ARRAY['dumpling','pork','pan_fried'], ARRAY['savory','juicy','aromatic'], ARRAY['contains_pork','contains_gluten'], 10.00),
-
-('Vegetable Spring Rolls', '素春卷 - Crispy fried rolls filled with fresh vegetables', 'https://d2pdj881wm30p5.cloudfront.net/menu/spring_rolls.jpg', 'chinese', 'appetizer',
- ARRAY['spring_roll','fried','vegetable'], ARRAY['crispy','savory','light'], ARRAY['vegan','contains_gluten'], 8.00),
-
-('Scallion Pancake', '葱油饼 - Flaky layered pancake with scallions', 'https://d2pdj881wm30p5.cloudfront.net/menu/scallion_pancake.jpg', 'chinese', 'appetizer',
- ARRAY['pancake','scallion','crispy'], ARRAY['savory','flaky','aromatic'], ARRAY['vegan','contains_gluten'], 13.00),
-
-('Fried Wontons', '炸云吞 - Crispy wontons filled with pork and shrimp', 'https://d2pdj881wm30p5.cloudfront.net/menu/fried_wontons.jpg', 'chinese', 'appetizer',
- ARRAY['wonton','fried','crispy'], ARRAY['savory','crispy','umami'], ARRAY['contains_pork','contains_shellfish','contains_gluten'], 9.00),
-
-('Cold Sesame Noodles', '凉拌芝麻面 - Chilled noodles in nutty sesame sauce', 'https://d2pdj881wm30p5.cloudfront.net/menu/sesame_noodles.jpg', 'chinese', 'appetizer',
- ARRAY['noodles','sesame','cold'], ARRAY['nutty','savory','tangy'], ARRAY['contains_nuts','contains_gluten','vegan'], 12.00),
-
-('Sichuan Wontons in Chili Oil', '红油抄手 - Wontons in spicy chili oil and Sichuan pepper', 'https://d2pdj881wm30p5.cloudfront.net/menu/sichuan_wontons.jpg', 'chinese', 'appetizer',
- ARRAY['wonton','spicy','chili_oil'], ARRAY['spicy','numbing','savory'], ARRAY['contains_pork','contains_gluten','spicy'], 14.00),
-
-('Cucumber Salad', '拍黄瓜 - Smashed cucumber with garlic and vinegar', 'https://d2pdj881wm30p5.cloudfront.net/menu/cucumber_salad.jpg', 'chinese', 'appetizer',
- ARRAY['cucumber','salad','cold'], ARRAY['fresh','tangy','garlicky'], ARRAY['vegan','gluten_free'], 9.00),
-
-('Xiaolongbao', '小笼包 - Soup dumplings with pork filling', 'https://d2pdj881wm30p5.cloudfront.net/menu/xiaolongbao.jpg', 'chinese', 'appetizer',
- ARRAY['dumpling','pork','steamed'], ARRAY['savory','juicy','umami'], ARRAY['contains_pork','contains_gluten'], 16.00),
-
--- JAPANESE
-('Edamame', '枝豆 - Steamed young soybeans with sea salt', 'https://d2pdj881wm30p5.cloudfront.net/menu/edamame.jpg', 'japanese', 'appetizer',
- ARRAY['soybean','steamed','healthy'], ARRAY['savory','fresh','light'], ARRAY['vegan','gluten_free'], 9.00),
-
-('Chicken Karaage', '唐揚げ - Japanese fried chicken marinated in soy and ginger', 'https://d2pdj881wm30p5.cloudfront.net/menu/karaage.jpg', 'japanese', 'appetizer',
- ARRAY['chicken','fried','crispy'], ARRAY['savory','garlicky','crispy'], ARRAY['contains_gluten'], 13.00),
-
-('Seaweed Salad', '海藻サラダ - Chilled seaweed salad with sesame dressing', 'https://d2pdj881wm30p5.cloudfront.net/menu/seaweed_salad.jpg', 'japanese', 'appetizer',
- ARRAY['seaweed','salad','cold'], ARRAY['savory','tangy','refreshing'], ARRAY['vegan','gluten_free'], 6.00),
-
-('Takoyaki', 'たこ焼き - Octopus balls with takoyaki sauce and bonito flakes', 'https://d2pdj881wm30p5.cloudfront.net/menu/takoyaki.jpg', 'japanese', 'appetizer',
- ARRAY['octopus','fried','balls'], ARRAY['savory','umami','rich'], ARRAY['contains_shellfish','contains_gluten'], 8.00),
-
-('Agedashi Tofu', '揚げ出し豆腐 - Deep-fried tofu in dashi broth', 'https://d2pdj881wm30p5.cloudfront.net/menu/agedashi_tofu.jpg', 'japanese', 'appetizer',
- ARRAY['tofu','fried','broth'], ARRAY['savory','umami','delicate'], ARRAY['vegetarian','contains_gluten'], 7.00),
-
-('Yakitori', '焼き鳥 - Grilled chicken skewers with teriyaki glaze', 'https://d2pdj881wm30p5.cloudfront.net/menu/yakitori.jpg', 'japanese', 'appetizer',
- ARRAY['chicken','grilled','skewers'], ARRAY['savory','sweet','smoky'], ARRAY['gluten_free'], 19.00),
-
-('Miso Soup', '味噌汁 - Traditional Japanese soup with tofu and seaweed', 'https://d2pdj881wm30p5.cloudfront.net/menu/miso_soup.jpg', 'japanese', 'appetizer',
- ARRAY['soup','miso','tofu'], ARRAY['savory','umami','warm'], ARRAY['vegan','gluten_free'], 5.00),
-
--- KOREAN
-('Kimchi', '김치 - Fermented spicy cabbage', 'https://d2pdj881wm30p5.cloudfront.net/menu/kimchi.jpg', 'korean', 'appetizer',
- ARRAY['fermented','spicy','cabbage'], ARRAY['spicy','tangy','funky'], ARRAY['vegan','gluten_free','spicy'], 25.00),
-
-('Korean Fried Chicken', '양념치킨 - Crispy chicken with sweet and spicy glaze', 'https://d2pdj881wm30p5.cloudfront.net/menu/korean_fried_chicken.jpg', 'korean', 'appetizer',
- ARRAY['chicken','fried','glazed'], ARRAY['spicy','sweet','crispy'], ARRAY['spicy','contains_gluten'], 69.00),
-
-('Japchae', '잡채 - Stir-fried glass noodles with vegetables', 'https://d2pdj881wm30p5.cloudfront.net/menu/japchae.jpg', 'korean', 'appetizer',
- ARRAY['noodles','stir_fry','vegetable'], ARRAY['savory','sweet','umami'], ARRAY['vegan','gluten_free'], 45.00),
-
-('Tteokbokki', '떡볶이 - Spicy rice cakes in gochujang sauce', 'https://d2pdj881wm30p5.cloudfront.net/menu/tteokbokki.jpg', 'korean', 'appetizer',
- ARRAY['rice_cake','spicy','chewy'], ARRAY['spicy','sweet','savory'], ARRAY['spicy','gluten_free','vegetarian'], 16.00),
-
-('Seafood Pancake', '해물파전 - Savory scallion pancake with seafood', 'https://d2pdj881wm30p5.cloudfront.net/menu/seafood_pancake.jpg', 'korean', 'appetizer',
- ARRAY['pancake','scallion','seafood'], ARRAY['savory','crispy','umami'], ARRAY['contains_shellfish','contains_gluten'], 14.00),
-
--- THAI
-('Chicken Satay', 'สะเต๊ะไก่ - Grilled chicken skewers with peanut sauce', 'https://d2pdj881wm30p5.cloudfront.net/menu/chicken_satay.jpg', 'thai', 'appetizer',
- ARRAY['chicken','grilled','skewers'], ARRAY['savory','nutty','smoky'], ARRAY['contains_nuts','gluten_free'], 9.00),
-
-('Thai Fish Cakes', 'ทอดมันปลา - Deep-fried spiced fish patties', 'https://d2pdj881wm30p5.cloudfront.net/menu/fish_cakes.jpg', 'thai', 'appetizer',
- ARRAY['fish','fried','spicy'], ARRAY['savory','aromatic','bouncy'], ARRAY['contains_shellfish','gluten_free'], 13.00),
-
-('Som Tam', 'ส้มตำ - Spicy green papaya salad', 'https://d2pdj881wm30p5.cloudfront.net/menu/papaya_salad.jpg', 'thai', 'appetizer',
- ARRAY['papaya','salad','spicy'], ARRAY['spicy','sour','sweet'], ARRAY['spicy','gluten_free','vegan','contains_nuts'], 13.00),
-
-('Larb Gai', 'ลาบไก่ - Spicy Thai chicken salad with herbs', 'https://d2pdj881wm30p5.cloudfront.net/menu/larb_gai.jpg', 'thai', 'appetizer',
- ARRAY['chicken','salad','spicy'], ARRAY['spicy','tangy','herby'], ARRAY['spicy','gluten_free'], 14.00),
-
-('Tom Yum Soup', 'ต้มยำกุ้ง - Spicy and sour Thai soup with shrimp', 'https://d2pdj881wm30p5.cloudfront.net/menu/tom_yum.jpg', 'thai', 'appetizer',
- ARRAY['soup','shrimp','spicy'], ARRAY['spicy','sour','aromatic'], ARRAY['spicy','gluten_free','contains_shellfish'], 9.00),
-
--- VIETNAMESE
-('Vietnamese Spring Rolls', 'Gỏi cuốn - Fresh rolls with shrimp, pork, and herbs', 'https://d2pdj881wm30p5.cloudfront.net/menu/vietnamese_spring_rolls.jpg', 'vietnamese', 'appetizer',
- ARRAY['spring_roll','fresh','shrimp'], ARRAY['fresh','light','herby'], ARRAY['contains_shellfish','contains_pork','gluten_free'], 9.00),
-
--- HONG KONG
-('Har Gow', '蝦餃 - Steamed shrimp dumplings with translucent skin', 'https://d2pdj881wm30p5.cloudfront.net/menu/har_gow.jpg', 'hong_kong', 'appetizer',
- ARRAY['dumpling','shrimp','steamed'], ARRAY['savory','delicate','umami'], ARRAY['contains_shellfish','gluten_free'], 9.00),
-
-('Siu Mai', '燒賣 - Cantonese pork and shrimp dumplings', 'https://d2pdj881wm30p5.cloudfront.net/menu/siu_mai.jpg', 'hong_kong', 'appetizer',
- ARRAY['dumpling','pork','steamed'], ARRAY['savory','juicy','umami'], ARRAY['contains_pork','contains_shellfish','gluten_free'], 9.00),
-
-('Char Siu Bao', '叉燒包 - Steamed buns with BBQ pork filling', 'https://d2pdj881wm30p5.cloudfront.net/menu/char_siu_bao.jpg', 'hong_kong', 'appetizer',
- ARRAY['bun','bbq_pork','steamed'], ARRAY['savory','sweet','soft'], ARRAY['contains_pork','contains_gluten'], 10.00),
-
-('Cheung Fun', '腸粉 - Steamed rice noodle rolls with shrimp or beef', 'https://d2pdj881wm30p5.cloudfront.net/menu/cheung_fun.jpg', 'hong_kong', 'appetizer',
- ARRAY['rice_noodle','steamed','shrimp'], ARRAY['savory','silky','umami'], ARRAY['contains_shellfish','gluten_free'], 5.00),
-
--- FUSION
-('Crispy Tofu Bites', '脆皮豆腐 - Fried tofu with sweet chili sauce', 'https://d2pdj881wm30p5.cloudfront.net/menu/crispy_tofu.jpg', 'fusion', 'appetizer',
- ARRAY['tofu','fried','crispy'], ARRAY['savory','crispy','sweet'], ARRAY['vegan','gluten_free'], 13.00);
-
--- ============================
--- RICE & NOODLES
--- ============================
-INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
-('Steamed White Rice', '白米饭 - Plain steamed jasmine rice', 'https://d2pdj881wm30p5.cloudfront.net/menu/white_rice.jpg', 'chinese', 'rice_and_noodles',
- ARRAY['rice','steamed','plain'], ARRAY['neutral','soft'], ARRAY['vegan','gluten_free'], 3.00),
-
-('Haiga Rice', '胚芽米 - Japanese partially polished rice with germ', 'https://d2pdj881wm30p5.cloudfront.net/menu/haiga_rice.jpg', 'japanese', 'rice_and_noodles',
- ARRAY['rice','japanese','haiga'], ARRAY['nutty','chewy'], ARRAY['vegan','gluten_free'], 4.00),
-
-('Chongqing Noodles', '重庆小面 - Spicy Sichuan-style noodles with broth', 'https://d2pdj881wm30p5.cloudfront.net/menu/chongqing_noodles.jpg', 'chinese', 'rice_and_noodles',
- ARRAY['noodles','spicy','sichuan'], ARRAY['spicy','numbing','savory'], ARRAY['contains_gluten', 'spicy'], 59.00),
-
-('Beef Noodles', '李先生加州牛肉面 - Beef broth noodles with tender beef slices', 'https://d2pdj881wm30p5.cloudfront.net/menu/beef_noodles.jpg', 'taiwanese', 'rice_and_noodles',
- ARRAY['chef special','noodles','beef','soup'], ARRAY['savory','rich','umami'], ARRAY['contains_gluten'], 59.00);
-
-
--- ============================
--- DRINKS
--- ============================
-INSERT INTO menu_item (title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price) VALUES
-('Boba Milk Tea', '珍珠奶茶 - Sweet tea with tapioca pearls and milk', 'https://d2pdj881wm30p5.cloudfront.net/menu/boba_milk_tea.jpg', 'taiwanese', 'drink',
- ARRAY['bubble_tea','tapioca','milky'], ARRAY['sweet','creamy','chewy'], ARRAY['contains_dairy','vegetarian'], 7.00),
-
-('American Black Coffee', '美式黑咖啡 - Classic brewed black coffee', 'https://d2pdj881wm30p5.cloudfront.net/menu/black_coffee.jpg', 'american', 'drink',
- ARRAY['coffee','black','brewed'], ARRAY['bitter','bold','aromatic'], ARRAY['vegan','gluten_free'], 4.00),
-
-('Espresso', '意式浓缩咖啡 - Strong concentrated coffee shot', 'https://d2pdj881wm30p5.cloudfront.net/menu/espresso.jpg', 'italian', 'drink',
- ARRAY['espresso','strong','concentrated'], ARRAY['bitter','intense','rich'], ARRAY['vegan','gluten_free'], 4.00),
-
-('Latte', '拿铁咖啡 - Espresso with steamed milk', 'https://d2pdj881wm30p5.cloudfront.net/menu/latte.jpg', 'italian', 'drink',
- ARRAY['latte','milky','espresso'], ARRAY['creamy','smooth','balanced'], ARRAY['contains_dairy','vegetarian'], 6.00),
-
-('Cappuccino', '卡布奇诺 - Espresso with equal parts steamed milk and foam', 'https://d2pdj881wm30p5.cloudfront.net/menu/cappuccino.jpg', 'italian', 'drink',
- ARRAY['cappuccino','foamy','espresso'], ARRAY['creamy','light','balanced'], ARRAY['contains_dairy','vegetarian'], 6.00),
-
-('Matcha Latte', '抹茶拿铁 - Green tea powder with steamed milk', 'https://d2pdj881wm30p5.cloudfront.net/menu/matcha_latte.jpg', 'japanese', 'drink',
- ARRAY['matcha','green_tea','milky'], ARRAY['earthy','creamy','sweet'], ARRAY['contains_dairy','vegetarian'], 6.00),
-
-
-('Thai Iced Tea', '泰式冰奶茶 - Sweet spiced tea with condensed milk', 'https://d2pdj881wm30p5.cloudfront.net/menu/thai_tea.jpg', 'thai', 'drink',
- ARRAY['thai_tea','orange','sweet'], ARRAY['sweet','creamy','spiced'], ARRAY['contains_dairy','vegetarian'], 7.00),
-
-('Lemonade', '新鲜柠檬水 - Freshly squeezed lemon with sugar', 'https://d2pdj881wm30p5.cloudfront.net/menu/lemonade.jpg', 'american', 'drink',
- ARRAY['lemonade','refreshing','citrus'], ARRAY['sour','sweet','refreshing'], ARRAY['vegan','gluten_free'], 5.00),
-
-('Iced Americano', '冰美式咖啡 - Espresso shots over ice and water', 'https://d2pdj881wm30p5.cloudfront.net/menu/americano_iced.jpg', 'american', 'drink',
- ARRAY['iced_coffee','cold','refreshing'], ARRAY['bold','smooth','refreshing'], ARRAY['vegan','gluten_free'], 4.00),
-
-('Mocha', '摩卡咖啡 - Espresso with chocolate and steamed milk', 'https://d2pdj881wm30p5.cloudfront.net/menu/mocha.jpg', 'italian', 'drink',
- ARRAY['mocha','chocolate','coffee'], ARRAY['sweet','chocolatey','creamy'], ARRAY['contains_dairy','vegetarian'], 6.00),
-
-('Green Tea', '绿茶 - Traditional Japanese green tea', 'https://d2pdj881wm30p5.cloudfront.net/menu/green_tea.jpg', 'japanese', 'drink',
- ARRAY['green_tea','traditional','healthy'], ARRAY['earthy','grassy','light'], ARRAY['vegan','gluten_free'], 3.00),
-
-('Orange Juice', '鲜榨橙汁 - Freshly squeezed orange juice', 'https://d2pdj881wm30p5.cloudfront.net/menu/orange_juice.jpg', 'american', 'drink',
- ARRAY['orange_juice','fresh','vitamin_c'], ARRAY['sweet','tangy','refreshing'], ARRAY['vegan','gluten_free'], 5.00),
-
-('Soda', '汽水 - Various carbonated soft drinks', '', 'american', 'drink',
- ARRAY['soda','carbonated','refreshing'], ARRAY['sweet','fizzy','cold'], ARRAY['vegan','gluten_free'], 3.00);
+-- Snapshot seed for current menu items.
+-- This replaces the older split between menu seed data and mock menu data.
+
+COPY public.menu_item (id, title, description, image_url, origin, category, tags, flavor_profiles, dietary_features, price, is_available, gallery_urls, recipe, created_at) FROM stdin;
+e80fc91a-3b4d-46ee-a26b-639bcfa4d67e	Tiramisu	提拉米苏 - Italian coffee-flavored dessert with mascarpone	https://d2pdj881wm30p5.cloudfront.net/menu/tiramisu.jpg	italian	pastry	{coffee,mascarpone,ladyfingers}	{sweet,bitter,creamy}	{contains_alcohol,contains_gluten,contains_dairy}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+4fe7ac4a-ad28-492f-8392-b066b8cc0ca9	Tiger Skin Swiss Roll	虎皮蛋糕 - Chinese patterned cake roll with cream filling	https://d2pdj881wm30p5.cloudfront.net/menu/swiss_roll.jpg	chinese	pastry	{swiss_roll,patterned,cream}	{sweet,light}	{contains_gluten,contains_dairy,vegetarian}	50.00	t	{}	\N	2025-11-26 18:24:18.76515
+50a8c703-b3a2-49d8-8f2e-dfa258024208	Baileys Strawberry Cake	百利甜酒草莓蛋糕 - Cream cake with Baileys and fresh strawberries	https://d2pdj881wm30p5.cloudfront.net/menu/baileys.jpg	fusion	pastry	{strawberry,cream,liqueur}	{sweet,creamy,fruity}	{contains_alcohol,contains_gluten,contains_dairy,vegetarian}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+3f89d217-5219-4b8c-8b2a-2c6ece021d00	Blueberry Chocolate Cake	蓝莓巧克力蛋糕 - Chocolate cake with blueberry compote	https://d2pdj881wm30p5.cloudfront.net/menu/blueberry.jpg	fusion	pastry	{blueberry,chocolate,layered}	{sweet,rich,fruity}	{contains_gluten,contains_dairy,vegetarian}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+abcb2b6e-4e9b-4e00-8f98-cb4223f7d8ac	Taro Cake	芋泥蛋糕 - Soft cake with taro paste filling	https://d2pdj881wm30p5.cloudfront.net/menu/taro_cake.jpg	chinese	pastry	{taro,purple,asian}	{sweet,earthy,creamy}	{contains_gluten,contains_dairy,vegetarian}	70.00	t	{}	\N	2025-11-26 18:24:18.76515
+dcf07145-2c15-40de-93f5-3ea71098a61f	Mango Pancake	芒果班戟 - Thin crepes filled with fresh mango and cream	https://d2pdj881wm30p5.cloudfront.net/menu/mango_pancake.jpg	hong_kong	dessert	{mango,crepe,cream}	{sweet,fruity,creamy}	{contains_dairy,gluten_free,vegetarian}	40.00	t	{}	\N	2025-11-26 18:24:18.76515
+bd516e7d-9f1b-4d86-b16e-d6f9166c0689	Tangyuan	汤圆 - Glutinous rice balls in sweet syrup	https://d2pdj881wm30p5.cloudfront.net/menu/tang_yuan.jpg	chinese	dessert	{rice_ball,sweet,traditional}	{sweet,chewy,warm}	{gluten_free,vegan}	40.00	t	{}	\N	2025-11-26 18:24:18.76515
+fb1018c6-17f2-4504-98e7-204a8bc0039c	Sticky Rice Tamale	粽子 - Glutinous rice dumplings wrapped in bamboo leaves	https://d2pdj881wm30p5.cloudfront.net/menu/tamale.jpg	chinese	dessert	{sticky_rice,dumpling,traditional}	{savory,umami,aromatic}	{gluten_free,contains_pork}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+ee37c730-777c-4114-a414-5be7d4231f02	Mooncake	月饼 - Traditional Chinese pastries for Mid-Autumn Festival	https://d2pdj881wm30p5.cloudfront.net/menu/mooncake.jpg	chinese	dessert	{mooncake,festival,traditional}	{sweet,rich,dense}	{contains_gluten,vegetarian}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+3b2f2d7c-1efa-40c6-80fc-437b28ea3659	Steamed Sea Bass	清蒸鲈鱼 - Fresh sea bass steamed with ginger and scallions	https://d2pdj881wm30p5.cloudfront.net/menu/steaming_fish.jpg	chinese	entree	{fish,steamed,healthy}	{savory,umami,light}	{gluten_free,contains_shellfish}	100.00	t	{}	\N	2025-11-26 18:24:18.76515
+0980861e-3048-4f73-b4c5-95fb96af3af6	Sour Beef Soup	酸汤肥牛 - Tangy beef soup with vegetables and spices	https://d2pdj881wm30p5.cloudfront.net/menu/sour_beef_soup.jpg	chinese	entree	{soup,beef,sour}	{sour,spicy,savory}	{gluten_free}	50.00	t	{}	\N	2025-11-26 18:24:18.76515
+e5b63104-6366-480c-b7e2-f0a72ab6ffb5	Strawberry Mousse Cake	爱心草莓慕斯蛋糕 - Heart-shaped strawberry mousse cake	https://d2pdj881wm30p5.cloudfront.net/menu/strawberry_mousse.jpg	fusion	pastry	{"chef special",mousse,strawberry,heart}	{sweet,fruity,light}	{contains_dairy,gluten_free,vegetarian}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+3f96ad57-0840-4c5e-9340-c638c14a63be	Animal Cookies	动物饼干 - Buttery cookies in fun animal shapes	https://d2pdj881wm30p5.cloudfront.net/menu/cookie.jpg	american	dessert	{"chef special",cookies,butter,animal}	{sweet,buttery,crunchy}	{contains_gluten,contains_dairy,vegetarian}	50.00	t	{}	\N	2025-11-26 18:24:18.76515
+a48dc467-96ef-4f65-8b8d-bf379792fe3d	Portuguese Egg Tart	葡式蛋挞 - Creamy custard tarts with caramelized tops	https://d2pdj881wm30p5.cloudfront.net/menu/egg_tart.jpg	macau	pastry	{custard,tart,caramelized}	{sweet,creamy,eggy}	{contains_gluten,contains_dairy,vegetarian}	40.00	t	{}	# KFC-Style Portuguese Egg Tarts\r\n\r\nA simple and beginner-friendly Portuguese egg tart recipe inspired by the popular KFC-style egg tarts. The filling is smooth, creamy, and lightly sweet with a flaky pastry shell.\r\n\r\n## Yield\r\n\r\n- Approximately 10 egg tarts\r\n\r\n## Equipment\r\n\r\n- Mixing bowl\r\n- Whisk\r\n- Fine mesh strainer\r\n- Measuring cup or pouring jug\r\n- Oven\r\n- Egg tart molds or muffin tin\r\n\r\n## Ingredients\r\n\r\n### Custard Filling\r\n\r\n- 40 g condensed milk\r\n- 100 ml whole milk\r\n- 100 g heavy cream\r\n- 15 g caster sugar (superfine sugar)\r\n- 3 egg yolks\r\n\r\n### Pastry\r\n\r\n- 10 egg tart shells\r\n\r\n### Optional Fillings\r\n\r\n- Blueberries\r\n- Chocolate chips\r\n- Cream cheese\r\n\r\n---\r\n\r\n## Step 1: Prepare the Custard\r\n\r\n1. Combine the condensed milk, whole milk, heavy cream, and sugar in a mixing bowl.\r\n2. Whisk until the sugar is fully dissolved.\r\n3. Add the egg yolks and whisk until smooth.\r\n\r\n> Avoid excessive whisking to minimize air bubbles.\r\n\r\n---\r\n\r\n## Step 2: Strain and Fill\r\n\r\n1. Strain the custard mixture through a fine mesh sieve 2–3 times.\r\n2. Transfer the custard to a measuring cup or pouring jug.\r\n3. Fill each tart shell approximately 80–90% full.\r\n4. Add optional fillings if desired.\r\n\r\n> Multiple rounds of straining help create a silky-smooth custard.\r\n\r\n---\r\n\r\n## Step 3: Bake\r\n\r\n1. Preheat the oven to **390°F (200°C)**.\r\n2. Bake for **20–25 minutes**.\r\n3. Remove when the custard is set and the surface develops light golden spots.\r\n\r\n---\r\n\r\n## Serving Notes\r\n\r\n- Best served warm.\r\n- Refrigerate leftovers for up to 2 days.\r\n- Reheat in an air fryer at **320°F (160°C)** for 3–5 minutes.\r\n\r\n---\r\n\r\n## Summary\r\n\r\n1. Mix all custard ingredients.\r\n2. Strain 2–3 times.\r\n3. Fill tart shells.\r\n4. Bake at **390°F (200°C)** for **20–25 minutes**.\r\n5. Cool slightly and serve.\r\n\r\nThe result is a creamy, silky custard with a flaky, buttery crust similar to the popular KFC-style Portuguese egg tart.	2025-11-26 18:24:18.76515
+75953b34-9a60-4caa-abc8-995cbae208ae	Sichuan Spicy Chicken	辣子鸡 - Crispy chicken with dried chilies and Sichuan peppercorns	https://d2pdj881wm30p5.cloudfront.net/menu/spicy_chicken.jpg	chinese	entree	{chicken,sichuan,spicy}	{spicy,numbing,savory}	{gluten_free}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+5c264c7f-5970-47c2-a731-ba52bf405c11	Griddle Cooked Mushrooms	干锅茶树菇 - Tea tree mushrooms cooked in a dry pot	https://d2pdj881wm30p5.cloudfront.net/menu/mushrooms.jpg	chinese	entree	{mushroom,griddle,vegetarian}	{savory,umami,aromatic}	{gluten_free,vegan}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+bb94d506-a9f5-4a2e-a48a-a65f200e4066	Kung Pao Chicken	宫保鸡丁 - Stir-fried chicken with peanuts and vegetables	https://d2pdj881wm30p5.cloudfront.net/menu/kungpao.jpg	chinese	entree	{chicken,kungpao,stir_fry}	{spicy,savory,nutty}	{contains_nuts,gluten_free}	40.00	t	{}	\N	2025-11-26 18:24:18.76515
+fe6cb04d-dacf-48ad-a7c7-1d30fcff0841	Grilled Fish	烤鱼 - Whole fish grilled with spices and herbs	https://d2pdj881wm30p5.cloudfront.net/menu/grill_fish.jpg	chinese	entree	{fish,grilled,whole}	{savory,smoky,aromatic}	{gluten_free,contains_shellfish}	100.00	t	{}	\N	2025-11-26 18:24:18.76515
+67c41ea4-6403-4caf-8d37-332daf6599df	Crystal Shrimp Dumplings	水晶虾饺 - Translucent dumplings filled with fresh shrimp	https://d2pdj881wm30p5.cloudfront.net/menu/dumpling.jpg	chinese	entree	{dumpling,shrimp,steamed}	{savory,umami,delicate}	{gluten_free,contains_shellfish}	70.00	t	{}	\N	2025-11-26 18:24:18.76515
+0dafe16d-120f-4602-96bb-2c694654b103	Vegetable Steamed Buns	素菜包子 - Soft steamed buns filled with mixed vegetables	https://d2pdj881wm30p5.cloudfront.net/menu/bum.jpg	chinese	entree	{bun,steamed,vegetable}	{savory,soft,umami}	{vegan,contains_gluten}	70.00	t	{}	\N	2025-11-26 18:24:18.76515
+87221de5-8a8e-4919-b320-0be278cd9c18	Griddle Pork Intestines	干锅肥肠 - Pork intestines cooked in a spicy dry pot	https://d2pdj881wm30p5.cloudfront.net/menu/intestines.jpg	chinese	entree	{pork,intestine,griddle}	{spicy,savory,chewy}	{contains_pork,gluten_free}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+54df68b1-26ae-447b-b8c7-b81b3b1dd8ff	Yuxiang Shredded Pork	鱼香肉丝 - Shredded pork in fish-fragrant sauce	https://d2pdj881wm30p5.cloudfront.net/menu/shredded_pork.jpg	chinese	entree	{pork,shredded,stir_fry}	{sour,spicy,sweet}	{contains_pork,gluten_free}	50.00	t	{}	\N	2025-11-26 18:24:18.76515
+fb7c569f-5c2c-41be-8bd9-b5318e2883f6	Chongqing Noodles	重庆小面 - Spicy Sichuan-style noodles with broth	https://d2pdj881wm30p5.cloudfront.net/menu/chongqing_noodles.jpg	chinese	rice_and_noodles	{noodles,spicy,sichuan}	{spicy,numbing,savory}	{contains_gluten}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+9f61c800-98fd-457e-b252-5013c9c90613	Rock Sugar Pear	冰糖雪梨 - Slow simmered snow pear with crystal rock sugar	https://d2pdj881wm30p5.cloudfront.net/menu/rock_sugar_pear.jpg	chinese	dessert	{pear,traditional,warm,herbal}	{light,sweet,soothing}	{gluten_free}	40.00	t	{}		2025-12-02 05:33:10.755326
+6b6b4367-662a-44fb-98ce-3cd935674f0f	Fried Wontons	炸云吞 - Crispy wontons filled with pork and shrimp	https://d2pdj881wm30p5.cloudfront.net/menu/fried_wontons.jpg	chinese	appetizer	{wonton,fried,crispy}	{savory,crispy,umami}	{contains_pork,contains_shellfish,contains_gluten}	10.00	t	{}	\N	2025-12-04 00:38:28.011331
+b33513a8-7a13-4684-a682-07ea63304c21	Cucumber Salad	拍黄瓜 - Smashed cucumber with garlic and vinegar	https://d2pdj881wm30p5.cloudfront.net/menu/cucumber_salad.jpg	chinese	appetizer	{cucumber,salad,cold}	{fresh,tangy,garlicky}	{vegan,gluten_free}	10.00	t	{}	\N	2025-12-04 00:38:28.011331
+d7d48cb2-16c8-44e4-bdfd-54df0ee71e35	Edamame	枝豆 - Steamed young soybeans with sea salt	https://d2pdj881wm30p5.cloudfront.net/menu/edamame.jpg	japanese	appetizer	{soybean,steamed,healthy}	{savory,fresh,light}	{vegan,gluten_free}	10.00	t	{}	\N	2025-12-04 00:38:28.011331
+a9409258-4b6a-41c2-ab19-6554e8404631	Yakitori	焼き鳥 - Grilled chicken skewers with teriyaki glaze	https://d2pdj881wm30p5.cloudfront.net/menu/yakitori.jpg	japanese	appetizer	{chicken,grilled,skewers}	{savory,sweet,smoky}	{gluten_free}	20.00	t	{}	\N	2025-12-04 00:38:28.011331
+bd495b91-e1d7-47bb-be3b-0c02a0f3cf86	Chicken Satay	สะเต๊ะไก่ - Grilled chicken skewers with peanut sauce	https://d2pdj881wm30p5.cloudfront.net/menu/chicken_satay.jpg	thai	appetizer	{chicken,grilled,skewers}	{savory,nutty,smoky}	{contains_nuts,gluten_free}	10.00	t	{}	\N	2025-12-04 00:38:28.011331
+e31d009f-ce69-4892-9d8b-2f126cacfc2e	Tom Yum Soup	ต้มยำกุ้ง - Spicy and sour Thai soup with shrimp	https://d2pdj881wm30p5.cloudfront.net/menu/tom_yum.jpg	thai	appetizer	{soup,shrimp,spicy}	{spicy,sour,aromatic}	{spicy,gluten_free,contains_shellfish}	10.00	t	{}	\N	2025-12-04 00:38:28.011331
+bd54a22b-e48a-48fb-8e0f-464d089ea258	Mango Mousse Cake	爱心芒果慕斯蛋糕 - Heart-shaped mango mousse cake	https://d2pdj881wm30p5.cloudfront.net/menu/mango_mousse.jpg	fusion	pastry	{"chef special",mousse,mango,heart}	{sweet,fruity,light}	{contains_dairy,gluten_free,vegetarian}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+1b3d1214-c66a-4f17-8c8e-418bf6a56e0c	Beef Noodles	李先生加州牛肉面 - Beef broth noodles with tender beef slices	https://d2pdj881wm30p5.cloudfront.net/menu/beef_noodles.jpg	taiwanese	rice_and_noodles	{"chef special",noodles,beef,soup}	{savory,rich,umami}	{contains_gluten}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+4de25a61-b226-49bd-b02c-642a399810b2	Vietnamese Spring Rolls	Gỏi cuốn - Fresh rolls with shrimp, pork, and herbs	https://d2pdj881wm30p5.cloudfront.net/menu/vietnamese_spring_rolls.jpg	vietnamese	appetizer	{spring_roll,fresh,shrimp}	{fresh,light,herby}	{contains_shellfish,contains_pork,gluten_free}	10.00	t	{}	\N	2025-12-04 00:38:28.011331
+0fea9d0b-720a-4832-a2ac-4027342db283	Har Gow	蝦餃 - Steamed shrimp dumplings with translucent skin	https://d2pdj881wm30p5.cloudfront.net/menu/har_gow.jpg	hong_kong	appetizer	{dumpling,shrimp,steamed}	{savory,delicate,umami}	{contains_shellfish,gluten_free}	10.00	t	{}	\N	2025-12-04 00:38:28.011331
+bb9a94c9-c50a-4446-8370-ab5de7c87d66	Siu Mai	燒賣 - Cantonese pork and shrimp dumplings	https://d2pdj881wm30p5.cloudfront.net/menu/siu_mai.jpg	hong_kong	appetizer	{dumpling,pork,steamed}	{savory,juicy,umami}	{contains_pork,contains_shellfish,gluten_free}	10.00	t	{}	\N	2025-12-04 00:38:28.011331
+0b57a255-d955-48b6-9154-8c5771943716	Soda	汽水 - Various carbonated soft drinks		american	drink	{soda,carbonated,refreshing}	{sweet,fizzy,cold}	{vegan,gluten_free}	3.00	t	{}	\N	2025-11-26 18:24:18.76515
+1b2aca9b-d6bb-469f-84c0-0cfdd16324b8	Matcha Roll Cake	Soft matcha sponge rolled with light cream.		japanese	dessert	{matcha,roll_cake}	{earthy,light,sweet}	{contains_dairy}	6.00	f	{}	\N	2025-11-26 18:24:18.76515
+6fbf5e14-3728-445d-89ca-2cb4f428479a	Taro Mochi Donut	Chewy donut made with taro glaze.		taiwanese	dessert	{taro,mochi}	{chewy,sweet}	{gluten_free}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+015ca750-34e8-44d8-903e-557686cb4d3d	Mini Éclair	Small choux filled with vanilla cream.		french	dessert	{eclair,vanilla}	{light,sweet}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+b37914d9-59c6-4c5e-b24a-591cfd556ac9	Sweet Potato Bread	Korean-style sweet potato–shaped bun.		korean	pastry	{sweet_potato}	{earthy,sweet}	{vegetarian}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+78fb7aaa-0cc3-4060-ba79-ede552293dd6	Thai Coconut Cookie	Crispy coconut cookie with toasted edges.		thai	dessert	{coconut,cookie}	{sweet,toasty}	{gluten_free}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+27121a91-1cce-49e6-8e14-65bfd87edd58	Chocolate Biscotti Mini	Crunchy chocolate biscotti.		italian	dessert	{biscotti,chocolate}	{crunchy,sweet}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+0c28033e-45aa-493b-85e9-bf3e73714911	Ube Butter Cookie	Chewy purple yam cookie.		fusion	dessert	{ube,cookie}	{chewy,sweet}	{gluten_free}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+200e1e3a-2c44-437e-b64d-83c8bcc5b78c	Watermelon Cake	西瓜蛋糕 - Novelty cake shaped and flavored like watermelon	https://d2pdj881wm30p5.cloudfront.net/menu/watermelon.jpg	fusion	pastry	{"chef special",watermelon,novelty,summer}	{"chef special",sweet,fruity,refreshing}	{contains_gluten,contains_dairy,vegetarian}	100.00	t	{}	\N	2025-11-26 18:24:18.76515
+3bbec78c-c2e7-46ab-bf8f-ce73d87a42c8	Black Forest Cake	黑森林蛋糕 - German chocolate cake with cherries and brandy	https://d2pdj881wm30p5.cloudfront.net/menu/black_forest.jpg	german	pastry	{chocolate,cherry,layered}	{sweet,rich}	{contains_alcohol,contains_gluten,contains_dairy}	80.00	t	{}	\N	2025-11-26 18:24:18.76515
+82ea5c84-13a1-44fa-b3bf-df8dcfd9fe9a	Fresh Fruit Cake	水果蛋糕 - Cake decorated with seasonal fresh fruits	https://d2pdj881wm30p5.cloudfront.net/menu/fruit_cake.jpg	fusion	pastry	{fruit,fresh,seasonal}	{sweet,fruity,light}	{contains_gluten,contains_dairy,vegetarian}	80.00	t	{}	\N	2025-11-26 18:24:18.76515
+9bd6295d-22a0-441d-a4fc-d6f00f350c97	Cream Puffs	泡芙 - Choux pastry puffs with vanilla, chocolate, or matcha filling	https://d2pdj881wm30p5.cloudfront.net/menu/cream_puff.jpg	french	pastry	{choux,cream,puff}	{sweet,creamy,light}	{contains_gluten,contains_dairy,vegetarian}	60.00	t	{}	\N	2025-11-26 18:24:18.76515
+b1a563dd-6ce1-4158-be77-04d148cb1788	Ice Cream	冰淇淋 - Homemade ice cream in vanilla, chocolate, or matcha	https://d2pdj881wm30p5.cloudfront.net/menu/ice_cream.jpg	french	pastry	{ice_cream,frozen,creamy}	{sweet,creamy,cold}	{contains_dairy,gluten_free,vegetarian}	30.00	t	{}	\N	2025-11-26 18:24:18.76515
+13cdfeac-843f-465b-991e-96d6a808c1cc	Korean Corn Fritters	韩式玉米煎饼 – A crispy, golden pan-fried fritter made with sweet corn and a light creamy drizzle. 	https://d2pdj881wm30p5.cloudfront.net/menu/corn_fritters.jpg	korean	appetizer	{"street food",corn,crispy,sweet-savory}	{sweet,creamy,crunchy}	{contains_dairy}	15.00	t	{}	\N	2025-12-07 19:05:33.387058
+9531e710-ca76-464c-b961-acdab923ef7c	Golden Salted Egg Pumpkin	蛋黄焗南瓜 – Tender pumpkin fries coated in a rich, aromatic salted egg yolk glaze, lightly crispy and full of savory umami.	https://d2pdj881wm30p5.cloudfront.net/menu/salted_egg_pumpkin.jpg	chinese	appetizer	{salted_egg,pumpkin,crispy,savory}	{creamy,salty,umami}	{vegetarian}	18.00	t	{}	\N	2025-12-09 17:47:07.980742
+1843784c-190b-4840-af31-174b0cfcc7ae	Korean Fried Chicken Wings	韩式鸡翅 - Crispy fried chicken wings with Korean seasoning	https://d2pdj881wm30p5.cloudfront.net/menu/chicken_wing.jpg	korean	entree	{"chef special",chicken,fried,spicy}	{spicy,savory,crispy}	{contains_gluten}	60.00	t	{https://d2pdj881wm30p5.cloudfront.net/menu/chicken_wing2.jpg}	# Korean Garlic Fried Chicken\r\n\r\nCrispy Korean-style fried chicken coated in a sweet, spicy, garlicky glaze. The exterior stays crunchy while the sauce adds a rich, sticky finish.\r\n\r\n## Yield\r\n\r\n- 2–4 servings\r\n\r\n## Ingredients\r\n\r\n### Chicken\r\n\r\n- Chicken wings and drumettes\r\n- Black pepper\r\n- Milk (enough to cover chicken)\r\n\r\n### Coating\r\n\r\n- 1 egg\r\n- All-purpose flour\r\n- Cornstarch\r\n- Korean fried chicken coating mix (optional)\r\n\r\n### Sauce\r\n\r\n- 2 tbsp Korean chili paste (Gochujang)\r\n- 1 tbsp minced garlic\r\n- 1 tbsp ketchup\r\n- 1 tbsp honey\r\n- 1 tbsp sugar (optional)\r\n- 2–3 tbsp water\r\n- 1 tbsp butter\r\n\r\n---\r\n\r\n## Step 1: Marinate the Chicken\r\n\r\n1. Season the chicken wings and drumettes with black pepper.\r\n2. Pour in enough milk to cover the chicken.\r\n3. Marinate for at least **2 hours** in the refrigerator.\r\n\r\n> The milk helps tenderize the chicken and reduces any strong poultry flavor.\r\n\r\n---\r\n\r\n## Step 2: Prepare the Coating\r\n\r\n1. Remove the chicken from the milk and drain.\r\n2. Add:\r\n   - 1 egg\r\n   - 1 tbsp all-purpose flour\r\n\r\n3. Mix until the chicken is evenly coated.\r\n\r\n4. In a separate tray, combine:\r\n   - All-purpose flour\r\n   - Cornstarch\r\n   - Korean fried chicken coating mix (optional)\r\n\r\n5. Coat each piece thoroughly in the dry mixture.\r\n\r\n> Cornstarch helps create a lighter and crispier crust.\r\n\r\n---\r\n\r\n## Step 3: Fry the Chicken\r\n\r\n1. Heat oil to **350–360°F (175–182°C)**.\r\n2. Carefully add the chicken pieces.\r\n3. Fry until golden brown and fully cooked, approximately **8 minutes**.\r\n\r\nInternal temperature should reach:\r\n\r\n- **165°F (74°C)**\r\n\r\n4. Remove and drain on a wire rack.\r\n\r\n---\r\n\r\n## Step 4: Prepare the Sauce\r\n\r\n1. Melt the butter in a skillet over medium heat.\r\n2. Add:\r\n   - Minced garlic\r\n   - Gochujang\r\n   - Ketchup\r\n   - Honey\r\n   - Sugar (if using)\r\n   - Water\r\n\r\n3. Stir well and simmer until the sauce becomes thick and glossy.\r\n\r\n> Add additional water if the sauce becomes too thick.\r\n\r\n---\r\n\r\n## Step 5: Coat the Chicken\r\n\r\n1. Add the fried chicken to the sauce.\r\n2. Toss until every piece is evenly coated.\r\n3. Continue stirring for 30–60 seconds to allow the sauce to adhere.\r\n\r\n---\r\n\r\n## Serving Suggestions\r\n\r\n- Steamed rice\r\n- Pickled radish\r\n- Coleslaw\r\n- French fries\r\n\r\n---\r\n\r\n## Summary\r\n\r\n1. Marinate chicken in milk and black pepper for **2 hours**.\r\n2. Coat with egg and flour mixture.\r\n3. Dredge in flour, cornstarch, and fried chicken coating.\r\n4. Fry at **350–360°F (175–182°C)** for approximately **8 minutes**.\r\n5. Make the garlic gochujang sauce.\r\n6. Toss chicken in sauce and serve.\r\n\r\nThe result is crispy Korean fried chicken with a sweet, spicy, garlicky glaze and a crunchy exterior.	2025-11-26 18:24:18.76515
+b3287196-0c6b-497c-b715-755222723154	Prime Steak	medium-rare	https://d2pdj881wm30p5.cloudfront.net/menu/steak.jpg	american	entree	{"chef special",beef}	{delicate,rich}	{gluten_free}	19.99	t	{}	# Reverse-Roasted Steak with Double-Rest Method\r\n\r\nA simple technique that produces a deeply browned crust while keeping the interior juicy and evenly cooked.\r\n\r\n## Equipment\r\n\r\n- Cast-iron skillet or heavy-bottom pan\r\n- Oven-safe baking tray\r\n- Tongs\r\n- Meat thermometer (recommended)\r\n\r\n## Ingredients\r\n\r\n- 1 steak (ribeye, NY strip, or similar, 1–1.5 inches thick)\r\n- 1 tbsp olive oil\r\n- Salt and freshly ground black pepper\r\n\r\n---\r\n\r\n## Step 1: Sear the Steak\r\n\r\n1. Preheat the oven to 390°F (200°C).\r\n2. Pat the steak completely dry with paper towels.\r\n3. Season generously with salt and pepper.\r\n4. Heat a cast-iron skillet with a small amount of olive oil over medium-high heat until lightly smoking.\r\n5. Sear the steak:\r\n   - 60 seconds on each flat side\r\n   - 30 seconds on each edge\r\n\r\n> The goal is to develop a flavorful crust without significantly cooking the interior.\r\n\r\n---\r\n\r\n## Step 2: First Rest\r\n\r\nTransfer the steak to a baking tray and allow it to rest for 3 minutes.\r\n\r\nThis brief rest helps stabilize the surface temperature and reduces moisture loss during roasting.\r\n\r\n---\r\n\r\n## Step 3: Initial Roast\r\n\r\nPlace the steak in the preheated 390°F (200°C) oven.\r\n\r\n### Recommended Roasting Times\r\n\r\n| Desired Doneness | Time |\r\n|------------------|------|\r\n| Medium | 8 minutes |\r\n| Medium-Well | 10 minutes |\r\n| Well-Done | 12 minutes |\r\n\r\nFor the most accurate results, use a meat thermometer.\r\n\r\n---\r\n\r\n## Step 4: Second Rest\r\n\r\nRemove the steak from the oven and let it rest while increasing the oven temperature to:\r\n\r\n430°F (220°C)\r\n\r\nThis resting period allows the internal temperature to equalize and prevents overcooking.\r\n\r\n---\r\n\r\n## Step 5: Final High-Heat Roast\r\n\r\nOnce the oven reaches 430°F (220°C), return the steak to the oven for:\r\n\r\n3 minutes\r\n\r\nThis finishing step intensifies the crust and enhances surface browning while preserving a tender interior.\r\n\r\n---\r\n\r\n## Step 6: Final Rest\r\n\r\nRemove the steak from the oven and rest for 3 minutes before serving.\r\n\r\nThis final rest allows juices to redistribute evenly throughout the meat, resulting in a more flavorful and tender steak.\r\n\r\n---\r\n\r\n## Internal Temperature Reference\r\n\r\n| Doneness | Final Temperature |\r\n|-----------|-------------------|\r\n| Rare | 120–125°F (49–52°C) |\r\n| Medium Rare | 130–135°F (54–57°C) |\r\n| Medium | 140–145°F (60–63°C) |\r\n| Medium Well | 150–155°F (66–68°C) |\r\n| Well Done | 160°F+ (71°C+) |\r\n\r\n> The steak will continue to rise by approximately 3–5°F (1–3°C) during resting.\r\n\r\n---\r\n\r\n## Summary\r\n\r\n1. Sear: 60 sec per side + 30 sec per edge\r\n2. Rest: 3 min\r\n3. Roast at 390°F (200°C)\r\n4. Rest while preheating oven to 430°F (220°C)\r\n5. Roast: 3 min\r\n6. Final Rest: 3 min\r\n\r\nThe result is a steak with a crisp, flavorful crust and a juicy, evenly cooked center.	2026-05-20 03:01:31.598691
+aadf9af2-f023-4af3-955b-224d1086ab01	Vanilla Mochi Donut	Chewy donut with vanilla glaze.		fusion	dessert	{mochi,vanilla}	{chewy,sweet}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+9b5210b0-7f48-46f1-8379-74e3085fd8b4	Mini Almond Cake	Small almond flour cake.		french	dessert	{almond,cake}	{nutty,sweet}	{contains_nuts}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+ed7ee354-db7d-4166-943f-6edac17d3b3e	Coconut Milk Bread	Soft bread flavored with coconut milk.		thai	bread	{coconut,milk_bread}	{fragrant,soft}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+e8f12afe-bb7f-4a7e-863f-9e86402e9e8d	Caramel Mochi Square	Chewy mochi square with caramel.		fusion	dessert	{caramel,mochi}	{sweet,chewy}	{gluten_free}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+ba759db7-a3fa-4d91-aa89-5d9f6ccd7b4c	Vanilla Castella Mini	Fluffy sponge with light vanilla flavor.		japanese	dessert	{castella,vanilla}	{airy,sweet}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+4a5bc2f4-37d7-4098-8b28-d0d3dcbc1fa3	Ube Mochi Cake	Chewy mochi cake with ube flavor.		fusion	dessert	{ube,mochi}	{chewy,sweet}	{gluten_free}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+e7ae53fd-b6c6-4976-965f-c772b3757bfa	Black Sesame Cream Puff	Cream puff filled with sesame cream.		korean	dessert	{cream_puff,black_sesame}	{nutty,creamy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+5c8066d4-c5f8-4ee1-96df-fe684777a2d9	Thai Tea Pound Cake	Pound cake infused with Thai tea.		thai	dessert	{thai_tea,cake}	{aromatic,sweet}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+f26266c1-e668-4dcd-b5aa-aeb22d0e527e	Oreo Cheesecake Bite	Rich cheesecake topped with Oreo crumbs.		american	dessert	{oreo,cheesecake}	{creamy,sweet}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+625f820d-3d34-47aa-86cb-c1e287345b7e	Yangcheng Lake Hairy Crab	阳澄湖大闸蟹 - Steamed premium hairy crab known for its sweet, delicate meat and rich golden roe	https://d2pdj881wm30p5.cloudfront.net/menu/hairy_crab.jpg	chinese	entree	{crab,steamed,premium}	{sweet,delicate,rich}	{gluten_free,contains_shellfish}	100.00	t	{}	\N	2025-11-27 18:26:01.139705
+4670f0bb-2f88-4c38-b908-3930e5bf6a24	Mini Apple Cinnamon Pie	Mini pie filled with apple cinnamon mix.		american	dessert	{apple,cinnamon}	{fruity,spiced}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+53b58d54-0511-41ee-a330-2cdb77a7209c	Chocolate Lava Mini	Small molten chocolate cake.		american	dessert	{chocolate,lava_cake}	{rich,gooey}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+c2077d95-5d24-475c-b0e7-7f7da0727d1e	Orange Juice	鲜榨橙汁 - Freshly squeezed orange juice	https://d2pdj881wm30p5.cloudfront.net/menu/orange_juice.jpg	american	drink	{orange_juice,fresh,vitamin_c}	{sweet,tangy,refreshing}	{vegan,gluten_free}	5.00	t	{}	\N	2025-11-26 18:24:18.76515
+84325f8b-3166-49b8-ada4-2d93e55ee783	French Butter Cookie Mini	Classic shortbread-style cookie.		french	dessert	{butter,shortbread}	{buttery,light}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+56fac2ed-b7d8-4a96-8475-7fe0ae28488d	Mango Sticky Rice Cake	Cake version of mango sticky rice.		thai	dessert	{mango,sticky_rice}	{fruity,sweet}	{gluten_free}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+1aacf799-2cf5-441f-a403-fdd1fc911b5f	Red Bean Mochi Donut	Mochi donut with red bean glaze.		fusion	dessert	{mochi,red_bean}	{chewy,sweet}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+2bdf04cc-b9d8-4ed3-8c6d-b28949cde66f	Honey Butter Bread Bite	Mini honey-soaked crispy toast.		korean	dessert	{honey,toast}	{sweet,buttery}	{contains_dairy}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+8283f302-fbbe-4874-969e-938fa719bd46	Black Sesame Latte Cake	Nutty black sesame layered sponge.		korean	dessert	{black_sesame}	{nutty,creamy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+e92314ab-5f91-4d53-b44f-f75b730a0853	Apple Tartlet	Caramelized apples on buttery tart crust.		french	dessert	{apple,tart}	{fruity,sweet}	{contains_gluten}	6.00	f	{}	\N	2025-11-26 18:24:18.76515
+8854c906-065c-4cf5-9b13-b72e9ea782f9	Brown Sugar Castella	Fluffy Taiwanese sponge with brown sugar.		taiwanese	dessert	{castella,brown_sugar}	{airy,sweet}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+f745ec20-64fa-400c-ad17-8fec022540c3	Mochi Brownie Bite	Dense chocolate brownie with mochi center.		fusion	dessert	{brownie,mochi}	{chewy,rich}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+8cfc8e60-e6d0-4aaf-b587-88da79db8d02	Lemon Olive Oil Cake	Bright, fragrant lemon cake.		italian	dessert	{lemon,cake}	{tangy,moist}	{vegetarian}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+d3f619c3-c72e-47ff-b758-3788e80aed6a	Yuzu Cheesecake Mini	Tangy yuzu-flavored mini cheesecake.		japanese	dessert	{yuzu,cheesecake}	{tangy,creamy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+44dd5d66-4138-4dc9-8123-ae60af379592	Cinnamon Sugar Donut Hole	Mini donut holes dusted in cinnamon.		american	dessert	{donut,cinnamon}	{sweet,spiced}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+458090ea-8670-4608-9eb1-e2108802f983	Pandan Milk Bun	Soft milk bread with pandan flavor.		thai	bread	{pandan,milk_bread}	{fragrant,sweet}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+1386ac35-23da-4531-a302-d84962fbbd7f	Chocolate Mochi Donut	Chewy donut with cocoa glaze.		fusion	dessert	{mochi,chocolate}	{chewy,sweet}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+ddef1003-9b05-4be5-b590-8916b60da78f	Mini Tiramisu Cup	Creamy tiramisu layered with espresso.		italian	dessert	{tiramisu,espresso}	{creamy,rich}	{contains_dairy}	6.00	f	{}	\N	2025-11-26 18:24:18.76515
+b5f56c89-cfab-44d7-ab5f-7300b4e40212	Black Sesame Shortbread	Crumbly cookie with sesame aroma.		taiwanese	dessert	{black_sesame,shortbread}	{nutty,crumbly}	{vegetarian}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+57e3f47f-1916-46b3-a470-f5d5396bd135	Strawberry Daifuku	Mochi filled with strawberry and red bean.		japanese	dessert	{mochi,strawberry}	{fruity,chewy}	{gluten_free}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+0058e070-fe63-486f-8310-2bf94ec37639	Honey Oolong Cookie	Cookie infused with oolong tea.		taiwanese	dessert	{oolong,cookie}	{aromatic,sweet}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+33a014db-967d-4fe8-a52c-5309bcfbe630	Garlic Cream Bread	Korean garlic cream cheese bread.		korean	pastry	{garlic,cream}	{savory,creamy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+ddebc784-814c-4ca1-803f-4c1c4ccdccc8	Pumpkin Spice Bread	Warm pumpkin loaf with spices.		american	dessert	{pumpkin,spice}	{warm,sweet}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+6da33676-bf55-4934-9313-6dcaff85e508	Hojicha Roll Cake	Roasted tea sponge with cream.		japanese	dessert	{hojicha,roll_cake}	{earthy,light}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+6eb63801-ba68-4aa3-9375-2e1cc6d2a294	Blueberry Milk Bun	Milk bread filled with blueberry jam.		korean	bread	{blueberry,milk_bread}	{fruity,sweet}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+ba3a224e-68a5-4a59-bf66-b8af599f1233	Carrot Cake Mini	Mini carrot cake with cream cheese.		american	dessert	{carrot,cream_cheese}	{sweet,spiced}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+5d64067e-1883-425a-a1a2-5379739bb1f1	Matcha Chocolate Chip Cookie	Matcha cookie mixed with chocolate chips.		fusion	dessert	{matcha,cookie}	{earthy,sweet}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+c6acf49e-441e-46de-9b71-f668403a9606	Chocolate Madeleine Mini	Chocolate version of classic French madeleine.		french	dessert	{madeleine,chocolate}	{soft,sweet}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+813715bb-af0e-4a08-9aa8-9b83c802161a	Coffee Milk Roll	Soft bread filled with coffee cream.		korean	bread	{coffee,cream}	{aromatic,creamy}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+1bceb78c-4b3b-42bf-adc4-0a8ed6decd5f	Blueberry Cream Cheese Bun	Bun filled with blueberry cream cheese.		korean	pastry	{blueberry,cream_cheese}	{sweet,tangy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+d621c2ae-39be-49bb-af2f-287249856327	Strawberry Cream Roll	Japanese-style strawberry cream roll.		japanese	dessert	{strawberry,cream}	{fruity,light}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+2579c8f9-6b13-4ed0-b3a7-c7b9940a8f23	Hazelnut Mini Croissant	Small croissant filled with hazelnut cream.		french	pastry	{hazelnut,croissant}	{nutty,buttery}	{contains_nuts}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+cd7a14e3-a6c6-4bc9-a5d2-dc09a2f11a8e	Green Tea Cookie	Crunchy cookie flavored with green tea.		japanese	dessert	{green_tea,cookie}	{earthy,crisp}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+dac11158-1c12-4204-93fe-40841112dd53	Pineapple Jam Bun	Soft bun with pineapple jam.		taiwanese	bread	{pineapple,jam}	{fruity,sweet}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+84ab1e66-df24-45ed-bad9-8f6094534ace	Vanilla Cream Donut Hole	Mini donut hole with vanilla cream.		american	dessert	{donut,vanilla}	{sweet,creamy}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+98e60a5d-e8b6-41b8-9025-c76a03d8ae1e	Thai Pandan Cookie	Crisp cookie with pandan aroma.		thai	dessert	{pandan,cookie}	{fragrant,sweet}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+415495f4-e9b2-440e-aa28-893546920721	Salted Caramel Tart Mini	Small tart filled with salted caramel.		french	dessert	{caramel,tart}	{sweet,salty}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+4af234d2-a062-4060-bae2-5cd25a847b55	Milk Tea Mochi Cake	Soft cake flavored like milk tea.		taiwanese	dessert	{milk_tea,mochi}	{chewy,sweet}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+aa214bca-d12c-468a-960d-750694844295	Miso Butter Cookie	Sweet–savory cookie with miso butter.		fusion	dessert	{miso,butter}	{savory,sweet}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+e4814d46-ee90-4c17-a1bc-c8857bef78d8	Caramel Coffee Bun	Coffee bun with caramel center.		fusion	bread	{coffee,caramel}	{aromatic,sweet}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+9ce953c8-05cf-4835-bb54-4478b794c2c5	Banana Mochi Bite	Soft banana-flavored mochi bite.		fusion	dessert	{banana,mochi}	{chewy,sweet}	{gluten_free}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+47027a47-6752-48f9-a594-d1189114549c	Matcha Soufflé Bite	Mini fluffy matcha soufflé.		japanese	dessert	{matcha,souffle}	{light,airy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+3c015c27-addb-4db8-b7cf-65c7a5905729	Chocolate Cream Pan	Soft bun filled with chocolate cream.		japanese	pastry	{cream,chocolate}	{creamy,sweet}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+b2216b70-5b53-4738-9921-5f4fa26c93a5	Strawberry Yogurt Mousse	Light yogurt mousse with strawberry swirl.		fusion	dessert	{strawberry,mousse}	{fruity,creamy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+c3edeee0-4180-4566-93f6-7c4039e6a73e	Black Sesame Financier	Small almond cake with sesame.		french	dessert	{sesame,financier}	{nutty,buttery}	{contains_nuts}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+6eff0b96-abc9-463a-9427-9dc254cb1087	Choco Puff Rice Bar	Crunchy puffed rice chocolate bar.		american	dessert	{chocolate,puff_rice}	{crunchy,sweet}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+c2e586eb-df5c-4469-b914-4f111bfa37f3	Tiramisu Mochi	Mochi with creamy tiramisu filling.		italian	dessert	{mochi,tiramisu}	{creamy,chewy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+2047da20-7c70-4deb-ad0b-af1a6c4f2ef6	Thai Lime Cookie	Bright lime-flavored shortbread.		thai	dessert	{lime,cookie}	{zesty,sweet}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+072e046b-a2c3-4e23-aab7-424b5e1f6e25	Brown Sugar Mochi Bread	Chewy bread with brown sugar mochi center.		taiwanese	bread	{brown_sugar,mochi}	{chewy,sweet}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+edca1d13-1cda-438d-a2fb-0ebf6788314d	Chocolate Castella Square	Moist chocolate castella cake.		japanese	dessert	{castella,chocolate}	{soft,rich}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+02990471-3fd2-44c0-9394-757977d2b91e	Green Tea Swiss Roll	Light green tea sponge with cream.		japanese	dessert	{green_tea,cream}	{light,earthy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+bdb3982b-8681-465b-b71f-a301dbc52d37	Maple Butter Cookie	Shortbread cookie with maple aroma.		american	dessert	{maple,cookie}	{buttery,sweet}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+41680000-63dc-40db-ba27-6d2145deed80	Ricotta Lemon Bar	Tangy lemon bar with ricotta layer.		italian	dessert	{lemon,ricotta}	{tangy,smooth}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+ec61ffef-9ab7-4d91-a071-addf68ca0131	Coffee Jelly Cup	Iced coffee jelly with cream.		japanese	dessert	{coffee,jelly}	{bitter,creamy}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+322fc6b5-d1b4-482c-bf29-bfc979448525	Hazelnut Chocolate Mini Muffin	Mini muffin with hazelnut cream.		fusion	dessert	{hazelnut,muffin}	{nutty,sweet}	{contains_nuts}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+f38a51c0-1410-4ad6-a7b3-bcc18b7c45df	Pandan Cheese Tart	Tart with pandan custard and cheese.		thai	dessert	{pandan,tart}	{fragrant,creamy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+b5b0c22c-c45b-48cc-938a-15a36224e437	Brown Butter Mochi Cake	Nutty brown butter mochi cake.		fusion	dessert	{mochi,brown_butter}	{chewy,nutty}	{gluten_free}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+c5f8ae19-6efe-4548-a8c2-cfc4b0102f7f	Strawberry Pudding Cup	Soft pudding with strawberry topping.		american	dessert	{strawberry,pudding}	{creamy,sweet}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+8b279c31-7f43-4c4f-80b5-f3d8d90addcd	Cocoa Meringue Cookie	Light, crispy cocoa meringue.		french	dessert	{meringue,cocoa}	{airy,sweet}	{gluten_free}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+6531eb18-7f67-4946-934e-aad7adf74b8e	Black Tea Chiffon Slice	Soft chiffon cake flavored with tea.		japanese	dessert	{black_tea,chiffon}	{light,aromatic}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+a7e6c704-be39-4680-a8e4-43aa3198019c	Taiwanese Honey Castella	Honey-sweet sponge cake.		taiwanese	dessert	{castella,honey}	{airy,sweet}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+37ceb1dd-5fc2-42e0-8c06-aaf9c7f0adef	Salted Yolk Puff Mini	Flaky pastry with sweet-salty yolk.		chinese	dessert	{salted_yolk,pastry}	{savory,sweet}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+7f99cc09-98d7-4333-bee2-c4c038e5b1a1	Milk Tea Pudding Cup	Classic milk tea pudding with cream.		taiwanese	dessert	{milk_tea,pudding}	{creamy,sweet}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+e08a2750-54e2-4ab7-ae49-186e93fc276f	Chocolate Hazelnut Donut Hole	Mini donut with chocolate hazelnut glaze.		fusion	dessert	{donut,hazelnut,chocolate}	{rich,sweet}	{contains_nuts}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+93d331dd-14b9-47a1-ada4-5524970a12f9	Matcha Mochi Cookie	Soft cookie with gooey mochi inside.		japanese	dessert	{matcha,mochi}	{chewy,earthy}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+2731c93a-22ac-43a9-be74-dd8cf8b78264	Mocha Cream Mini Cup	Small cup of mocha-flavored cream dessert.		american	dessert	{mocha,cream}	{creamy,chocolatey}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+9cfc4ae5-494c-4df1-b165-b5ce9f1363c7	Pandan Mochi Donut Hole	Mochi donut hole with pandan icing.		thai	dessert	{pandan,mochi}	{chewy,fragrant}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+b1a6dcb4-54d2-4d95-bb04-0838c51967ce	Vanilla Custard Bun	Soft bun filled with smooth vanilla custard.		japanese	pastry	{custard,vanilla}	{creamy,sweet}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+17521e2d-912d-4619-b69b-a38348d75990	Chocolate Cookie Sandwich	Chocolate cookie with cream filling.		american	dessert	{chocolate,cookie}	{sweet,rich}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+2fd980fa-2fde-4daa-a23c-432770bc26a1	Mango Cream Tart	Mini tart topped with mango cream.		fusion	dessert	{mango,tart}	{fruity,creamy}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+4b5879db-d751-4e5a-a7ee-d390397d1fb4	Sweet Corn Mochi Cake	Chewy mochi cake with sweet corn flavor.		taiwanese	dessert	{corn,mochi}	{chewy,sweet}	{gluten_free}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+ea941c43-fad1-49b3-a5a3-1ed70bd7adc2	Thai Coffee Cookie	Crispy cookie with Thai-style coffee aroma.		thai	dessert	{coffee,cookie}	{aromatic,sweet}	{contains_gluten}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+c40665c4-fab5-44b4-b31b-3a9e5d798472	Chocolate Taro Swirl Cake	Soft cake with taro and chocolate swirls.		fusion	dessert	{taro,chocolate}	{sweet,soft}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+e577f496-dbc2-4533-a59f-d17b9c5d39fa	Green Tea Pudding Cup	Smooth pudding flavored with green tea.		japanese	dessert	{green_tea,pudding}	{light,creamy}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+0c963df7-dfc9-4c6a-9f3a-6785a9c2f538	Ube Milk Bun	Milk bread with ube filling.		korean	bread	{ube,milk_bread}	{soft,sweet}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+fa97eaa9-bacc-4b3c-a6d6-5df763d5e6e8	Chocolate Chip Scone Mini	Mini scone with chocolate chips.		american	pastry	{scone,chocolate}	{crumbly,sweet}	{contains_gluten}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+1aa05ef5-ff74-4cbd-8e28-b16c4f05d52e	Salted Caramel Mochi Donut	Mochi donut with salted caramel glaze.		fusion	dessert	{caramel,mochi}	{chewy,sweet,salty}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+d78c33bb-1e7f-4621-a0a3-210eb976a65c	Miso Chocolate Tart	Small chocolate tart with a hint of miso.		fusion	dessert	{chocolate,miso}	{rich,savory}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+0f63fbd5-108a-4182-be03-a784587bb0a2	Honey Milk Castella	Fluffy castella cake with honey and milk.		taiwanese	dessert	{castella,milk}	{airy,sweet}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+48f6e216-5f10-40d7-a669-8d2efe94cd9b	Matcha Cream Dorayaki	Mini dorayaki with matcha cream filling.		japanese	dessert	{dorayaki,matcha}	{sweet,earthy}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+6f6a9bdb-2133-4ed0-b0d5-e475aeaf2c5e	Strawberry Mochi Cupcake	Cupcake with mochi center and strawberry cream.		fusion	dessert	{strawberry,mochi}	{fruity,chewy}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+44a8bd76-d2c4-4665-b648-bb201622d383	Choco Almond Mini Bar	Chocolate snack bar with almond crunch.		american	dessert	{chocolate,almond}	{nutty,sweet}	{contains_nuts}	3.00	f	{}	\N	2025-11-26 18:24:18.76515
+ad7c6792-4552-422b-a57a-dfd217de3696	Pandan Kaya Bun	Soft bun filled with pandan kaya jam.		thai	pastry	{pandan,kaya}	{creamy,sweet}	{contains_dairy}	4.00	f	{}	\N	2025-11-26 18:24:18.76515
+88bf6188-a74b-4a69-b576-73a707d057fc	Black Sesame Butter Mochi	Nutty butter mochi with sesame.		japanese	dessert	{black_sesame,mochi}	{nutty,chewy}	{gluten_free}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+a6859dc7-1382-46d4-be0f-550b4f41420f	Sweet Red Bean Tart	Mini tart with sweet red bean filling.		japanese	dessert	{red_bean,tart}	{sweet,smooth}	{contains_gluten}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+8ab7b22a-e21f-47de-8521-be85546a8f0d	Mini Coconut Cheesecake	Cheesecake with coconut cream.		fusion	dessert	{coconut,cheesecake}	{creamy,sweet}	{contains_dairy}	5.00	f	{}	\N	2025-11-26 18:24:18.76515
+858ad26f-ca79-4894-a942-3b3124908cfb	Cedric Grolet Pastry	法式甜品慕斯 - French modernist fruit-inspired pastries	https://d2pdj881wm30p5.cloudfront.net/menu/cedric_grolet.jpg	french	pastry	{mousse,modern,artistic}	{sweet,fruity}	{contains_gluten,contains_dairy,vegetarian}	100.00	t	{}	\N	2025-11-26 18:24:18.76515
+7c868c22-8886-4ec7-a009-dd7a040db7ad	Steamed White Rice	白米饭 - Plain steamed jasmine rice	https://d2pdj881wm30p5.cloudfront.net/menu/white_rice.jpg	chinese	rice_and_noodles	{rice,steamed,plain}	{neutral,soft}	{vegan,gluten_free}	3.00	t	{}	\N	2025-11-26 18:24:18.76515
+8e1a9def-dfe7-4c25-b5d3-8c34af5a4307	Haiga Rice	胚芽米 - Japanese partially polished rice with germ	https://d2pdj881wm30p5.cloudfront.net/menu/haiga_rice.jpg	japanese	rice_and_noodles	{rice,japanese,haiga}	{nutty,chewy}	{vegan,gluten_free}	4.00	t	{}	\N	2025-11-26 18:24:18.76515
+1072380b-a3dd-4f89-be50-13696a0c35b7	Boba Milk Tea	珍珠奶茶 - Sweet tea with tapioca pearls and milk	https://d2pdj881wm30p5.cloudfront.net/menu/boba_milk_tea.jpg	taiwanese	drink	{bubble_tea,tapioca,milky}	{sweet,creamy,chewy}	{contains_dairy,vegetarian}	7.00	t	{}	\N	2025-11-26 18:24:18.76515
+21d90f67-55a0-4a0e-86f9-2adffa92b6b7	American Black Coffee	美式黑咖啡 - Classic brewed black coffee	https://d2pdj881wm30p5.cloudfront.net/menu/black_coffee.jpg	american	drink	{coffee,black,brewed}	{bitter,bold,aromatic}	{vegan,gluten_free}	4.00	t	{}	\N	2025-11-26 18:24:18.76515
+336a593f-f85b-469a-a441-ce1510448e2e	Espresso	意式浓缩咖啡 - Strong concentrated coffee shot	https://d2pdj881wm30p5.cloudfront.net/menu/espresso.jpg	italian	drink	{espresso,strong,concentrated}	{bitter,intense,rich}	{vegan,gluten_free}	4.00	t	{}	\N	2025-11-26 18:24:18.76515
+35b31f9f-1dcb-4804-8664-b62a586690fc	Latte	拿铁咖啡 - Espresso with steamed milk	https://d2pdj881wm30p5.cloudfront.net/menu/latte.jpg	italian	drink	{latte,milky,espresso}	{creamy,smooth,balanced}	{contains_dairy,vegetarian}	6.00	t	{}	\N	2025-11-26 18:24:18.76515
+c0bbe95d-1047-42dd-9c52-3765173caa55	Cappuccino	卡布奇诺 - Espresso with equal parts steamed milk and foam	https://d2pdj881wm30p5.cloudfront.net/menu/cappuccino.jpg	italian	drink	{cappuccino,foamy,espresso}	{creamy,light,balanced}	{contains_dairy,vegetarian}	6.00	t	{}	\N	2025-11-26 18:24:18.76515
+58149d89-f2f3-43db-9de6-ef165265969b	Matcha Latte	抹茶拿铁 - Green tea powder with steamed milk	https://d2pdj881wm30p5.cloudfront.net/menu/matcha_latte.jpg	japanese	drink	{matcha,green_tea,milky}	{earthy,creamy,sweet}	{contains_dairy,vegetarian}	6.00	t	{}	\N	2025-11-26 18:24:18.76515
+c79d998b-a008-43f4-9f54-e3a9c7ea731f	Thai Iced Tea	泰式冰奶茶 - Sweet spiced tea with condensed milk	https://d2pdj881wm30p5.cloudfront.net/menu/thai_tea.jpg	thai	drink	{thai_tea,orange,sweet}	{sweet,creamy,spiced}	{contains_dairy,vegetarian}	7.00	t	{}	\N	2025-11-26 18:24:18.76515
+31cd15ca-33d5-4c8c-8245-37116fd8212a	Lemonade	新鲜柠檬水 - Freshly squeezed lemon with sugar	https://d2pdj881wm30p5.cloudfront.net/menu/lemonade.jpg	american	drink	{lemonade,refreshing,citrus}	{sour,sweet,refreshing}	{vegan,gluten_free}	5.00	t	{}	\N	2025-11-26 18:24:18.76515
+ca89bb20-a38e-40ea-aaa2-16c7f915e0bb	Iced Americano	冰美式咖啡 - Espresso shots over ice and water	https://d2pdj881wm30p5.cloudfront.net/menu/americano_iced.jpg	american	drink	{iced_coffee,cold,refreshing}	{bold,smooth,refreshing}	{vegan,gluten_free}	4.00	t	{}	\N	2025-11-26 18:24:18.76515
+913ac632-937f-4635-bfd2-d46fbda046fb	Mocha	摩卡咖啡 - Espresso with chocolate and steamed milk	https://d2pdj881wm30p5.cloudfront.net/menu/mocha.jpg	italian	drink	{mocha,chocolate,coffee}	{sweet,chocolatey,creamy}	{contains_dairy,vegetarian}	6.00	t	{}	\N	2025-11-26 18:24:18.76515
+acbc082b-e390-4611-bb20-f7c6fc5975c4	Green Tea	绿茶 - Traditional Japanese green tea	https://d2pdj881wm30p5.cloudfront.net/menu/green_tea.jpg	japanese	drink	{green_tea,traditional,healthy}	{earthy,grassy,light}	{vegan,gluten_free}	3.00	t	{}	\N	2025-11-26 18:24:18.76515
+3151ca46-6d6b-456a-aeeb-b55b2266ef16	Bean Rice Soup	豆汤饭 - A warm and comforting bowl of soft rice served in a light, savory bean broth. Simple, hearty, and soothing, perfect for a cozy meal.	https://d2pdj881wm30p5.cloudfront.net/menu/bean_rice_soup.jpg	chinese	rice_and_noodles	{homestyle,"comfort food",savory}	{mild,earthy,hearty}	{contains_gluten}	16.00	t	{}		2025-12-02 03:15:06.817924
+c8cf0ac0-bf6b-4b4a-8a5c-95376d08ff1e	Pork and Chive Dumplings	韭菜猪肉饺子 - Pan-fried dumplings with pork and Chinese chives	https://d2pdj881wm30p5.cloudfront.net/menu/pork_dumplings.jpg	chinese	appetizer	{dumpling,pork,pan_fried}	{savory,juicy,aromatic}	{contains_pork,contains_gluten}	10.00	t	{}	\N	2025-12-04 00:38:28.011331
+f3be1e44-64e9-49b0-a358-2f1a38ca6f06	Vegetable Spring Rolls	素春卷 - Crispy fried rolls filled with fresh vegetables	https://d2pdj881wm30p5.cloudfront.net/menu/spring_rolls.jpg	chinese	appetizer	{spring_roll,fried,vegetable}	{crispy,savory,light}	{vegan,contains_gluten}	8.00	t	{}	\N	2025-12-04 00:38:28.011331
+b985d091-5225-41b8-b6a4-d366230cce57	Scallion Pancake	葱油饼 - Flaky layered pancake with scallions	https://d2pdj881wm30p5.cloudfront.net/menu/scallion_pancake.jpg	chinese	appetizer	{pancake,scallion,crispy}	{savory,flaky,aromatic}	{vegan,contains_gluten}	13.00	t	{}	\N	2025-12-04 00:38:28.011331
+c04a7a23-7105-45f7-964f-130a95756247	Cold Sesame Noodles	凉拌芝麻面 - Chilled noodles in nutty sesame sauce	https://d2pdj881wm30p5.cloudfront.net/menu/sesame_noodles.jpg	chinese	appetizer	{noodles,sesame,cold}	{nutty,savory,tangy}	{contains_nuts,contains_gluten,vegan}	12.00	t	{}	\N	2025-12-04 00:38:28.011331
+96fde6df-0ebe-4b54-8371-f826efbb288b	Sichuan Wontons in Chili Oil	红油抄手 - Wontons in spicy chili oil and Sichuan pepper	https://d2pdj881wm30p5.cloudfront.net/menu/sichuan_wontons.jpg	chinese	appetizer	{wonton,spicy,chili_oil}	{spicy,numbing,savory}	{contains_pork,contains_gluten,spicy}	14.00	t	{}	\N	2025-12-04 00:38:28.011331
+5cdc6747-2806-4ea2-8b9f-a11518660fa0	Xiaolongbao	小笼包 - Soup dumplings with pork filling	https://d2pdj881wm30p5.cloudfront.net/menu/xiaolongbao.jpg	chinese	appetizer	{dumpling,pork,steamed}	{savory,juicy,umami}	{contains_pork,contains_gluten}	16.00	t	{}	\N	2025-12-04 00:38:28.011331
+4a9ca08b-d076-4a74-a166-3cece98e16f0	Macarons	马卡龙 - French almond meringue cookies with various fillings	https://d2pdj881wm30p5.cloudfront.net/menu/macarons.jpg	french	pastry	{macaron,almond,delicate}	{sweet,delicate}	{contains_nuts,gluten_free,vegetarian}	80.00	t	{https://d2pdj881wm30p5.cloudfront.net/menu/macarons_1.jpg,https://d2pdj881wm30p5.cloudfront.net/menu/macarons_2.jpg,https://d2pdj881wm30p5.cloudfront.net/menu/macarons_3.jpg,https://d2pdj881wm30p5.cloudfront.net/menu/macarons_4.jpg,https://d2pdj881wm30p5.cloudfront.net/menu/macarons_5.jpg}	\N	2025-11-25 18:24:18.76515
+55b62f04-5422-47d8-b0dd-fc42a0325f12	Chicken Karaage	唐揚げ - Japanese fried chicken marinated in soy and ginger	https://d2pdj881wm30p5.cloudfront.net/menu/karaage.jpg	japanese	appetizer	{chicken,fried,crispy}	{savory,garlicky,crispy}	{contains_gluten}	13.00	t	{}	\N	2025-12-04 00:38:28.011331
+b11ddd63-3c49-4fc8-9e68-a18d5907a75d	Seaweed Salad	海藻サラダ - Chilled seaweed salad with sesame dressing	https://d2pdj881wm30p5.cloudfront.net/menu/seaweed_salad.jpg	japanese	appetizer	{seaweed,salad,cold}	{savory,tangy,refreshing}	{vegan,gluten_free}	6.00	t	{}	\N	2025-12-04 00:38:28.011331
+f969d695-bc06-48e3-a634-005cc4059ae5	Takoyaki	たこ焼き - Octopus balls with takoyaki sauce and bonito flakes	https://d2pdj881wm30p5.cloudfront.net/menu/takoyaki.jpg	japanese	appetizer	{octopus,fried,balls}	{savory,umami,rich}	{contains_shellfish,contains_gluten}	8.00	t	{}	\N	2025-12-04 00:38:28.011331
+060fd804-c409-4056-b539-91bbebd77b06	Agedashi Tofu	揚げ出し豆腐 - Deep-fried tofu in dashi broth	https://d2pdj881wm30p5.cloudfront.net/menu/agedashi_tofu.jpg	japanese	appetizer	{tofu,fried,broth}	{savory,umami,delicate}	{vegetarian,contains_gluten}	7.00	t	{}	\N	2025-12-04 00:38:28.011331
+d3b6a350-05f8-4e78-b0cc-3f26c1c6c4a3	Miso Soup	味噌汁 - Traditional Japanese soup with tofu and seaweed	https://d2pdj881wm30p5.cloudfront.net/menu/miso_soup.jpg	japanese	appetizer	{soup,miso,tofu}	{savory,umami,warm}	{vegan,gluten_free}	5.00	t	{}	\N	2025-12-04 00:38:28.011331
+9ac98795-7118-4d9d-8d5f-0a7445a1e996	Kimchi	김치 - Fermented spicy cabbage	https://d2pdj881wm30p5.cloudfront.net/menu/kimchi.jpg	korean	appetizer	{fermented,spicy,cabbage}	{spicy,tangy,funky}	{vegan,gluten_free,spicy}	25.00	t	{}	\N	2025-12-04 00:38:28.011331
+891991ce-a3f8-434a-82f3-918dfd746554	Japchae	잡채 - Stir-fried glass noodles with vegetables	https://d2pdj881wm30p5.cloudfront.net/menu/japchae.jpg	korean	appetizer	{noodles,stir_fry,vegetable}	{savory,sweet,umami}	{vegan,gluten_free}	45.00	t	{}	\N	2025-12-04 00:38:28.011331
+3e8bad60-ffb8-4ff4-883d-a6d9eaebb169	Tteokbokki	떡볶이 - Spicy rice cakes in gochujang sauce	https://d2pdj881wm30p5.cloudfront.net/menu/tteokbokki.jpg	korean	appetizer	{rice_cake,spicy,chewy}	{spicy,sweet,savory}	{spicy,gluten_free,vegetarian}	16.00	t	{}	\N	2025-12-04 00:38:28.011331
+f02f1f4b-7ac4-4d96-8525-9bb3daa5e37d	Seafood Pancake	해물파전 - Savory scallion pancake with seafood	https://d2pdj881wm30p5.cloudfront.net/menu/seafood_pancake.jpg	korean	appetizer	{pancake,scallion,seafood}	{savory,crispy,umami}	{contains_shellfish,contains_gluten}	14.00	t	{}	\N	2025-12-04 00:38:28.011331
+5b7b97f3-217c-4d22-a36c-624dd6e5838b	Thai Fish Cakes	ทอดมันปลา - Deep-fried spiced fish patties	https://d2pdj881wm30p5.cloudfront.net/menu/fish_cakes.jpg	thai	appetizer	{fish,fried,spicy}	{savory,aromatic,bouncy}	{contains_shellfish,gluten_free}	13.00	t	{}	\N	2025-12-04 00:38:28.011331
+05095f6f-1c51-42c4-ac0f-341f759b94a8	Som Tam	ส้มตำ - Spicy green papaya salad	https://d2pdj881wm30p5.cloudfront.net/menu/papaya_salad.jpg	thai	appetizer	{papaya,salad,spicy}	{spicy,sour,sweet}	{spicy,gluten_free,vegan,contains_nuts}	13.00	t	{}	\N	2025-12-04 00:38:28.011331
+595c223d-f737-479b-8c96-cd316c1fc3f3	Larb Gai	ลาบไก่ - Spicy Thai chicken salad with herbs	https://d2pdj881wm30p5.cloudfront.net/menu/larb_gai.jpg	thai	appetizer	{chicken,salad,spicy}	{spicy,tangy,herby}	{spicy,gluten_free}	14.00	t	{}	\N	2025-12-04 00:38:28.011331
+13b97f10-2d02-4414-a9d3-4b10fbeea513	Char Siu Bao	叉燒包 - Steamed buns with BBQ pork filling	https://d2pdj881wm30p5.cloudfront.net/menu/char_siu_bao.jpg	hong_kong	appetizer	{bun,bbq_pork,steamed}	{savory,sweet,soft}	{contains_pork,contains_gluten}	10.00	t	{}	\N	2025-12-04 00:38:28.011331
+c0bea777-4226-48d9-973a-4f5acb7e81e1	Cheung Fun	腸粉 - Steamed rice noodle rolls with shrimp or beef	https://d2pdj881wm30p5.cloudfront.net/menu/cheung_fun.jpg	hong_kong	appetizer	{rice_noodle,steamed,shrimp}	{savory,silky,umami}	{contains_shellfish,gluten_free}	5.00	t	{}	\N	2025-12-04 00:38:28.011331
+3d1ecb98-8cf2-48f0-8b04-b4bab2278a36	Crispy Tofu Bites	脆皮豆腐 - Fried tofu with sweet chili sauce	https://d2pdj881wm30p5.cloudfront.net/menu/crispy_tofu.jpg	fusion	appetizer	{tofu,fried,crispy}	{savory,crispy,sweet}	{vegan,gluten_free}	13.00	t	{}	\N	2025-12-04 00:38:28.011331
+\.

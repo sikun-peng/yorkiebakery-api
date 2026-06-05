@@ -29,7 +29,9 @@ npm run build
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/001_create_tables.sql
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/002_seed_menu.sql
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/003_seed_music.sql
-docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/004_mock_menu.sql
+docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/004_seed_users.sql
+docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/005_seed_events.sql
+docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery -f /migrations/006_seed_reviews.sql
 
 # SSH into Postgres container
 docker exec -it yorkiebakery-api-db psql -U postgres -d yorkiebakery
