@@ -91,6 +91,12 @@
                 </p>
             {% endif %}
 
+            <div class="dish-share-actions">
+                <button type="button" id="share-dish-btn" class="btn btn-outline">Share Dish</button>
+                <button type="button" id="copy-dish-link-btn" class="btn btn-outline">Copy Link</button>
+                <span id="dish-share-status" class="dish-share-status" aria-live="polite"></span>
+            </div>
+
             {% if item.recipe %}
                 <details class="recipe-disclosure">
                     <summary class="recipe-toggle">Recipe for {{ item.title }}</summary>
@@ -210,6 +216,67 @@
             mainImg.src = btn.dataset.full;
         });
     });
+
+    const shareDishBtn = document.getElementById("share-dish-btn");
+    const copyDishLinkBtn = document.getElementById("copy-dish-link-btn");
+    const dishShareStatus = document.getElementById("dish-share-status");
+    const dishTitle = {{ item.title | tojson }};
+    const shareText = {{ ("Check out " ~ item.title ~ " and its recipe from Yorkie Bakery.") | tojson if item.recipe else ("Check out " ~ item.title ~ " from Yorkie Bakery.") | tojson }};
+
+    async function copyDishLink() {
+        const url = window.location.href;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(url);
+            return;
+        }
+
+        const tempInput = document.createElement("input");
+        tempInput.value = url;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+    }
+
+    if (shareDishBtn) {
+        shareDishBtn.addEventListener("click", async () => {
+            dishShareStatus.textContent = "";
+            const url = window.location.href;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: `${dishTitle} · Yorkie Bakery`,
+                        text: shareText,
+                        url,
+                    });
+                    return;
+                } catch (err) {
+                    if (err && err.name === "AbortError") {
+                        return;
+                    }
+                }
+            }
+
+            try {
+                await copyDishLink();
+                dishShareStatus.textContent = "Link copied.";
+            } catch (err) {
+                dishShareStatus.textContent = "Unable to share right now.";
+            }
+        });
+    }
+
+    if (copyDishLinkBtn) {
+        copyDishLinkBtn.addEventListener("click", async () => {
+            try {
+                await copyDishLink();
+                dishShareStatus.textContent = "Link copied.";
+            } catch (err) {
+                dishShareStatus.textContent = "Unable to copy link.";
+            }
+        });
+    }
 
     // Admin update form (recipe + gallery)
     const adminForm = document.getElementById("admin-update-form");
