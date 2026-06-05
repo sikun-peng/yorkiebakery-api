@@ -70,9 +70,9 @@ def orders_view_page(request: Request, session: Session = Depends(get_session)):
         })
 
     return templates.TemplateResponse(
+        request,
         "order.html",
         {
-            "request": request,
             "orders_with_items": orders_with_items,
             "user": user_session,
         }
@@ -200,9 +200,9 @@ def order_detail_page(order_id: UUID, request: Request, session: Session = Depen
         items_list.append(item_dict)
 
     return templates.TemplateResponse(
+        request,
         "order_detail.html",
         {
-            "request": request,
             "order": order_dict,  # Use converted order
             "items": items_list,  # Use converted items
             "user": user_session,

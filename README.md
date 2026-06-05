@@ -147,6 +147,12 @@ GET  /ai/debug
 - S3 (images/music)
 - SES (emails + password reset)
 
+### Upload Size Limits
+- Menu item creation uploads multipart images, so the reverse proxy must allow larger request bodies.
+- App-side limit is controlled by `MAX_REQUEST_BODY_MB` and defaults to `25`.
+- If Nginx fronts the app, set `client_max_body_size 25M;` in the active site config and reload Nginx.
+- Example config: [infra/nginx/yorkiebakery.conf.example](/Users/sikunpeng/sikun/yorkiebakery-api/infra/nginx/yorkiebakery.conf.example)
+
 ---
 
 ## 🔧 Operations & Cleanup

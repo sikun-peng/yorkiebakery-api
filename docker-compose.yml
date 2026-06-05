@@ -33,6 +33,7 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/yorkiebakery
+      MAX_REQUEST_BODY_MB: 25
     env_file:
       - .env
     volumes:

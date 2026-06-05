@@ -25,10 +25,12 @@ from app.models.postgres.user import User
 from app.core.db import get_session
 from app.core.security import require_admin
 from app.core.cart_utils import get_cart_count
+from app.core.markdown import render_markdown
 from app.utils.s3_util import upload_file_to_s3
 import os
 
 templates = Jinja2Templates(directory="app/templates")
+templates.env.filters["markdown"] = render_markdown
 
 router = APIRouter(prefix="/menu", tags=["Menu"])
 
@@ -84,9 +86,9 @@ def view_menu_page(
         cart_count = sum(cart.values())
 
         return templates.TemplateResponse(
+            request,
             "menu.html",
             {
-                "request": request,
                 "items": items,
                 "cart": cart,
                 "cart_count": cart_count,
@@ -97,9 +99,9 @@ def view_menu_page(
         logger.error(f"Error in view_menu_page: {e}", exc_info=True)
         # Return empty response on error
         return templates.TemplateResponse(
+            request,
             "menu.html",
             {
-                "request": request,
                 "items": [],
                 "cart": {},
                 "cart_count": 0,
@@ -250,7 +252,7 @@ def search_menu_items(
 # -------------------------------
 @router.get("/new")
 def admin_new_menu_page(request: Request, user=Depends(require_admin)):
-    return templates.TemplateResponse("menu_new.html", {"request": request})
+    return templates.TemplateResponse(request, "menu_new.html", {})
 
 
 # -------------------------------
@@ -293,9 +295,9 @@ def view_menu_item_page(
     logged_in_user = request.session.get("user")
 
     return templates.TemplateResponse(
+        request,
         "menu_item_detail.html",
         {
-            "request": request,
             "item": item,
             "reviews": reviews,
             "avg_rating": avg_rating,

@@ -110,6 +110,16 @@ def test_view_menu_page_with_dietary_filter(client, fake_session):
     assert resp.status_code == 200
 
 
+def test_menu_view_shows_recipe_badge_when_recipe_exists(client, fake_session):
+    seeded_item = next(iter(fake_session.menu_items.values()))
+    seeded_item.recipe = "Secret laminated dough notes"
+
+    resp = client.get("/menu/view")
+
+    assert resp.status_code == 200
+    assert b"Recipe" in resp.content
+
+
 def test_get_nonexistent_menu_item(client):
     """Test getting a non-existent menu item"""
     fake_id = uuid4()
@@ -215,6 +225,29 @@ def test_menu_create_with_single_image(client, monkeypatch):
         "flavor_profiles": "rich,sweet",
         "dietary_features": "vegetarian",
         "recipe": "Mix and bake",
+        "is_available": "true",
+    }
+    files = {"image": ("test.jpg", b"jpgdata", "image/jpeg")}
+
+    resp = client.post("/menu/", data=data, files=files)
+    assert resp.status_code in [200, 303, 403]
+
+
+def test_menu_create_without_recipe_succeeds(client, monkeypatch):
+    """Test creating menu item without recipe"""
+    def mock_upload(*args, **kwargs):
+        return "https://example.com/uploaded.jpg"
+    monkeypatch.setattr("app.routes.menu.upload_file_to_s3", mock_upload)
+
+    data = {
+        "title": "No Recipe Item",
+        "description": "Still valid",
+        "price": "15.00",
+        "category": "pastry",
+        "origin": "french",
+        "tags": "sweet,buttery",
+        "flavor_profiles": "rich,sweet",
+        "dietary_features": "vegetarian",
         "is_available": "true",
     }
     files = {"image": ("test.jpg", b"jpgdata", "image/jpeg")}

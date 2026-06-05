@@ -64,9 +64,9 @@ def profile_page(request: Request, session: Session = Depends(get_session)):
         request.session["user"]["avatar_url"] = user.avatar_url
     success = request.query_params.get("success")
     return templates.TemplateResponse(
+        request,
         "profile.html",
         {
-            "request": request,
             "user": user,
             "errors": {},
             "address_values": address_form_values(user),
@@ -160,9 +160,9 @@ def update_address(
     if any(required_fields) and not all(required_fields):
         errors = {"address": "Please fill street, city, state, postal code, and country to save your default address."}
         return templates.TemplateResponse(
+            request,
             "profile.html",
             {
-                "request": request,
                 "user": user,
                 "errors": errors,
                 "address_values": {
@@ -197,9 +197,9 @@ def update_password(
     user = require_user(request, session)
     if new_password != confirm_password:
         return templates.TemplateResponse(
+            request,
             "profile.html",
             {
-                "request": request,
                 "user": user,
                 "errors": {"password": "Passwords do not match"},
                 "address_values": address_form_values(user),
@@ -208,9 +208,9 @@ def update_password(
         )
     if len(new_password) < 6 or len(new_password) > 32:
         return templates.TemplateResponse(
+            request,
             "profile.html",
             {
-                "request": request,
                 "user": user,
                 "errors": {"password": "Password must be 6-32 characters"},
                 "address_values": address_form_values(user),
@@ -219,9 +219,9 @@ def update_password(
         )
     if not verify_password(current_password, user.password_hash):
         return templates.TemplateResponse(
+            request,
             "profile.html",
             {
-                "request": request,
                 "user": user,
                 "errors": {"password": "Current password is incorrect"},
                 "address_values": address_form_values(user),
@@ -276,9 +276,9 @@ async def upload_avatar(
             err_msg += f" ({e.response.get('Error', {}).get('Message', '').strip()})"
         # Return profile page with an error
         return templates.TemplateResponse(
+            request,
             "profile.html",
             {
-                "request": request,
                 "user": user,
                 "errors": {"avatar": err_msg},
                 "address_values": address_form_values(user),

@@ -108,9 +108,9 @@
             {% endif %}
 
             {% if item.recipe %}
-                <div class="recipe-card">
+                <div class="recipe-card markdown-content">
                     <h3>Recipe / Notes</h3>
-                    {{ item.recipe }}
+                    {{ item.recipe | markdown }}
                 </div>
             {% endif %}
 
@@ -123,6 +123,7 @@
                       action="/menu/{{ item.id }}">
                     <label style="display:block; margin-bottom:6px;">Recipe / Notes</label>
                     <textarea name="recipe" rows="3" style="width:100%; padding:8px; border:1px solid var(--border); border-radius:8px; margin-bottom:10px;">{{ item.recipe or "" }}</textarea>
+                    <div style="margin:-4px 0 10px; font-size:12px; color: var(--text-light);">Markdown supported for recipe only: headings, bullet lists, bold, italics, links, and inline code.</div>
 
                     <label style="display:block; margin-bottom:6px;">Add Gallery Images</label>
                     <input type="file" name="images" accept="image/*" multiple style="margin-bottom:10px;">

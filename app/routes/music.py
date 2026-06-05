@@ -64,9 +64,9 @@ def listen(request: Request):
     )
 
     return templates.TemplateResponse(
+        request,
         "music.html",
         {
-            "request": request,
             "tracks": tracks,
             "cart_count": sum(request.session.get("cart", {}).values()),
         },
@@ -79,7 +79,7 @@ def listen(request: Request):
 @router.get("/new")
 def upload_page(request: Request, user=Depends(require_admin)):
     """Render upload form for admin users."""
-    return templates.TemplateResponse("music_new.html", {"request": request})
+    return templates.TemplateResponse(request, "music_new.html", {})
 
 
 @router.post("/new")

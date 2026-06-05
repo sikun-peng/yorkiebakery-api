@@ -33,6 +33,7 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/yorkiebakery
       CHROMA_PATH: /app/app/ai/vector_store
+      MAX_REQUEST_BODY_MB: 25
     env_file:
       - .env
     volumes:

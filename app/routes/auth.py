@@ -108,8 +108,7 @@ def login_page(request: Request, redirect_url: str = None):
     # Choose a sensible default destination (prefer redirect_url param, then referer, else home)
     default_redirect = redirect_url or request.query_params.get("redirect_url") or request.headers.get("referer") or "/"
 
-    return templates.TemplateResponse("login.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "login.html", {
         "redirect_url": default_redirect,
         "page_mode": "login",
     })
@@ -119,8 +118,7 @@ def login_page(request: Request, redirect_url: str = None):
 def register_page(request: Request, redirect_url: str = None):
     """Render a register page that posts to the register_form endpoint."""
     default_redirect = redirect_url or request.query_params.get("redirect_url") or request.headers.get("referer") or "/"
-    return templates.TemplateResponse("login.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "login.html", {
         "redirect_url": default_redirect,
         "page_mode": "register",
     })
@@ -635,8 +633,7 @@ def reset_password_page(
 ):
     # Basic token validation
     if not token or len(token) < 10:
-        return templates.TemplateResponse("reset_password.html", {
-            "request": request,
+        return templates.TemplateResponse(request, "reset_password.html", {
             "token": token,
             "error": "Invalid reset token."
         })
@@ -651,21 +648,18 @@ def reset_password_page(
         ).first()
 
         if not reset_token_record:
-            return templates.TemplateResponse("reset_password.html", {
-                "request": request,
+            return templates.TemplateResponse(request, "reset_password.html", {
                 "token": token,
                 "error": "Invalid or expired reset link. Please request a new password reset."
             })
 
-        return templates.TemplateResponse("reset_password.html", {
-            "request": request,
+        return templates.TemplateResponse(request, "reset_password.html", {
             "token": token,
             "error": None
         })
     except Exception as e:
         logger.error(f"Error in reset_password_page: {e}", exc_info=True)
-        return templates.TemplateResponse("reset_password.html", {
-            "request": request,
+        return templates.TemplateResponse(request, "reset_password.html", {
             "token": token,
             "error": "Error validating reset token."
         })
@@ -746,8 +740,7 @@ async def reset_password(
             logger.warning(f"Failed to send password change email: {email_error}")
 
         # Return HTML response that shows success and redirects
-        return templates.TemplateResponse("reset_password.html", {
-            "request": request,
+        return templates.TemplateResponse(request, "reset_password.html", {
             "token": token,
             "success": True,
             "message": "Password updated successfully! You can now login with your new password."
@@ -756,8 +749,7 @@ async def reset_password(
     except Exception as e:
         logger.error(f"Error in reset_password: {e}", exc_info=True)
         session.rollback()
-        return templates.TemplateResponse("reset_password.html", {
-            "request": request,
+        return templates.TemplateResponse(request, "reset_password.html", {
             "token": token,
             "error": "An error occurred while resetting your password."
         })

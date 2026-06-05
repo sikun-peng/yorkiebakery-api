@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from fastapi.templating import Jinja2Templates
@@ -25,6 +25,18 @@ from app.models.postgres.user import User
 # ===============================================
 app = FastAPI()
 app.router.default_options = True
+
+
+def _get_max_request_body_bytes() -> int:
+    raw_value = os.getenv("MAX_REQUEST_BODY_MB", "25")
+    try:
+        size_mb = float(raw_value)
+    except ValueError:
+        size_mb = 25
+    return max(int(size_mb * 1024 * 1024), 0)
+
+
+MAX_REQUEST_BODY_BYTES = _get_max_request_body_bytes()
 
 templates = Jinja2Templates(directory="app/templates")
 
@@ -118,6 +130,25 @@ async def attach_user(request: Request, call_next):
     response = await call_next(request)
     return response
 
+
+@app.middleware("http")
+async def enforce_request_body_limit(request: Request, call_next):
+    content_length = request.headers.get("content-length")
+    if content_length and MAX_REQUEST_BODY_BYTES > 0:
+        try:
+            request_size = int(content_length)
+        except ValueError:
+            request_size = 0
+
+        if request_size > MAX_REQUEST_BODY_BYTES:
+            max_mb = MAX_REQUEST_BODY_BYTES / (1024 * 1024)
+            return PlainTextResponse(
+                f"Request Entity Too Large. Limit is {max_mb:g} MB.",
+                status_code=413,
+            )
+
+    return await call_next(request)
+
 # ===============================================
 # STARTUP — DB Init
 # ===============================================
@@ -186,9 +217,9 @@ def home(request: Request, session=Depends(get_session)):
     ).all()
 
     return templates.TemplateResponse(
+        request,
         "index.html",
         {
-            "request": request,
             "cart_count": cart_count,
             "menu_items": menu_items,
             "review_stats": review_stats,

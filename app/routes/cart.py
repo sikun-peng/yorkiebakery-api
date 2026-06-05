@@ -83,8 +83,7 @@ def view_cart_page(request: Request):
     total = 0  # 100% off promotion
     cart_count = sum(cart.values())
 
-    return templates.TemplateResponse("cart.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "cart.html", {
         "items": items,
         "original_total": original_total,
         "total": total,
@@ -201,8 +200,7 @@ def checkout_page(request: Request):
     original_total = sum(i["price"] * i["qty"] for i in detailed_cart)
     total = 0  # 100% off promotion
 
-    return templates.TemplateResponse("checkout.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "checkout.html", {
         "cart": detailed_cart,
         "original_total": original_total,
         "total": total,
@@ -382,8 +380,7 @@ def process_checkout(
     # Clear cart
     request.session["cart"] = {}
 
-    return templates.TemplateResponse("confirm.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "confirm.html", {
         "cart": cart_items,
         "original_total": original_total,
         "total": total,

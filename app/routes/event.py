@@ -46,8 +46,9 @@ def list_events(request: Request):
         ).all()
 
     return templates.TemplateResponse(
+        request,
         "events.html",
-        {"request": request, "events": events}
+        {"events": events}
     )
 
 
@@ -130,7 +131,7 @@ def submit_rsvp(
 @router.get("/new")
 def admin_new_event(request: Request):
     require_admin(request)
-    return templates.TemplateResponse("events_new.html", {"request": request})
+    return templates.TemplateResponse(request, "events_new.html", {})
 
 
 # ======================================================
