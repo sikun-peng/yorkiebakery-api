@@ -2842,6 +2842,12 @@ h1, h2, h3, h4 {
   line-height: 1.72;
 }
 
+.item-purchase-actions {
+  margin-top: 1.15rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dfe3e8;
+}
+
 .markdown-content {
   line-height: 1.72;
 }
@@ -3036,6 +3042,11 @@ h1, h2, h3, h4 {
   .menu-item-detail .cart-form,
   .menu-item-detail .qty-controls {
     margin-top: 1rem;
+  }
+
+  .item-purchase-actions {
+    margin-top: 1.15rem;
+    padding-top: 1rem;
   }
 
   .menu-item-detail .cart-form .btn,

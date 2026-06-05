@@ -126,24 +126,26 @@
             </div>
             {% endif %}
 
-            <!-- Add to Cart -->
-            {% if qty == 0 %}
-              <form action="/cart/add/{{ item.id }}" method="post" class="cart-form" data-cart-action="add" data-item-id="{{ item.id }}">
-                  <button type="submit" class="btn btn-primary">Add to Cart 🛍️</button>
-              </form>
-            {% else %}
-              <div class="qty-controls">
-                  <form action="/cart/remove/{{ item.id }}" method="post" class="cart-form" data-cart-action="remove" data-item-id="{{ item.id }}" style="display:inline;">
-                      <button type="submit" class="qty-btn" {% if qty == 0 %}disabled{% endif %}>−</button>
+            <div class="item-purchase-actions">
+                <!-- Add to Cart -->
+                {% if qty == 0 %}
+                  <form action="/cart/add/{{ item.id }}" method="post" class="cart-form" data-cart-action="add" data-item-id="{{ item.id }}">
+                      <button type="submit" class="btn btn-primary">Add to Cart 🛍️</button>
                   </form>
+                {% else %}
+                  <div class="qty-controls">
+                      <form action="/cart/remove/{{ item.id }}" method="post" class="cart-form" data-cart-action="remove" data-item-id="{{ item.id }}" style="display:inline;">
+                          <button type="submit" class="qty-btn" {% if qty == 0 %}disabled{% endif %}>−</button>
+                      </form>
 
-                  <span class="qty-display">{{ qty }}</span>
+                      <span class="qty-display">{{ qty }}</span>
 
-                  <form action="/cart/add/{{ item.id }}" method="post" class="cart-form" data-cart-action="add" data-item-id="{{ item.id }}" style="display:inline;">
-                      <button type="submit" class="qty-btn">+</button>
-                  </form>
-              </div>
-            {% endif %}
+                      <form action="/cart/add/{{ item.id }}" method="post" class="cart-form" data-cart-action="add" data-item-id="{{ item.id }}" style="display:inline;">
+                          <button type="submit" class="qty-btn">+</button>
+                      </form>
+                  </div>
+                {% endif %}
+            </div>
         </div>
 
         <!-- Right: Reviews Section -->
