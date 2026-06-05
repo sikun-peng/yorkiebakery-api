@@ -117,7 +117,7 @@ def test_menu_view_shows_recipe_badge_when_recipe_exists(client, fake_session):
     resp = client.get("/menu/view")
 
     assert resp.status_code == 200
-    assert b"Recipe" in resp.content
+    assert b"Recipe Available" in resp.content
 
 
 def test_get_nonexistent_menu_item(client):

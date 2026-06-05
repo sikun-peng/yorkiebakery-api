@@ -2781,12 +2781,60 @@ h1, h2, h3, h4 {
    RECIPE MARKDOWN
    =========================== */
 
+.recipe-disclosure {
+  margin-top: 1rem;
+  border-top: 1px solid #dfe3e8;
+  padding-top: 0.85rem;
+}
+
+.recipe-toggle {
+  list-style: none;
+  cursor: pointer;
+  color: #394150;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.recipe-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.recipe-toggle::before {
+  content: "▸";
+  font-size: 0.95rem;
+  color: #7f4a1d;
+  transition: transform 0.18s ease;
+}
+
+.recipe-disclosure[open] .recipe-toggle::before {
+  transform: rotate(90deg);
+}
+
+.recipe-card {
+  margin-top: 0.9rem;
+  padding: 0.1rem 0 0;
+  background: transparent;
+  border: 0;
+}
+
+.recipe-card.markdown-content {
+  color: #3d4554;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 1.08rem;
+  line-height: 1.72;
+}
+
 .markdown-content {
-  line-height: 1.65;
+  line-height: 1.72;
 }
 
 .markdown-content p {
-  margin: 0 0 0.8rem;
+  margin: 0 0 0.72rem;
 }
 
 .markdown-content p:last-child {
@@ -2794,60 +2842,82 @@ h1, h2, h3, h4 {
 }
 
 .markdown-content ul {
-  margin: 0.6rem 0 0.8rem 1.2rem;
-  padding-left: 0.4rem;
+  margin: 0.4rem 0 0.7rem 1.15rem;
+  padding-left: 0.28rem;
 }
 
 .markdown-content ol {
-  margin: 0.6rem 0 0.8rem 1.35rem;
-  padding-left: 0.5rem;
+  margin: 0.4rem 0 0.7rem 1.22rem;
+  padding-left: 0.4rem;
 }
 
 .markdown-content ol ul,
 .markdown-content ul ul,
 .markdown-content ol ol,
 .markdown-content ul ol {
-  margin-top: 0.35rem;
-  margin-bottom: 0.35rem;
+  margin-top: 0.22rem;
+  margin-bottom: 0.22rem;
 }
 
-.markdown-content li + li {
-  margin-top: 0.3rem;
+.markdown-content li {
+  margin: 0.16rem 0;
 }
 
 .markdown-content h1,
 .markdown-content h2,
 .markdown-content h3 {
-  margin: 0.9rem 0 0.45rem;
-  line-height: 1.25;
-  color: var(--text-dark);
+  margin: 1.3rem 0 0.52rem;
+  line-height: 1.15;
+  color: #394150;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.markdown-content h1 {
+  font-size: clamp(1.35rem, 2.2vw, 1.6rem);
+}
+
+.markdown-content h2 {
+  font-size: clamp(1.15rem, 1.9vw, 1.32rem);
+}
+
+.markdown-content h3 {
+  font-size: clamp(1rem, 1.5vw, 1.12rem);
+}
+
+.markdown-content h1:first-child,
+.markdown-content h2:first-child,
+.markdown-content h3:first-child {
+  margin-top: 0;
 }
 
 .markdown-content code {
-  padding: 0.12rem 0.35rem;
-  border-radius: 999px;
-  background: #f3ebe1;
-  font-size: 0.92em;
+  padding: 0.04rem 0.25rem;
+  border-radius: 4px;
+  background: #f3eee6;
+  font-size: 0.9em;
+  font-family: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 .markdown-content a {
-  color: #a14f1f;
+  color: #7f4a1d;
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
 }
 
 .markdown-content hr {
   border: 0;
-  border-top: 1px solid #e2d3c0;
-  margin: 1rem 0;
+  border-top: 1px solid #dfe3e8;
+  margin: 1.2rem 0 1.45rem;
 }
 
 .markdown-content blockquote {
-  margin: 0.9rem 0;
-  padding: 0.75rem 0.9rem;
-  border-left: 4px solid #d6b48a;
-  background: #fcf6ee;
-  color: #6b4c2f;
+  margin: 0.75rem 0 1rem;
+  padding: 0.5rem 0 0.5rem 0.9rem;
+  border-left: 3px solid #d4dbe4;
+  background: transparent;
+  color: #596375;
   font-style: italic;
 }
 
@@ -2857,11 +2927,10 @@ h1, h2, h3, h4 {
 
 .markdown-table-wrap {
   overflow-x: auto;
-  margin: 0.9rem 0 1rem;
-  border: 1px solid #eadcca;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #fffdfa 0%, #fff7ef 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  margin: 0.8rem 0 1.15rem;
+  border: 1px solid #e0e4ea;
+  border-radius: 0;
+  background: #fbfbfc;
 }
 
 .markdown-content table {
@@ -2870,21 +2939,24 @@ h1, h2, h3, h4 {
   border-spacing: 0;
   min-width: 360px;
   background: transparent;
+  font-family: "Times New Roman", Times, serif;
 }
 
 .markdown-content th,
 .markdown-content td {
-  padding: 0.65rem 0.75rem;
-  border-bottom: 1px solid #eadcca;
-  border-right: 1px solid #f0e4d6;
+  padding: 0.78rem 0.82rem;
+  border-bottom: 1px solid #e0e4ea;
+  border-right: 1px solid #e0e4ea;
   text-align: left;
   vertical-align: top;
+  color: #424958;
 }
 
 .markdown-content th {
-  background: #f7ede1;
+  background: #f7f8fa;
   font-weight: 700;
   white-space: nowrap;
+  font-size: 1em;
 }
 
 .markdown-content th:last-child,
@@ -2897,7 +2969,7 @@ h1, h2, h3, h4 {
 }
 
 .markdown-content tbody tr:nth-child(even) td {
-  background: rgba(248, 232, 211, 0.38);
+  background: #fdfdfe;
 }
 
 .markdown-content .align-left {
@@ -2914,14 +2986,35 @@ h1, h2, h3, h4 {
 
 @media (max-width: 640px) {
   .markdown-table-wrap {
-    margin-left: -0.15rem;
-    margin-right: -0.15rem;
+    margin-left: -0.1rem;
+    margin-right: -0.1rem;
   }
 
   .markdown-content th,
   .markdown-content td {
-    padding: 0.58rem 0.65rem;
-    font-size: 0.94rem;
+    padding: 0.64rem 0.7rem;
+    font-size: 0.95rem;
+  }
+
+  .recipe-card.markdown-content {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .recipe-toggle {
+    font-size: 0.95rem;
+  }
+
+  .markdown-content h1 {
+    font-size: 1.28rem;
+  }
+
+  .markdown-content h2 {
+    font-size: 1.12rem;
+  }
+
+  .markdown-content h3 {
+    font-size: 1rem;
   }
 }
 
