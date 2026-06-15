@@ -7,6 +7,19 @@
 {% set qty = cart.get(item.id|string, 0) %}
 {% set images = ([item.image_url] if item.image_url else []) + (item.gallery_urls or []) %}
 {% set primary_image = images[0] if images else "/static/images/default_menu_image.jpg" %}
+{% set dietary_map = {
+    "vegetarian": "🥦 Vegetarian",
+    "vegan": "🥕 Vegan",
+    "gluten_free": "✅ Gluten-Free",
+    "gluten_free_option_available": "🔀 Gluten-Free Option Available",
+    "contains_gluten": "🌾 Contains Gluten",
+    "contains_dairy": "🧀 Contains Dairy",
+    "contains_nuts": "🥜 Contains Nuts",
+    "contains_pork": "🐷 Contains Pork",
+    "contains_shellfish": "🦐 Contains Shellfish",
+    "contains_alcohol": "🍷 Contains Alcohol",
+    "spicy": "🌶️ Spicy"
+} %}
 <style>
     .gallery-thumbs {
         display: flex;
@@ -80,8 +93,16 @@
             {% endif %}
 
             {% if item.dietary_features %}
-                    <p><strong>Dietary:</strong> {{ item.dietary_features | join(", ") }}</p>
-                {% endif %}
+                {% set mapped = [] %}
+                {% for d in item.dietary_features %}
+                    {% if d in dietary_map %}
+                        {% set _ = mapped.append(dietary_map[d]) %}
+                    {% else %}
+                        {% set _ = mapped.append(d) %}
+                    {% endif %}
+                {% endfor %}
+                <p><strong>Dietary:</strong> {{ mapped | join(", ") }}</p>
+            {% endif %}
             </div>
 
             {% if item.price is not none %}

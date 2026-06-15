@@ -3,6 +3,7 @@ from uuid import UUID, uuid4
 
 from app.models.postgres.menu import MenuItem
 from app.models.postgres.review import Review
+from app.routes.menu import _parse_csv_or_list
 
 
 def test_menu_view_page_renders(client):
@@ -382,6 +383,25 @@ def test_menu_update_tags_and_flavors(client, fake_session):
         },
     )
     assert resp.status_code in [200, 403, 404]
+
+
+def test_parse_csv_or_list_supports_repeated_checkbox_values():
+    """Test parsing repeated checkbox values from form submissions."""
+    assert _parse_csv_or_list(
+        ["contains_gluten", "gluten_free_option_available"]
+    ) == [
+        "contains_gluten",
+        "gluten_free_option_available",
+    ]
+
+
+def test_parse_csv_or_list_strips_wrapping_quotes():
+    """Test quoted multi-word tags are normalized before storage."""
+    assert _parse_csv_or_list('"galbi jjim", \'braised short rib\', spicy') == [
+        "galbi jjim",
+        "braised short rib",
+        "spicy",
+    ]
 
 
 def test_menu_update_origin_and_recipe(client, fake_session):

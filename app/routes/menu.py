@@ -11,7 +11,7 @@ from fastapi import (
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from sqlmodel import Session, select
-from typing import List, Optional
+from typing import List, Optional, Union
 from uuid import UUID
 from sqlalchemy import any_
 from collections import defaultdict
@@ -45,6 +45,32 @@ CATEGORY_DISPLAY_ORDER = [
     "drink",
     "soup",
 ]
+
+
+def _normalize_list_item(value: str) -> str:
+    cleaned = value.strip()
+    if len(cleaned) >= 2 and cleaned[0] == cleaned[-1] and cleaned[0] in {'"', "'"}:
+        cleaned = cleaned[1:-1].strip()
+    return cleaned
+
+
+def _parse_csv_or_list(value: Optional[Union[str, List[str]]]) -> List[str]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        parsed: List[str] = []
+        for entry in value:
+            parsed.extend(
+                normalized
+                for part in entry.split(",")
+                if (normalized := _normalize_list_item(part))
+            )
+        return parsed
+    return [
+        normalized
+        for part in value.split(",")
+        if (normalized := _normalize_list_item(part))
+    ]
 
 
 def _item_has_chef_special_tag(item: MenuItem) -> bool:
@@ -151,7 +177,7 @@ def create_menu_item(
     origin: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),
     flavor_profiles: Optional[str] = Form(None),
-    dietary_features: Optional[str] = Form(None),
+    dietary_features: Optional[List[str]] = Form(None),
     recipe: Optional[str] = Form(None),
     is_available: bool = Form(True),
     image: Optional[UploadFile] = File(None),
@@ -191,21 +217,15 @@ def create_menu_item(
     image_url = uploaded_urls[0]
     gallery_urls = uploaded_urls[1:] if len(uploaded_urls) > 1 else []
 
-    # Convert CSV → list[]
-    def parse_list(value: Optional[str]):
-        if not value:
-            return []
-        return [v.strip() for v in value.split(",") if v.strip()]
-
     item = MenuItem(
         title=title,
         description=description,
         price=float(price),
         category=category,
         origin=origin,
-        tags=parse_list(tags),
-        flavor_profiles=parse_list(flavor_profiles),
-        dietary_features=parse_list(dietary_features),
+        tags=_parse_csv_or_list(tags),
+        flavor_profiles=_parse_csv_or_list(flavor_profiles),
+        dietary_features=_parse_csv_or_list(dietary_features),
         recipe=recipe,
         image_url=image_url,
         gallery_urls=gallery_urls,
@@ -361,7 +381,7 @@ def update_menu_item(
     origin: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),
     flavor_profiles: Optional[str] = Form(None),
-    dietary_features: Optional[str] = Form(None),
+    dietary_features: Optional[List[str]] = Form(None),
     recipe: Optional[str] = Form(None),
     is_available: Optional[bool] = Form(None),
     image: Optional[UploadFile] = File(None),
@@ -385,18 +405,12 @@ def update_menu_item(
     if origin is not None:
         item.origin = origin
 
-    # List fields (CSV → list)
-    def parse_list(value):
-        if value is None:
-            return None
-        return [v.strip() for v in value.split(",") if v.strip()]
-
     if tags is not None:
-        item.tags = parse_list(tags)
+        item.tags = _parse_csv_or_list(tags)
     if flavor_profiles is not None:
-        item.flavor_profiles = parse_list(flavor_profiles)
+        item.flavor_profiles = _parse_csv_or_list(flavor_profiles)
     if dietary_features is not None:
-        item.dietary_features = parse_list(dietary_features)
+        item.dietary_features = _parse_csv_or_list(dietary_features)
     if recipe is not None:
         item.recipe = recipe
 

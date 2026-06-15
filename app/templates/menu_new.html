@@ -51,6 +51,7 @@
 
   <label>🏷️ Tags (comma-separated)</label>
   <input type="text" name="tags" placeholder="e.g. sweet, flaky, buttery">
+  <small style="color:#666;">Enter plain tags only. Do not add quotes around multi-word tags.</small>
 
   <!-- FLAVOR & DIETARY -->
   <label>👅 Flavor Profile (comma-separated)</label>
@@ -72,6 +73,10 @@
     <label class="checkbox-label">
         <input type="checkbox" name="dietary_features" value="gluten_free">
         <span>✅ Gluten-Free</span>
+    </label>
+    <label class="checkbox-label">
+        <input type="checkbox" name="dietary_features" value="gluten_free_option_available">
+        <span>🔀 Gluten-Free Option Available</span>
     </label>
     <label class="checkbox-label">
         <input type="checkbox" name="dietary_features" value="contains_gluten">
